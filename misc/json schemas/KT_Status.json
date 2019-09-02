@@ -1,0 +1,55 @@
+{
+  "OVERLAPS": {
+	"ASTENOT": 0,
+	"DECIMALS": "0.000001 m",
+	"PST": 1,
+	"ASTTOM": 1,
+	"CD": "14/07/2019 - 18:50:11"
+  },
+  "DBOUND": {
+	"PROBS": 0,
+	"CD": "14/07/2019 - 18:42:44"
+  },
+  "SHAPES_GEOMETRY": {
+	"OTA": [],
+	"PROBS": false,
+	"CD": "14/07/2019 - 19:19:18"
+  },
+  "WRONG_KAEK": {
+	"ASTENOT_ASTTOM": 1,
+	"PST_ASTENOT": 1
+  },
+  "SHAPE": {
+	"FBOUND": true,
+	"ASTIK": true,
+	"DBOUND": true,
+	"ASTENOT": true,
+	"iROADS": true,
+	"ASTOTA": true,
+	"PST": true,
+	"ROADS": true,
+	"BLD": true,
+	"ASTTOM": true
+  },
+  "EXPORTED": {
+	"FBOUND": true,
+	"ROADS": true,
+	"FBOUND_ED": "14/07/2019 - 19:12:47",
+	"ROADS_ED": "14/07/2019 - 19:03:38"
+  },
+  "ROADS": {
+	"ALL": 0,
+	"CPROBS": false,
+	"PROBS": 0,
+	"CD": "14/07/2019 - 19:21:34"
+  },
+  "BLD": {
+	"PROBS": 0,
+	"CD": "14/07/2019 - 18:42:31"
+  },
+  "FBOUND_GEOMETRY": {
+	"OTA": [],
+	"PROBS": false,
+	"CD": "14/07/2019 - 19:35:51"
+  }
+}
