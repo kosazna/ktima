@@ -47,8 +47,8 @@ prefboundinpath = cp([meleti, inputdata, shapefiles_i, 'PRE_FBOUND_ALL.shp'])
 claimoutpath = cp([meleti, inputdata, shapefiles_i])
 claiminpath = cp([meleti, inputdata, shapefiles_i, 'FBOUND_CLAIM.shp'])
 
-dasinpath = cp([meleti, inputdata, shapefiles_i, po_i, 'PO_PARCELS.shp'])
 predasinpath = cp([meleti, inputdata, shapefiles_i, po_i, 'KYR_PO_PARCELS.shp'])
+dasinpath = cp([meleti, inputdata, shapefiles_i, po_i, 'PO_PARCELS.shp'])
 
 locality = cp([meleti, inputdata, docs_i, 'LOCALITY.txt'])
 fbounddoc = cp([meleti, inputdata, docs_i, 'FBOUND_DOCS.txt'])
