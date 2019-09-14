@@ -150,7 +150,7 @@ def mxdfiles():
 
 def localfiles():
     for ota in kt.ota_list:
-        for shape in kt.local_data_to_index:
+        for shape in kt.local_data_to_index_list:
             local_lyr = paths.ktima(ota, shape, ext=True)
 
             lyr_name = shape + "_" + ota

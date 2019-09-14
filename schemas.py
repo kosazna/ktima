@@ -39,7 +39,7 @@ class NamesAndLists:
         self.ota_list = ktdata["ota_list"]
         self.status_list = ktdata["status_list"]
         self.merging_list = ktdata["merging_list"]
-        self.local_data_to_index = ktdata["local_data_to_index"]
+        self.local_data_to_index_list = ktdata["local_data_to_index"]
         self.geometry_list = ktdata["geometry_list"]
         self.server_list = ktdata["server_list"]
         self.local_list = ktdata["local_list"]

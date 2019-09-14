@@ -12,24 +12,83 @@ from update import *
 
 arcpy.env.overwriteOutput = True
 
+meleti = str(sys.argv[1].split('\\')[1])
+data = load_json(cp([meleti, inputdata, docs_i, 'KT_Info.json']))
+
+kt = NamesAndLists(data)
+paths = Paths(meleti, kt.mel_type, kt.company_name)
+status = Status(meleti)
+log = Log(meleti)
+
+
+def user_in(func):
+    console = {'action_type': "(1) Export Shapefiles\n"
+                              "(2) Organize MDB's\n"
+                              "(3) Export NEW ROADS to InputData\n"
+                              "(4) Delete data\n"
+                              "(5) Create Metadata\n"
+                              "(6) Anaktiseis\n"
+                              "(7) Status\n"
+                              "(8) Update\n\n",
+               'get_folder': "\nGet from : (S)erver  or  (L)ocal \n\n",
+               'export_folder': "\nExport to : (L)ocal  or  (P)aradosi\n\n",
+               'shapes': "\nSHAPEFILE to export: (Enter for ALL)\n\n",
+               'ota_code': "\nOTA to export from: (Enter for ALL)\n\n",
+               'clear_folder': "\nDelete from : (I)nputData  (L)ocal  or  (P)aradosi\n",
+               'clear_type': "\nDelete method : (A)ll  or  (S)tandard\n"}
+
+    sl = ['']
+    ol = ['']
+    [sl.append(i) for i in kt.local_list]
+    [ol.append(i) for i in kt.ota_list]
+
+    approved = {'action_type': ['', '1', '2', '3', '4', '5', '6', '7', '8', '1LPAA4PS5'],
+                'get_folder': ['S', 'L'],
+                'export_folder': ['L', 'P'],
+                'shapes': sl,
+                'ota_code': ol,
+                'clear_folder': ['I', 'L', 'P'],
+                'clear_type': ['A', 'S']}
+
+    if func == 'shapes' or func == 'ota_code':
+        action = raw_input(console[func]).upper()
+        _action = action.split('-')
+        count = 0
+
+        if len(_action) != 1:
+            for i in _action:
+                if i in approved[func]:
+                    count += 1
+
+            while count != len(_action):
+                print('\n\n!! Action Not Recognised. Try Again !!\n\n')
+                count = 0
+                action = raw_input(console[func]).upper()
+                _action = action.split('-')
+                for i in _action:
+                    if i in approved[func]:
+                        count += 1
+        else:
+            while action not in approved[func]:
+                print('\n\n!! Action Not Recognised. Try Again !!\n\n')
+                action = raw_input(console[func]).upper()
+    else:
+        action = raw_input(console[func]).upper()
+        while action not in approved[func]:
+            print('\n\n!! Action Not Recognised. Try Again !!\n\n')
+            action = raw_input(console[func]).upper()
+
+    return action
+
+
 if get_pass():
-    action_type = (raw_input("(1) Export Shapefiles\n(2) Organize MDB's\n(3) Export NEW ROADS to InputData\n(4) Delete data\n(5) Create Metadata\n(6) Anaktiseis\n(7) Status\n(8) Update\n\n").upper())
+    action_type = user_in('action_type')
 
     if action_type == "1LPAA4PS5":
         mod_date = (raw_input("\nDate for Metadata (xx/xx/xxxx) : \n").upper())
-
-    meleti = str(sys.argv[1].split('\\')[1])
-    data = load_json(cp([meleti, inputdata, docs_i, 'KT_Info.json']))
-
-    kt = NamesAndLists(data)
-    paths = Paths(meleti, kt.mel_type, kt.company_name)
 else:
     print("\nAccess denied\n")
     action_type = "None"
-    meleti = "None"
-
-status = Status(meleti)
-log = Log(meleti)
 
 
 def shapefiles():
@@ -39,10 +98,10 @@ def shapefiles():
         shapes = ""
         ota_code = ""
     else:
-        get_folder = (raw_input("\nGet from : (S)erver  or  (L)ocal \n\n").upper())
-        export_folder = (raw_input("\nExport to : (L)ocal  or  (P)aradosi\n\n").upper())
-        shapes = (raw_input("\nSHAPEFILE to export: (Enter for ALL)\n\n").upper())
-        ota_code = (raw_input("\nOTA to export from: (Enter for ALL)\n\n").upper())
+        get_folder = user_in('get_folder')
+        export_folder = user_in('export_folder')
+        shapes = user_in('shapes')
+        ota_code = user_in('ota_code')
 
     user_shapes = shapes.split("-")
     user_ota_list = ota_code.split("-")
@@ -177,8 +236,8 @@ def clear():
         clear_folder = "P"
         clear_type = "S"
     else:
-        clear_folder = (raw_input("\nDelete from : (I)nputData  (L)ocal  or  (P)aradosi\n").upper())
-        clear_type = (raw_input("\nDelete method : (A)ll  or  (S)tandard\n").upper())
+        clear_folder = user_in('clear_folder')
+        clear_type = user_in('clear_type')
 
     log_status = []
     clearlocalpath = ""
