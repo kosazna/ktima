@@ -1,31 +1,13 @@
-from cust_win import *
+from paths import *
 
-locASTENOT = []
-locASTIK = []
-locASTOTA = []
-locASTTOM = []
-locBLD = []
-locDBOUND = []
-locEAS = []
-locPST = []
-locVST = []
-locRBOUND = []
-locROADS = []
-locFBOUND = []
+meleti = 'KT2-11'
+company_name = 'NAMA'
+mel_type = 1
+
+paths = Paths(meleti, mel_type, company_name)
+ktdata = load_json(paths.kt_info_path)
+kt = NamesAndLists(ktdata)
 
 
-loc_fl = {"ASTENOT": locASTENOT,
-          "ASTIK": locASTIK,
-          "ASTOTA": locASTOTA,
-          "ASTTOM": locASTTOM,
-          "BLD": locBLD,
-          "DBOUND": locDBOUND,
-          "FBOUND": locFBOUND,
-          "PST": locPST,
-          "ROADS": locROADS,
-          "EAS": locEAS,
-          "VST": locVST,
-          "RBOUND": locRBOUND}
-
-for shape in loc_fl:
-    print(shape)
+for _ in kt.status_list:
+    print(_)

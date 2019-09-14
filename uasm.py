@@ -7,7 +7,6 @@
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
 import hashlib
-
 from paths import *
 
 

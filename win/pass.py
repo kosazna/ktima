@@ -36,7 +36,11 @@ def t_pass():
     if _user == "":
         write_json(r"C:\Users\{}\ipass.json".format(_user), data)
     else:
-        os.mkdir(r"{}:\Google Drive\Work\ktima\passes\temp\{}".format(gd[_user], _user))
+        try:
+            os.mkdir(r"{}:\Google Drive\Work\ktima\passes\temp\{}".format(gd[_user], _user))
+        except WindowsError:
+            pass
+
         write_json(r"{}:\Google Drive\Work\ktima\passes\temp\{}\ipass.json".format(gd[_user], _user), data)
 
 

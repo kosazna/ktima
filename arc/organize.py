@@ -69,7 +69,7 @@ loc_fl = {"ASTENOT": locASTENOT,
           "VST": locVST,
           "RBOUND": locRBOUND}
 
-req_map = {'merge': ktdata['merging_list'],
+req_map = {'merge': kt.merging_list,
            'shapes': ['ASTENOT', 'ASTTOM', 'PST'],
            'export_per_ota': ['ASTOTA'],
            'fbound_geometry': ['FBOUND'],
@@ -118,7 +118,7 @@ def add_layer(features, lyr=False):
         else:
             for feature in features:
                 try:
-                    layer_to_add = arcpy.mapping.Layer(gdbm(feature))
+                    layer_to_add = arcpy.mapping.Layer(paths.gdbm(feature))
                     arcpy.mapping.AddLayer(dataframes, layer_to_add, "AUTO_ARRANGE")
                 except ValueError:
                     pm("Den uparxei to arxeio : {}".format(feature))
@@ -149,9 +149,9 @@ def mxdfiles():
 
 
 def localfiles():
-    for ota in ktdata["ota_list"]:
-        for shape in ktdata["local_data_to_index"]:
-            local_lyr = ktima_paths(ota, shape, ext=True)
+    for ota in kt.ota_list:
+        for shape in kt.local_data_to_index:
+            local_lyr = paths.ktima(ota, shape, ext=True)
 
             lyr_name = shape + "_" + ota
 

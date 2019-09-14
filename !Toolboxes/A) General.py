@@ -49,7 +49,7 @@ class Merge(object):
             direction="Input")
 
         if core.mxdName == core.mxdGeneralName or core.mxdName == core.mxdKtimaName:
-            merging_list = copy.copy(core.ktdata["merging_list"])
+            merging_list = copy.copy(core.kt.merging_list)
 
             shape.filter.list = merging_list
 
@@ -308,7 +308,7 @@ class ImportData(object):
             direction="Input",
             multiValue=True)
 
-        merging_list = copy.copy(core.ktdata["local_data_shape_list"])
+        merging_list = copy.copy(core.kt.local_data_shape_list)
         merging_list.append("IROADS")
 
         shape.filter.list = merging_list
