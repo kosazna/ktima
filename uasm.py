@@ -14,6 +14,7 @@ ktl = load_json(cp([users, user, 'paths.json']))
 
 
 def get_user_uid():
+
     if ktl['company_name'] == 'NAMA':
         ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'], origin=ktl[user])
     else:
