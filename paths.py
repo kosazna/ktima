@@ -62,6 +62,9 @@ class Paths:
         self.anakt_in = cp([meleti, inputdata, anakt])
         self.anakt_out = cp([meleti, outputdata, anakt])
 
+        self.saromena_in = cp([meleti, inputdata, saromena])
+        self.saromena_out = cp([meleti, outputdata, saromena])
+
     def server(self, ota, shp):
         if self.company_name == 'NAMA':
             return cp([ota, 'SHP', shp + '.shp'], origin='K')

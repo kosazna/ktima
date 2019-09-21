@@ -28,6 +28,7 @@ paradosimdb_o = "ParadosiMDB"
 users = "Users"
 mdev = "! aznavouridis.k"
 anakt = 'Anaktiseis'
+saromena = 'Saromena'
 
 
 class NamesAndLists:

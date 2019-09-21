@@ -23,32 +23,39 @@ log = Log(meleti)
 
 def user_in(func):
     console = {'action_type': "(1) Export Shapefiles\n"
-                              "(2) Organize MDB's\n"
-                              "(3) Export NEW ROADS to InputData\n"
-                              "(4) Delete data\n"
-                              "(5) Create Metadata\n"
-                              "(6) Anaktiseis\n"
-                              "(7) Status\n"
-                              "(8) Update\n\n",
+                              "(2) Organize Files\n"
+                              "(3) Create Metadata\n"
+                              "(4) Export NEW ROADS to InputData\n"
+                              "(5) Status\n"
+                              "(6) Delete Data\n"
+                              "(7) Update\n\n",
                'get_folder': "\nGet from : (S)erver  or  (L)ocal \n\n",
                'export_folder': "\nExport to : (L)ocal  or  (P)aradosi\n\n",
-               'shapes': "\nSHAPEFILE to export: (Enter for ALL)\n\n",
-               'ota_code': "\nOTA to export from: (Enter for ALL)\n\n",
-               'clear_folder': "\nDelete from : (I)nputData  (L)ocal  or  (P)aradosi\n",
-               'clear_type': "\nDelete method : (A)ll  or  (S)tandard\n"}
+               'shapes': "\nSHAPEFILE to export: (Enter for ALL, or split with '-')\n\n",
+               'ota_code': "\nOTA to export from: (Enter for ALL, or split with '-')\n\n",
+               'clear_folder': "\nDelete from :\n\n"
+                               "(I)nputData\n"
+                               "(L)ocal\n"
+                               "(P)aradosi\n"
+                               "(M)DB's\n\n"
+                               "(A)naktiseis\n"
+                               "(S)aromena\n\n",
+               'clear_type': "\nDelete method : (A)ll  or  (S)tandard\n",
+               'org_folder': "\nFiles : (A)naktiseis  or  (S)aromena  or  (M)DB's\n"}
 
     sl = ['']
     ol = ['']
     [sl.append(i) for i in kt.local_list]
     [ol.append(i) for i in kt.ota_list]
 
-    approved = {'action_type': ['', '1', '2', '3', '4', '5', '6', '7', '8', '1LPAA4PS5'],
+    approved = {'action_type': ['', '1', '2', '3', '4', '5', '6', '7', '1LPAA4PS5'],
                 'get_folder': ['S', 'L'],
                 'export_folder': ['L', 'P'],
                 'shapes': sl,
                 'ota_code': ol,
-                'clear_folder': ['I', 'L', 'P'],
-                'clear_type': ['A', 'S']}
+                'clear_folder': ['I', 'L', 'P', 'A', 'S', 'M'],
+                'clear_type': ['A', 'S'],
+                'org_folder': ['A', 'S', 'M']}
 
     if func == 'shapes' or func == 'ota_code':
         action = raw_input(console[func]).upper()
@@ -176,33 +183,12 @@ def shapefiles():
         print("\nMissing files : \n")
 
         if not missing_list:
-            print("NONE")
+            print("NONE\n\n")
         else:
             for i in missing_list:
                 print(i)
     else:
         pass
-
-
-def mdbs():
-    if get_pass():
-        for rootDir, subdirs, filenames in os.walk(paths.mdb_in):
-            for ota in kt.ota_list:
-                for filename in filenames:
-                    if ota in filename and 'VSTEAS_REL' in filename:
-                        inpathv = os.path.join(rootDir, filename)
-                        outpathv = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', filename)
-                        copyfile(inpathv, outpathv)
-                    elif ota in filename:
-                        inpath = os.path.join(rootDir, filename)
-                        outpath = os.path.join(paths.mdb_out, ota, filename)
-                        copyfile(inpath, outpath)
-
-        log("Export MDB's")
-    else:
-        pass
-
-    print("DONE !")
 
 
 def roads():
@@ -237,7 +223,10 @@ def clear():
         clear_type = "S"
     else:
         clear_folder = user_in('clear_folder')
-        clear_type = user_in('clear_type')
+        if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
+            clear_type = user_in('clear_type')
+        else:
+            clear_type = 'None'
 
     log_status = []
     clearlocalpath = ""
@@ -251,6 +240,12 @@ def clear():
     elif clear_folder == "I":
         clearlocalpath = paths.old_roads
         log_status.append('InputRoads')
+    elif clear_folder == 'A':
+        clearlocalpath = paths.anakt_out
+    elif clear_folder == 'S':
+        clearlocalpath = paths.saromena_out
+    elif clear_folder == 'M':
+        clearlocalpath = paths.mdb_out
 
     del_list = []
 
@@ -262,20 +257,28 @@ def clear():
         log_status.append('standard')
 
     if get_pass():
-        for i in del_list:
+        if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
+            for i in del_list:
+                for rootDir, subdirs, filenames in os.walk(clearlocalpath):
+                    for filename in fnmatch.filter(filenames, i):
+                        if clear_type == "A" and clear_folder == "P" and filename[:-4] in kt.no_del_list:
+                            pass
+                        else:
+                            try:
+                                os.remove(os.path.join(rootDir, filename))
+                            except OSError:
+                                print("Error while deleting file")
+
+            log('Clear directories', log_status)
+
+            print("DONE !")
+        else:
             for rootDir, subdirs, filenames in os.walk(clearlocalpath):
-                for filename in fnmatch.filter(filenames, i):
-                    if clear_type == "A" and clear_folder == "P" and filename[:-4] in kt.no_del_list:
-                        pass
-                    else:
-                        try:
-                            os.remove(os.path.join(rootDir, filename))
-                        except OSError:
-                            print("Error while deleting file")
-
-        log('Clear directories', log_status)
-
-        print("DONE !")
+                for filename in filenames:
+                    try:
+                        os.remove(os.path.join(rootDir, filename))
+                    except OSError:
+                        print("Error while deleting file")
     else:
         pass
 
@@ -330,15 +333,44 @@ def metadata():
         pass
 
 
-def anaktiseis():
+def organize():
+    org_folder = user_in('org_folder')
+
     if get_pass():
-        for rootDir, subdirs, filenames in os.walk(paths.anakt_in):
-            for ota in kt.ota_list:
-                for filename in filenames:
-                    if ota in filename:
-                        inpath = os.path.join(rootDir, filename)
-                        outpath = os.path.join(paths.anakt_out, ota, filename)
-                        copyfile(inpath, outpath)
+        if org_folder == 'A':
+            for rootDir, subdirs, filenames in os.walk(paths.anakt_in):
+                for ota in kt.ota_list:
+                    for filename in filenames:
+                        if ota in filename[:5]:
+                            inpath = os.path.join(rootDir, filename)
+                            outpath = os.path.join(paths.anakt_out, ota, filename)
+                            copyfile(inpath, outpath)
+        elif org_folder == 'S':
+            for rootDir, subdirs, filenames in os.walk(paths.saromena_in):
+                for ota in kt.ota_list:
+                    for filename in filenames:
+                        if filename[0] == 'D' and ota in filename[1:6]:
+                            inpath = os.path.join(rootDir, filename)
+                            outpath = os.path.join(paths.saromena_out, ota, filename)
+                            copyfile(inpath, outpath)
+                        elif ota in filename[:5]:
+                            inpath = os.path.join(rootDir, filename)
+                            outpath = os.path.join(paths.saromena_out, ota, filename)
+                            copyfile(inpath, outpath)
+        elif org_folder == 'M':
+            for rootDir, subdirs, filenames in os.walk(paths.mdb_in):
+                for ota in kt.ota_list:
+                    for filename in filenames:
+                        if ota in filename and 'VSTEAS_REL' in filename:
+                            inpathv = os.path.join(rootDir, filename)
+                            outpathv = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', filename)
+                            copyfile(inpathv, outpathv)
+                        elif ota in filename:
+                            inpath = os.path.join(rootDir, filename)
+                            outpath = os.path.join(paths.mdb_out, ota, filename)
+                            copyfile(inpath, outpath)
+
+            log("Export MDB's")
     else:
         pass
 
@@ -349,18 +381,16 @@ if get_pass():
     if action_type == "1":
         shapefiles()
     elif action_type == "2":
-        mdbs()
+        organize()
     elif action_type == "3":
-        roads()
-    elif action_type == "4":
-        clear()
-    elif action_type == "5":
         metadata()
-    elif action_type == "6":
-        anaktiseis()
-    elif action_type == "7":
+    elif action_type == "4":
+        roads()
+    elif action_type == "5":
         status.show()
-    elif action_type == "8":
+    elif action_type == "6":
+        clear()
+    elif action_type == "7":
         extract('Temp', ktl[user])
         update_from_server(ktl[user])
     elif action_type == "1LPAA4PS5":
