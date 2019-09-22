@@ -19,6 +19,7 @@ def get_user_uid():
         ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'], origin=ktl[user])
     else:
         ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'], origin=ktl[user])
+
     tpp = cp([users, user, 'ipass.json'])
 
     try:
