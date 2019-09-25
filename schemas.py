@@ -6,6 +6,9 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+import getpass
+from cust_win import *
+
 
 gd = {'aznavouridis.k': 'D',
       'user1': 'C',
@@ -29,6 +32,9 @@ users = "Users"
 mdev = "! aznavouridis.k"
 anakt = 'Anaktiseis'
 saromena = 'Saromena'
+
+user = getpass.getuser()
+ktl = load_json(cp([users, user, 'paths.json']))
 
 
 class NamesAndLists:

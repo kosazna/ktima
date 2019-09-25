@@ -19,7 +19,7 @@ def p_pass():
 
     data = {"{}".format(_user): "{}".format(hk)}
 
-    write_json(r"{}:\Google Drive\Work\ktima\passes\{}.json".format(gd[_user], _user), data)
+    write_json(r"{}:\Google Drive\Work\ktima\passes\{}.json".format(gd[user], _user), data)
 
 
 def t_pass():

@@ -341,7 +341,7 @@ def organize():
             for rootDir, subdirs, filenames in os.walk(paths.anakt_in):
                 for ota in kt.ota_list:
                     for filename in filenames:
-                        if ota in filename[:5]:
+                        if ota in filename[9:14]:
                             inpath = os.path.join(rootDir, filename)
                             outpath = os.path.join(paths.anakt_out, ota, filename)
                             copyfile(inpath, outpath)
@@ -391,13 +391,13 @@ if get_pass():
     elif action_type == "6":
         clear()
     elif action_type == "7":
-        extract('Temp', ktl[user])
-        update_from_server(ktl[user])
+        extract('Temp', ktl['temp'][user])
+        update_from_server(ktl['temp'][user])
     elif action_type == "1LPAA4PS5":
         shapefiles()
         clear()
         metadata()
     else:
-        extract('Local', ktl[user])
+        extract('Local', ktl['temp'][user])
 else:
     pass

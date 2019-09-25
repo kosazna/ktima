@@ -6,16 +6,10 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
-import getpass
-from cust_win import *
 from schemas import *
-
-user = getpass.getuser()
 
 
 class Paths:
-    """This is the doc"""
-
     def __init__(self, meleti, mel_type, company_name):
         self.mel_type = mel_type
         self.company_name = company_name
