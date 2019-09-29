@@ -260,7 +260,7 @@ def clear():
             for i in del_list:
                 for rootDir, subdirs, filenames in os.walk(clearlocalpath):
                     for filename in fnmatch.filter(filenames, i):
-                        if clear_type == "A" and clear_folder == "P" and filename[:-4] in kt.no_del_list:
+                        if clear_type == "A" and clear_folder == "P" and os.path.splitext(filename)[0] in kt.no_del_list:
                             pass
                         else:
                             try:
