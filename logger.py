@@ -103,8 +103,8 @@ class Log:
         elif msg == 'Export Shapefiles':
             comments = 'Copied files from {0[0]} to {0[1]}'.format(log_list)
             self.write_to_file(time_now, msg, comments)
-        elif msg == "Export MDB's":
-            comments = "Copied MDB's to ParadosiData".format(log_list)
+        elif msg == "Organize files":
+            comments = "Organized {} to !OutputData".format(log_list[0])
             self.write_to_file(time_now, msg, comments)
         elif msg == 'New ROADS to InputRoads folder':
             comments = "Copied new ROADS to Inputs folder for future testing".format(log_list)

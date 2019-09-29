@@ -334,9 +334,11 @@ def metadata():
 
 def organize():
     org_folder = user_in('org_folder')
+    log_status = []
 
     if get_pass():
         if org_folder == 'A':
+            log_status.append('Anaktiseis')
             for rootDir, subdirs, filenames in os.walk(paths.anakt_in):
                 for ota in kt.ota_list:
                     for filename in filenames:
@@ -345,6 +347,7 @@ def organize():
                             outpath = os.path.join(paths.anakt_out, ota, filename)
                             copyfile(inpath, outpath)
         elif org_folder == 'S':
+            log_status.append('Saromena')
             for rootDir, subdirs, filenames in os.walk(paths.saromena_in):
                 for ota in kt.ota_list:
                     for filename in filenames:
@@ -357,6 +360,7 @@ def organize():
                             outpath = os.path.join(paths.saromena_out, ota, filename)
                             copyfile(inpath, outpath)
         elif org_folder == 'M':
+            log_status.append("MDB's")
             for rootDir, subdirs, filenames in os.walk(paths.mdb_in):
                 for ota in kt.ota_list:
                     for filename in filenames:
@@ -369,7 +373,7 @@ def organize():
                             outpath = os.path.join(paths.mdb_out, ota, filename)
                             copyfile(inpath, outpath)
 
-            log("Export MDB's")
+        log("Organize files", log_status)
     else:
         pass
 
