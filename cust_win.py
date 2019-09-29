@@ -10,7 +10,7 @@ import os
 import json
 import time
 import sys
-from shutil import copyfile
+from shutil import copyfile, copytree
 
 
 # sys.tracebacklimit = 0

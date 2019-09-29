@@ -9,7 +9,6 @@
 import getpass
 from cust_win import *
 
-
 gd = {'aznavouridis.k': 'D',
       'user1': 'C',
       'kazna': 'D'}

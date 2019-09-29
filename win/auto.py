@@ -6,7 +6,6 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
-import fnmatch
 from ktima.status import *
 from update import *
 
@@ -21,7 +20,7 @@ status = Status(meleti)
 log = Log(meleti)
 
 
-def user_in(func):
+def user_in(_func):
     console = {'action_type': "(1) Export Shapefiles\n"
                               "(2) Organize Files\n"
                               "(3) Create Metadata\n"
@@ -57,35 +56,35 @@ def user_in(func):
                 'clear_type': ['A', 'S'],
                 'org_folder': ['A', 'S', 'M']}
 
-    if func == 'shapes' or func == 'ota_code':
-        action = raw_input(console[func]).upper()
-        _action = action.split('-')
+    if _func == 'shapes' or _func == 'ota_code':
+        user_action = raw_input(console[_func]).upper()
+        _action = user_action.split('-')
         count = 0
 
         if len(_action) != 1:
             for i in _action:
-                if i in approved[func]:
+                if i in approved[_func]:
                     count += 1
 
             while count != len(_action):
                 print('\n\n!! Action Not Recognised. Try Again !!\n\n')
                 count = 0
-                action = raw_input(console[func]).upper()
-                _action = action.split('-')
+                user_action = raw_input(console[_func]).upper()
+                _action = user_action.split('-')
                 for i in _action:
-                    if i in approved[func]:
+                    if i in approved[_func]:
                         count += 1
         else:
-            while action not in approved[func]:
+            while user_action not in approved[_func]:
                 print('\n\n!! Action Not Recognised. Try Again !!\n\n')
-                action = raw_input(console[func]).upper()
+                user_action = raw_input(console[_func]).upper()
     else:
-        action = raw_input(console[func]).upper()
-        while action not in approved[func]:
+        user_action = raw_input(console[_func]).upper()
+        while user_action not in approved[_func]:
             print('\n\n!! Action Not Recognised. Try Again !!\n\n')
-            action = raw_input(console[func]).upper()
+            user_action = raw_input(console[_func]).upper()
 
-    return action
+    return user_action
 
 
 if get_pass():
