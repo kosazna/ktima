@@ -14,8 +14,8 @@ kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
 
 def buildtree():
-    # repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'Folder_Structure'], origin=ktl['temp'][user])
-    repo = r"C:\Users\aznavouridis.k\Desktop\repo\Folder_Structure"
+    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'Folder_Structure'], origin=ktl['temp'][user])
+    # repo = r"C:\Users\aznavouridis.k\Desktop\repo\Folder_Structure"
     target = r"C:\{}".format(meleti)
 
     try:
@@ -25,8 +25,8 @@ def buildtree():
 
 
 def update_folder_structure():
-    # repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'File_Structure', meleti], origin=ktl['temp'][user])
-    repo = r"C:\Users\aznavouridis.k\Desktop\repo\File_Structure\{}".format(meleti)
+    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'File_Structure', meleti], origin=ktl['temp'][user])
+    # repo = r"C:\Users\aznavouridis.k\Desktop\repo\File_Structure\{}".format(meleti)
     for dirpath, dirnames, filenames in os.walk(repo):
         outpath = cp(dirpath.split('\\')[6:])
         if not os.path.exists(outpath):
@@ -34,8 +34,8 @@ def update_folder_structure():
 
 
 def update_file_structure():
-    # repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'File_Structure', meleti], origin=ktl['temp'][user])
-    repo = r"C:\Users\aznavouridis.k\Desktop\repo\File_Structure\{}".format(meleti)
+    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'File_Structure', meleti], origin=ktl['temp'][user])
+    # repo = r"C:\Users\aznavouridis.k\Desktop\repo\File_Structure\{}".format(meleti)
     for dirpath, dirnames, filenames in os.walk(repo):
         for filename in filenames:
             inpath = os.path.join(dirpath, filename)
@@ -71,8 +71,8 @@ def start_logs():
 
 
 def updatetree():
-    # repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'Folder_Structure'], origin=ktl['temp'][user])
-    repo = r"C:\Users\aznavouridis.k\Desktop\repo\Folder_Structure"
+    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'Folder_Structure'], origin=ktl['temp'][user])
+    # repo = r"C:\Users\aznavouridis.k\Desktop\repo\Folder_Structure"
     for dirpath, dirnames, filenames in os.walk(repo):
         outpath = [meleti] + dirpath.split('\\')[6:]
         _dir = cp(outpath)
