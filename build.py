@@ -21,7 +21,7 @@ def buildtree():
     try:
         copytree(repo, target)
     except WindowsError:
-        print('"{}" directory already exists'.format(target))
+        print('"{}" directory already exists  or  Source directory missing'.format(target))
 
 
 def update_folder_structure():
