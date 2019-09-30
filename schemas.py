@@ -13,6 +13,8 @@ gd = {'aznavouridis.k': 'D',
       'user1': 'C',
       'kazna': 'D'}
 
+build_pass = 'aznaktima'
+
 inputdata = "!InputData"
 outputdata = "!OutputData"
 geodatabases = "Geodatabases"

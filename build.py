@@ -7,10 +7,15 @@
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
 from schemas import *
+from win.update import update_from_server
 
-meleti = (raw_input("\n\nMeleti\n\n").upper())
+username = raw_input("\n\nUsername:\n")
+password = getpass.getpass("\nPassword:\n")
 
-kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
+if username == mdev.strip('! ') and password == build_pass:
+    meleti = (raw_input("\n\nMeleti\n\n").upper())
+
+    kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
 
 def buildtree():
