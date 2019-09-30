@@ -16,7 +16,7 @@ toolboxes = ["A) General",
              "D) Create"]
 
 
-def update_from_server(folder):
+def update_from_server(folder=ktl['temp'][user]):
     src = cp([mdev, 'Diafora', 'logs', 'ktima', 'scripts'], origin=folder)
     dst_c = ['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']
     dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1', 'Tools', 'KT-Tools']

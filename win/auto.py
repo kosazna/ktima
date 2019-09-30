@@ -517,7 +517,7 @@ if get_pass():
         counter()
     elif action_type == "8":
         extract('Temp', ktl['temp'][user])
-        update_from_server(ktl['temp'][user])
+        update_from_server()
     elif action_type == "1LPAA4PS5":
         shapefiles()
         clear()
