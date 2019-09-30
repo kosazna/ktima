@@ -17,7 +17,7 @@ toolboxes = ["A) General",
 
 
 def update_from_server(folder):
-    src = cp([mdev, 'Diafora', 'logs', 'scripts'], origin=folder)
+    src = cp([mdev, 'Diafora', 'logs', 'ktima', 'scripts'], origin=folder)
     dst_c = ['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']
     dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1', 'Tools', 'KT-Tools']
 
@@ -26,7 +26,7 @@ def update_from_server(folder):
             basename = os.path.splitext(filename)[0]
             if filename.endswith('.pyc'):
                 inpath = os.path.join(rootDir, filename)
-                out = dst_c + inpath.split('\\')[5:]
+                out = dst_c + inpath.split('\\')[6:]
                 outpath = cp(out)
                 c_copy(inpath, outpath)
             elif filename.endswith('.pyt'):

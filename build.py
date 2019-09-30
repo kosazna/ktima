@@ -19,7 +19,7 @@ if username == mdev.strip('! ') and password == build_pass:
 
 
 def buildtree():
-    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'Folder_Structure'], origin=ktl['temp'][user])
+    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
     # repo = r"C:\Users\aznavouridis.k\Desktop\repo\Folder_Structure"
     target = r"C:\{}".format(meleti)
 
@@ -30,7 +30,7 @@ def buildtree():
 
 
 def update_folder_structure():
-    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'File_Structure', meleti], origin=ktl['temp'][user])
+    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
     # repo = r"C:\Users\aznavouridis.k\Desktop\repo\File_Structure\{}".format(meleti)
     for dirpath, dirnames, filenames in os.walk(repo):
         outpath = cp(dirpath.split('\\')[6:])
@@ -39,7 +39,7 @@ def update_folder_structure():
 
 
 def update_file_structure():
-    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'File_Structure', meleti], origin=ktl['temp'][user])
+    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
     # repo = r"C:\Users\aznavouridis.k\Desktop\repo\File_Structure\{}".format(meleti)
     for dirpath, dirnames, filenames in os.walk(repo):
         for filename in filenames:
@@ -76,7 +76,7 @@ def start_logs():
 
 
 def updatetree():
-    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'Folder_Structure'], origin=ktl['temp'][user])
+    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
     # repo = r"C:\Users\aznavouridis.k\Desktop\repo\Folder_Structure"
     for dirpath, dirnames, filenames in os.walk(repo):
         outpath = [meleti] + dirpath.split('\\')[6:]
@@ -87,7 +87,7 @@ def updatetree():
 
 
 def update_json():
-    repo = cp([mdev, 'Diafora', 'logs', 'scripts', 'File_Structure', meleti, inputdata, docs_i, 'KT_Info.json'], origin=ktl['temp'][user])
+    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'File_Structure', meleti, inputdata, docs_i, 'KT_Info.json'], origin=ktl['temp'][user])
     target = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
     c_copy(repo, target)
