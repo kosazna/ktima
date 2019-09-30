@@ -27,7 +27,8 @@ def user_in(_func):
                               "(4) Export NEW ROADS to InputData\n"
                               "(5) Status\n"
                               "(6) Delete Data\n"
-                              "(7) Update\n\n",
+                              "(7) Count Paradosi Files\n"
+                              "(8) Update\n\n",
                'get_folder': "\nGet from : (S)erver  or  (L)ocal \n\n",
                'export_folder': "\nExport to : (L)ocal  or  (P)aradosi\n\n",
                'shapes': "\nSHAPEFILE to export: (Enter for ALL, or split with '-')\n\n",
@@ -47,7 +48,7 @@ def user_in(_func):
     [sl.append(i) for i in kt.local_list]
     [ol.append(i) for i in kt.ota_list]
 
-    approved = {'action_type': ['', '1', '2', '3', '4', '5', '6', '7', '1LPAA4PS5'],
+    approved = {'action_type': ['', '1', '2', '3', '4', '5', '6', '7', '8', '1LPAA4PS5'],
                 'get_folder': ['S', 'L'],
                 'export_folder': ['L', 'P'],
                 'shapes': sl,
@@ -380,6 +381,125 @@ def organize():
     print("DONE !")
 
 
+def counter():
+    astenot = []
+    astik = []
+    astota = []
+    asttom = []
+    bld = []
+    block_pnt = []
+    cbound = []
+    dbound = []
+    oik = []
+    poi = []
+    pre_coastline = []
+    pre_fbound = []
+    pst = []
+    rbound = []
+    _roads = []
+    fbound = []
+    eas = []
+    vst = []
+    pol = []
+    eia = []
+    eia_pnt = []
+    mrt = []
+    nomi = []
+    vsteas_rel = []
+    powners = []
+    block_pnt_metadata = []
+    geo_metadata = []
+    roads_metadata = []
+
+    kt_map = {"ASTENOT": astenot,
+              "ASTIK": astik,
+              "ASTOTA": astota,
+              "ASTTOM": asttom,
+              "BLD": bld,
+              "BLOCK_PNT": block_pnt,
+              "CBOUND": cbound,
+              "DBOUND": dbound,
+              "OIK": oik,
+              "POI": poi,
+              "FBOUND": fbound,
+              "PRE_COASTLINE": pre_coastline,
+              "PRE_FBOUND": pre_fbound,
+              "PST": pst,
+              "ROADS": _roads,
+              "EAS": eas,
+              "VST": vst,
+              "RBOUND": rbound,
+              "POL": pol,
+              "EIA": eia,
+              "EIA_PNT": eia_pnt,
+              "MRT": mrt,
+              "NOMI": nomi,
+              "VSTEAS_REL": vsteas_rel,
+              "POWNERS": powners,
+              "BLOCK_PNT_METADATA": block_pnt_metadata,
+              "GEO_METADATA": geo_metadata,
+              "ROADS_METADATA": roads_metadata
+              }
+
+    matches = ['*shp', '*mdb', '*xml']
+
+    for rootDir, subdirs, filenames in os.walk(paths.paradosidata):
+        for match in matches:
+            for filename in fnmatch.filter(filenames, match):
+                try:
+                    kt_map[os.path.splitext(filename)[0]].append(os.path.join(rootDir, filename))
+                except KeyError:
+                    print("{} wasn't counted".format(filename))
+
+    pm('\n\n')
+
+    pm("SHAPEFILES")
+    pm("------------------\n")
+
+    pm("ASTENOT       - {}".format(len(kt_map['ASTENOT']))) if kt_map['ASTENOT'] else pm("ASTENOT       - 0")
+    pm("ASTIK         - {}".format(len(kt_map['ASTIK']))) if kt_map['ASTIK'] else pm("ASTIK         - 0")
+    pm("ASTOTA        - {}".format(len(kt_map['ASTOTA']))) if kt_map['ASTOTA'] else pm("ASTOTA        - 0")
+    pm("ASTTOM        - {}".format(len(kt_map['ASTTOM']))) if kt_map['ASTTOM'] else pm("ASTTOM        - 0")
+    pm("BLD           - {}".format(len(kt_map['BLD']))) if kt_map['BLD'] else pm("BLD           - 0")
+    pm("EAS           - {}".format(len(kt_map['EAS']))) if kt_map['EAS'] else pm("EAS           - 0")
+    pm("PST           - {}".format(len(kt_map['PST']))) if kt_map['PST'] else pm("PST           - 0")
+    pm("ROADS         - {}".format(len(kt_map['ROADS']))) if kt_map['ROADS'] else pm("ROADS         - 0")
+    pm("VST           - {}\n".format(len(kt_map['VST']))) if kt_map['VST'] else pm("VST           - 0\n")
+
+    pm("CBOUND        - {}".format(len(kt_map['CBOUND']))) if kt_map['CBOUND'] else pm("CBOUND        - 0")
+    pm("DBOUND        - {}".format(len(kt_map['DBOUND']))) if kt_map['DBOUND'] else pm("DBOUND        - 0")
+    pm("FBOUND        - {}".format(len(kt_map['FBOUND']))) if kt_map['FBOUND'] else pm("FBOUND        - 0")
+    pm("RBOUND        - {}\n".format(len(kt_map['RBOUND']))) if kt_map['RBOUND'] else pm("RBOUND        - 0\n")
+
+    pm("PRE_COASTLINE - {}".format(len(kt_map['PRE_COASTLINE']))) if kt_map['PRE_COASTLINE'] else pm("PRE_COASTLINE - 0")
+    pm("PRE_FBOUND    - {}\n".format(len(kt_map['PRE_FBOUND']))) if kt_map['PRE_FBOUND'] else pm("PRE_FBOUND    - 0\n")
+
+    pm("OIK           - {}".format(len(kt_map['OIK']))) if kt_map['OIK'] else pm("OIK           - 0")
+    pm("BLOCK_PNT     - {}".format(len(kt_map['BLOCK_PNT']))) if kt_map['BLOCK_PNT'] else pm("BLOCK_PNT     - 0")
+    pm("POI           - {}\n".format(len(kt_map['POI']))) if kt_map['POI'] else pm("POI           - 0\n")
+
+    pm("POL           - {}".format(len(kt_map['POL']))) if kt_map['POL'] else pm("POL           - 0")
+    pm("EIA           - {}".format(len(kt_map['EIA']))) if kt_map['EIA'] else pm("EIA           - 0")
+    pm("EIA_PNT       - {}".format(len(kt_map['EIA_PNT']))) if kt_map['EIA_PNT'] else pm("EIA_PNT       - 0")
+    pm("MRT           - {}".format(len(kt_map['MRT']))) if kt_map['MRT'] else pm("MRT           - 0")
+    pm("NOMI          - {}\n\n".format(len(kt_map['NOMI']))) if kt_map['NOMI'] else pm("NOMI          - 0\n\n")
+
+    pm("MBD's")
+    pm('------------------\n')
+
+    pm("VSTEAS_REL    - {}".format(len(kt_map['VSTEAS_REL']))) if kt_map['VSTEAS_REL'] else pm("VSTEAS_REL    - 0")
+    pm("POWNERS       - {}\n\n".format(len(kt_map['POWNERS']))) if kt_map['POWNERS'] else pm("POWNERS       - 0\n\n")
+
+    pm("METADATA")
+    pm('------------------\n')
+
+    pm("BLOCK_PNT     - {}".format(len(kt_map['BLOCK_PNT_METADATA']))) if kt_map['BLOCK_PNT_METADATA'] else pm("BLOCK_PNT       - 0")
+    pm("GEO           - {}".format(len(kt_map['GEO_METADATA']))) if kt_map['GEO_METADATA'] else pm("GEO           - 0")
+    pm("ROADS         - {}\n\n".format(len(kt_map['ROADS_METADATA']))) if kt_map['ROADS_METADATA'] else pm("ROADS          - 0\n\n")
+
+    pm('\n\n')
+
+
 if get_pass():
     if action_type == "1":
         shapefiles()
@@ -394,6 +514,8 @@ if get_pass():
     elif action_type == "6":
         clear()
     elif action_type == "7":
+        counter()
+    elif action_type == "8":
         extract('Temp', ktl['temp'][user])
         update_from_server(ktl['temp'][user])
     elif action_type == "1LPAA4PS5":

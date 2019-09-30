@@ -6,7 +6,7 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
-from ktima.paths import *
+from ktima.schemas import *
 import fnmatch
 
 
@@ -22,16 +22,16 @@ def update_from_server(folder):
     dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1', 'Tools', 'KT-Tools']
 
     for rootDir, subdirs, filenames in os.walk(src):
-        for filename in fnmatch.filter(filenames, '*py'):
+        for filename in filenames:
             basename = os.path.splitext(filename)[0]
-            if basename in toolboxes:
-                inpath = os.path.join(rootDir, filename)
-                outpath = os.path.join(cp(dst_t), '{}.pyt'.format(basename))
-                c_copy(inpath, outpath)
-            else:
+            if filename.endswith('.pyc'):
                 inpath = os.path.join(rootDir, filename)
                 out = dst_c + inpath.split('\\')[5:]
                 outpath = cp(out)
+                c_copy(inpath, outpath)
+            elif filename.endswith('.pyt'):
+                inpath = os.path.join(rootDir, filename)
+                outpath = os.path.join(cp(dst_t), basename)
                 c_copy(inpath, outpath)
 
 

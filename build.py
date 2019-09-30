@@ -6,7 +6,7 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
-from win.update import *
+from schemas import *
 
 meleti = (raw_input("\n\nMeleti\n\n").upper())
 
