@@ -23,7 +23,7 @@ def extract(mode, folder):
             pass
     else:
         try:
-            outpath = cp([mdev, 'Diafora', 'logs', filename], origin=folder)
+            outpath = cp([mdev, 'Diafora', 'ktima', 'logs', filename], origin=folder)
             copyfile(inpath, outpath)
         except IOError:
             print('No such drive')

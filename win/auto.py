@@ -381,7 +381,7 @@ def organize():
     print("DONE !")
 
 
-def counter():
+def counter(path_to_count=paths.paradosidata):
     astenot = []
     astik = []
     astota = []
@@ -410,6 +410,8 @@ def counter():
     block_pnt_metadata = []
     geo_metadata = []
     roads_metadata = []
+
+    otas = [int(i) for i in kt.ota_list]
 
     kt_map = {"ASTENOT": astenot,
               "ASTIK": astik,
@@ -443,11 +445,11 @@ def counter():
 
     matches = ['*shp', '*mdb', '*xml']
 
-    for rootDir, subdirs, filenames in os.walk(paths.paradosidata):
+    for rootDir, subdirs, filenames in os.walk(path_to_count):
         for match in matches:
             for filename in fnmatch.filter(filenames, match):
                 try:
-                    kt_map[os.path.splitext(filename)[0]].append(os.path.join(rootDir, filename))
+                    kt_map[os.path.splitext(filename)[0]].append(int(rootDir.split('\\')[4]))
                 except KeyError:
                     print("{} wasn't counted".format(filename))
 
@@ -493,11 +495,16 @@ def counter():
     pm("METADATA")
     pm('------------------\n')
 
-    pm("BLOCK_PNT     - {}".format(len(kt_map['BLOCK_PNT_METADATA']))) if kt_map['BLOCK_PNT_METADATA'] else pm("BLOCK_PNT       - 0")
+    pm("BLOCK_PNT     - {}".format(len(kt_map['BLOCK_PNT_METADATA']))) if kt_map['BLOCK_PNT_METADATA'] else pm("BLOCK_PNT     - 0")
     pm("GEO           - {}".format(len(kt_map['GEO_METADATA']))) if kt_map['GEO_METADATA'] else pm("GEO           - 0")
     pm("ROADS         - {}\n\n".format(len(kt_map['ROADS_METADATA']))) if kt_map['ROADS_METADATA'] else pm("ROADS          - 0\n\n")
 
     pm('\n\n')
+
+    for shp in kt_map:
+        if len(kt_map[shp]) != len(otas):
+            missing = tuple(set(otas) - set(kt_map[shp]))
+            pm('{} missing from\n---------------\n{}\n\n'.format(shp, sorted(missing)))
 
 
 if get_pass():

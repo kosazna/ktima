@@ -19,8 +19,7 @@ if username == mdev.strip('! ') and password == build_pass:
 
 
 def buildtree():
-    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
-    # repo = r"C:\Users\aznavouridis.k\Desktop\repo\Folder_Structure"
+    repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
     target = r"C:\{}".format(meleti)
 
     try:
@@ -30,21 +29,19 @@ def buildtree():
 
 
 def update_folder_structure():
-    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
-    # repo = r"C:\Users\aznavouridis.k\Desktop\repo\File_Structure\{}".format(meleti)
+    repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
     for dirpath, dirnames, filenames in os.walk(repo):
-        outpath = cp(dirpath.split('\\')[6:])
+        outpath = cp(dirpath.split('\\')[5:])
         if not os.path.exists(outpath):
             os.makedirs(outpath)
 
 
 def update_file_structure():
-    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
-    # repo = r"C:\Users\aznavouridis.k\Desktop\repo\File_Structure\{}".format(meleti)
+    repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
     for dirpath, dirnames, filenames in os.walk(repo):
         for filename in filenames:
             inpath = os.path.join(dirpath, filename)
-            outpath = cp(inpath.split('\\')[6:])
+            outpath = cp(inpath.split('\\')[5:])
             c_copy(inpath, outpath)
 
 
@@ -76,18 +73,28 @@ def start_logs():
 
 
 def updatetree():
-    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
-    # repo = r"C:\Users\aznavouridis.k\Desktop\repo\Folder_Structure"
+    repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
     for dirpath, dirnames, filenames in os.walk(repo):
-        outpath = [meleti] + dirpath.split('\\')[6:]
+        outpath = [meleti] + dirpath.split('\\')[5:]
         _dir = cp(outpath)
         if not os.path.exists(_dir):
             os.makedirs(_dir)
             print('{} - Created'.format(_dir))
 
 
-def update_json():
-    repo = cp([mdev, 'Diafora', 'logs', 'ktima', 'File_Structure', meleti, inputdata, docs_i, 'KT_Info.json'], origin=ktl['temp'][user])
+def update_ktima_info():
+    repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti, inputdata, docs_i, 'KT_Info.json'], origin=ktl['temp'][user])
     target = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
     c_copy(repo, target)
+
+
+def update_temp_paths():
+    repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'], origin=ktl['temp'][user])
+    target = cp([users, user, 'paths.json'])
+
+    c_copy(repo, target)
+
+
+def get_binary():
+    update_from_server()
