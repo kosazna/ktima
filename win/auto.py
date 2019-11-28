@@ -134,7 +134,7 @@ def shapefiles():
         log_status.append('LocalData')
         log_status.append('ParadosiData')
 
-    print("Initializing...")
+    print("Initializing...\n")
 
     def export(e_shape, e_ota):
         inpath = ""
@@ -150,7 +150,6 @@ def shapefiles():
             print("Wrong letter combination")
 
         if arcpy.Exists(inpath):
-            print("--> {}".format(outpath))
             arcpy.CopyFeatures_management(inpath, outpath)
         else:
             missing_name = e_shape + "_" + e_ota
@@ -158,23 +157,33 @@ def shapefiles():
 
         return
 
+    progress_counter = 0
+
     if get_pass():
         if ota_code == "" and shapes == "":
             for ota in kt.ota_list:
+                progress_counter += 1
                 for shape in shape_list:
                     export(shape, ota)
+                progress(progress_counter, len(kt.ota_list))
         elif ota_code != "" and shapes != "":
             for ota in user_ota_list:
+                progress_counter += 1
                 for shape in user_shapes:
                     export(shape, ota)
+                progress(progress_counter, len(user_ota_list))
         elif ota_code != "":
             for ota in user_ota_list:
+                progress_counter += 1
                 for shape in shape_list:
                     export(shape, ota)
+                progress(progress_counter, len(user_ota_list))
         elif shapes != "":
-            for shape in user_shapes:
-                for ota in kt.ota_list:
+            for ota in kt.ota_list:
+                progress_counter += 1
+                for shape in user_shapes:
                     export(shape, ota)
+                progress(progress_counter, len(kt.ota_list))
 
         missing_list.sort()
 
@@ -196,13 +205,16 @@ def roads():
 
     if get_pass():
         def copy_files(x):
+            progress_counter = 0
             for i in copy_list:
                 for rootDir, subdirs, filenames in os.walk(paths.new_roads):
                     for filename in fnmatch.filter(filenames, i):
                         if "ROADS" in filename:
+                            progress_counter += 1
                             inpath = os.path.join(rootDir, filename)
                             outpath = os.path.join(paths.old_roads, rootDir[-x:], filename)
-                            copyfile(inpath, outpath)
+                            shutil.copyfile(inpath, outpath)
+                            progress(progress_counter, 42)
 
         if kt.mel_type == 1:
             copy_files(17)
@@ -257,6 +269,7 @@ def clear():
         log_status.append('standard')
 
     if get_pass():
+        progress_counter = 0
         if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
             for i in del_list:
                 for rootDir, subdirs, filenames in os.walk(clearlocalpath):
@@ -266,6 +279,8 @@ def clear():
                         else:
                             try:
                                 os.remove(os.path.join(rootDir, filename))
+                                progress_counter += 1
+                                progress(progress_counter, 42)
                             except OSError:
                                 print("Error while deleting file")
 
@@ -316,7 +331,9 @@ def metadata():
                  'GEO_METADATA': geo_cont}
 
     if get_pass():
+        progress_counter = 0
         for ota in kt.ota_list:
+            progress_counter += 1
             for meta in metas:
                 path = paths.meta(ota, meta)
 
@@ -325,6 +342,8 @@ def metadata():
 
                 with open(path, 'w') as meta_f:
                     meta_f.write(content)
+
+            progress(progress_counter, len(kt.ota_list))
 
         log("Metadata")
 
@@ -338,41 +357,48 @@ def organize():
     log_status = []
 
     if get_pass():
+        progress_counter = 0
         if org_folder == 'A':
             log_status.append('Anaktiseis')
             for rootDir, subdirs, filenames in os.walk(paths.anakt_in):
                 for ota in kt.ota_list:
+                    progress_counter += 1
                     for filename in filenames:
                         if ota in filename[9:14]:
                             inpath = os.path.join(rootDir, filename)
                             outpath = os.path.join(paths.anakt_out, ota, filename)
-                            copyfile(inpath, outpath)
+                            shutil.copyfile(inpath, outpath)
+                    progress(progress_counter, len(kt.ota_list))
         elif org_folder == 'S':
             log_status.append('Saromena')
             for rootDir, subdirs, filenames in os.walk(paths.saromena_in):
                 for ota in kt.ota_list:
+                    progress_counter += 1
                     for filename in filenames:
                         if filename[0] == 'D' and ota in filename[1:6]:
                             inpath = os.path.join(rootDir, filename)
                             outpath = os.path.join(paths.saromena_out, ota, filename)
-                            copyfile(inpath, outpath)
+                            shutil.copyfile(inpath, outpath)
                         elif ota in filename[:5]:
                             inpath = os.path.join(rootDir, filename)
                             outpath = os.path.join(paths.saromena_out, ota, filename)
-                            copyfile(inpath, outpath)
+                            shutil.copyfile(inpath, outpath)
+                    progress(progress_counter, len(kt.ota_list))
         elif org_folder == 'M':
             log_status.append("MDB's")
             for rootDir, subdirs, filenames in os.walk(paths.mdb_in):
                 for ota in kt.ota_list:
+                    progress_counter += 1
                     for filename in filenames:
                         if ota in filename and 'VSTEAS_REL' in filename:
                             inpathv = os.path.join(rootDir, filename)
                             outpathv = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', filename)
-                            copyfile(inpathv, outpathv)
+                            shutil.copyfile(inpathv, outpathv)
                         elif ota in filename:
                             inpath = os.path.join(rootDir, filename)
                             outpath = os.path.join(paths.mdb_out, ota, filename)
-                            copyfile(inpath, outpath)
+                            shutil.copyfile(inpath, outpath)
+                    progress(progress_counter, len(kt.ota_list))
 
         log("Organize files", log_status)
     else:
@@ -440,8 +466,7 @@ def counter(path_to_count=paths.paradosidata):
               "POWNERS": powners,
               "BLOCK_PNT_METADATA": block_pnt_metadata,
               "GEO_METADATA": geo_metadata,
-              "ROADS_METADATA": roads_metadata
-              }
+              "ROADS_METADATA": roads_metadata}
 
     matches = ['*shp', '*mdb', '*xml']
 
@@ -451,7 +476,7 @@ def counter(path_to_count=paths.paradosidata):
                 try:
                     kt_map[os.path.splitext(filename)[0]].append(int(rootDir.split('\\')[4]))
                 except KeyError:
-                    print("{} wasn't counted".format(filename))
+                    pass
 
     pm('\n\n')
 
@@ -501,7 +526,7 @@ def counter(path_to_count=paths.paradosidata):
 
     pm('\n\n')
 
-    for shp in kt_map:
+    for shp in kt.count_list:
         if len(kt_map[shp]) != len(otas):
             missing = tuple(set(otas) - set(kt_map[shp]))
             pm('{} missing from\n---------------\n{}\n\n'.format(shp, sorted(missing)))

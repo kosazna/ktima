@@ -267,7 +267,10 @@ class Check:
     @staticmethod
     def pst_geometry():
         if status.check('SHAPE', "PST"):
-            arcpy.CheckGeometry_management(paths.gdbm(kt.pstM), paths.gdbc(kt.pst_geom))
+            add_layer([kt.pstM])
+            turn_off()
+
+            arcpy.CheckGeometry_management(kt.pstM, paths.gdbc(kt.pst_geom))
 
             count_geom = get_count(kt.pst_geom)
             problematic_set = set()
@@ -729,7 +732,7 @@ class Create:
                             if "ROADS" in filename:
                                 _inpath = os.path.join(rootDir, filename)
                                 _outpath = os.path.join(paths.new_roads, rootDir[-x:], filename)
-                                copyfile(_inpath, _outpath)
+                                shutil.copyfile(_inpath, _outpath)
 
             if mel_type == 1:
                 copy_files(17)

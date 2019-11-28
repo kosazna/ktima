@@ -13,7 +13,7 @@ gd = {'aznavouridis.k': 'D',
       'user1': 'C',
       'kazna': 'D'}
 
-build_pass = 'aznaktima'
+build_pass = 'ktima()azna'
 
 inputdata = "!InputData"
 outputdata = "!OutputData"
@@ -52,6 +52,7 @@ class NamesAndLists:
         self.server_list = ktdata["server_list"]
         self.local_list = ktdata["local_list"]
         self.no_del_list = ktdata["no_del_list"]
+        self.count_list = ktdata["count_list"]
 
         self.astenotM = ktdata["merge"]["astenot"]
         self.astikM = ktdata["merge"]["astik"]

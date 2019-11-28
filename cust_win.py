@@ -10,10 +10,7 @@ import os
 import json
 import time
 import sys
-from shutil import copyfile, copytree
-
-
-# sys.tracebacklimit = 0
+import shutil
 
 
 def time_it(func):
@@ -63,7 +60,19 @@ def write_json(path, data):
 
 def c_copy(s, d):
     try:
-        copyfile(s, d)
+        shutil.copyfile(s, d)
         print('!! OK !!')
     except IOError:
         print('!! File Not Found !!')
+
+
+def progress(count, total):
+    suffix = '{}/{}'.format(count, total)
+    bar_len = 80
+    filled_len = int(round(bar_len * count / float(total)))
+
+    percents = int(round(100.0 * count / total, 0))
+    bar = '=' * filled_len + ' ' * (bar_len - filled_len)
+
+    sys.stdout.write('[%s] %s %s -- %s\r' % (bar, percents, '%', suffix))
+    sys.stdout.flush()

@@ -18,13 +18,13 @@ def extract(mode, folder):
     if mode == "Local":
         try:
             outpath = cp([users, user, 'Desktop', filename])
-            copyfile(inpath, outpath)
+            shutil.copyfile(inpath, outpath)
         except IOError:
             pass
     else:
         try:
             outpath = cp([mdev, 'Diafora', 'ktima', 'logs', filename], origin=folder)
-            copyfile(inpath, outpath)
+            shutil.copyfile(inpath, outpath)
         except IOError:
             print('No such drive')
 
@@ -47,7 +47,7 @@ class Log:
                 company_f.write('\n{}\t{}\t{}\t{}\t{}'.format(_datetime, _user, self.meleti, msgf, commentsf))
                 server_loged = 'YES'
         except IOError:
-            pm('! Logging !')
+            pm('\n\n! Logging !\n\n')
             server_loged = 'NO'
 
         with open(self.general_log, 'a') as general_f:

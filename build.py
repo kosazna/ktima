@@ -23,7 +23,7 @@ def buildtree():
     target = r"C:\{}".format(meleti)
 
     try:
-        copytree(repo, target)
+        shutil.copytree(repo, target)
     except WindowsError:
         print('"{}" directory already exists  or  Source directory missing'.format(target))
 
