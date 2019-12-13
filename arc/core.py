@@ -210,11 +210,14 @@ class Check:
             count_astenot_asttom = get_count(kt.p_astenot_asttom)
 
             if count_astenot_m != count_astenot_u:
-                arcpy.Erase_analysis(kt.astenotU, kt.astenotM, paths.gdbc(kt.p_overlaps_astenot))
+                arcpy.SelectLayerByAttribute_management(kt.astenotU, "NEW_SELECTION", ''' "OBJECTID" > {} '''.format(count_astenot_m))
+                arcpy.CopyFeatures_management(kt.astenotU, paths.gdbc(kt.p_overlaps_astenot))
             if count_asttom_m != count_asttom_u:
-                arcpy.Erase_analysis(kt.asttomU, kt.asttomM, paths.gdbc(kt.p_overlaps_asttom))
+                arcpy.SelectLayerByAttribute_management(kt.asttomU, "NEW_SELECTION", ''' "OBJECTID" > {} '''.format(count_asttom_m))
+                arcpy.CopyFeatures_management(kt.asttomU, paths.gdbc(kt.p_overlaps_asttom))
             if count_pst_m != count_pst_u:
-                arcpy.Erase_analysis(kt.pstU, kt.pstM, paths.gdbc(kt.p_overlaps_pst))
+                arcpy.SelectLayerByAttribute_management(kt.pstU, "NEW_SELECTION", ''' "OBJECTID" > {} '''.format(count_pst_m))
+                arcpy.CopyFeatures_management(kt.pstU, paths.gdbc(kt.p_overlaps_pst))
 
             log_shapes = [precision_txt,
                           diff_pst,
