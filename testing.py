@@ -16,7 +16,11 @@ paths = Paths(meleti, mel_type, company_name)
 kt_map = load_json(paths.kt_info_path)
 kt = NamesAndLists(kt_map)
 
+
 ##################################################
 
 
 dir_compare(paths.localdata, paths.paradosidata, match='.xml')
+
+
+
