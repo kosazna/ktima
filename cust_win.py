@@ -13,6 +13,53 @@ import sys
 import shutil
 
 
+class Files:
+    def __init__(self, path):
+        self.path = path
+        self.filenames = []
+        self.filepaths = []
+
+    def list_files(self, match=None, filenames_only=False):
+        if match is None:
+            match_wildcard = []
+        elif isinstance(match, list):
+            match_wildcard = match
+        else:
+            match_wildcard = [match]
+
+        if match_wildcard:
+            for dirpath, dirnames, filenames in os.walk(self.path):
+                for filename in filenames:
+                    for _match in match_wildcard:
+                        if os.path.splitext(filename)[1] == _match:
+                            self.filepaths.append(os.path.join(dirpath, filename))
+                            self.filenames.append(filename)
+        else:
+            for dirpath, dirnames, filenames in os.walk(self.path):
+                for filename in filenames:
+                    self.filepaths.append(os.path.join(dirpath, filename))
+                    self.filenames.append(filename)
+
+        return self.filenames if filenames_only else self.filepaths
+
+    def show_filenames(self):
+        for i in self.filenames:
+            print(i)
+
+    def show_filepaths(self):
+        for i in self.filepaths:
+            print(i)
+
+    def extract(self, what='filepaths'):
+        with open(os.path.join(self.path, 'File_List.txt'), 'w') as f:
+            if what == 'filepaths':
+                for i in self.filepaths:
+                    f.write('{}\n'.format(i))
+            else:
+                for i in self.filenames:
+                    f.write('{}\n'.format(i))
+
+
 def time_it(func):
     def wrapper(*args, **kwargs):
         start = time.time()
@@ -63,7 +110,7 @@ def c_copy(s, d):
         shutil.copyfile(s, d)
         print('!! OK !!')
     except IOError:
-        print('!! File Not Found !!')
+        print('!! File Not Found or Target Directory missing!!')
 
 
 def progress(count, total):
@@ -76,3 +123,28 @@ def progress(count, total):
 
     sys.stdout.write('[%s] %s %s -- %s\r' % (bar, percents, '%', suffix))
     sys.stdout.flush()
+
+
+def dir_compare(path1, path2, match=None):
+    dir1 = Files(path1)
+    dir2 = Files(path2)
+
+    dir1.list_files(match=match)
+    dir2.list_files(match=match)
+
+    path2_miss = tuple(set(dir1.filenames) - set(dir2.filenames))
+    path1_miss = tuple(set(dir2.filenames) - set(dir1.filenames))
+
+    print('{} - missing:'.format(path2))
+    print('---------------------------')
+    for i in sorted(path2_miss):
+        print(i)
+
+    print('')
+    print('===========================')
+    print('')
+
+    print('{} - missing:'.format(path1))
+    print('---------------------------')
+    for i in sorted(path1_miss):
+        print(i)

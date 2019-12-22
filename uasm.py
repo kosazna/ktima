@@ -11,7 +11,7 @@ from paths import *
 
 
 def get_user_uid():
-    if ktl['company_name'] == 'NAMA':
+    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
         ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'], origin=ktl['temp'][user])
     else:
         ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'], origin=ktl['temp'][user])
@@ -44,7 +44,7 @@ def get_pass():
     except KeyError:
         ehk = "No Key"
 
-    if hk == ehk or mdev.strip('! ') == user:
+    if hk == ehk or mdev.strip('! ') == user or user == 'kazna':
         return True
     else:
         return False

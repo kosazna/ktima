@@ -40,19 +40,19 @@ ktl = load_json(cp([users, user, 'paths.json']))
 
 class NamesAndLists:
     def __init__(self, ktdata):
-        self.company_name = ktdata["company_name"]
-        self.meleti = ktdata["meleti"]
-        self.mel_type = ktdata["mel_type"]
+        self.company_name = ktdata.get("company_name", 'NOT_FOUND')
+        self.meleti = ktdata.get("meleti", 'NOT_FOUND')
+        self.mel_type = ktdata.get("mel_type", 'NOT_FOUND')
 
-        self.ota_list = ktdata["ota_list"]
-        self.status_list = ktdata["status_list"]
-        self.merging_list = ktdata["merging_list"]
-        self.local_data_to_index_list = ktdata["local_data_to_index"]
-        self.geometry_list = ktdata["geometry_list"]
-        self.server_list = ktdata["server_list"]
-        self.local_list = ktdata["local_list"]
-        self.no_del_list = ktdata["no_del_list"]
-        self.count_list = ktdata["count_list"]
+        self.ota_list = ktdata.get("ota_list", 'NOT_FOUND')
+        self.status_list = ktdata.get("status_list", 'NOT_FOUND')
+        self.merging_list = ktdata.get("merging_list", 'NOT_FOUND')
+        self.local_data_to_index_list = ktdata.get("local_data_to_index", 'NOT_FOUND')
+        self.geometry_list = ktdata.get("geometry_list", 'NOT_FOUND')
+        self.server_list = ktdata.get("server_list", 'NOT_FOUND')
+        self.local_list = ktdata.get("local_list", 'NOT_FOUND')
+        self.no_del_list = ktdata.get("no_del_list", 'NOT_FOUND')
+        self.count_list = ktdata.get("count_list", 'NOT_FOUND')
 
         self.astenotM = ktdata["merge"]["astenot"]
         self.astikM = ktdata["merge"]["astik"]
