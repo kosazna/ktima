@@ -361,48 +361,33 @@ def organize():
     log_status = []
 
     if get_pass():
-        progress_counter = 0
         if org_folder == 'A':
             log_status.append('Anaktiseis')
-            for rootDir, subdirs, filenames in os.walk(paths.anakt_in):
+            for fullpath, basename, ext in iter_dir(paths.anakt_in):
                 for ota in kt.ota_list:
-                    progress_counter += 1
-                    for filename in filenames:
-                        if ota in filename[9:14]:
-                            inpath = os.path.join(rootDir, filename)
-                            outpath = os.path.join(paths.anakt_out, ota, filename)
-                            shutil.copyfile(inpath, outpath)
-                    progress(progress_counter, len(kt.ota_list))
+                    if ota in basename[9:14]:
+                        outpath = os.path.join(paths.anakt_out, ota, basename + ext)
+                        c_copy(fullpath, outpath)
         elif org_folder == 'S':
             log_status.append('Saromena')
-            for rootDir, subdirs, filenames in os.walk(paths.saromena_in):
+            for fullpath, basename, ext in iter_dir(paths.saromena_in):
                 for ota in kt.ota_list:
-                    progress_counter += 1
-                    for filename in filenames:
-                        if filename[0] == 'D' and ota in filename[1:6]:
-                            inpath = os.path.join(rootDir, filename)
-                            outpath = os.path.join(paths.saromena_out, ota, filename)
-                            shutil.copyfile(inpath, outpath)
-                        elif ota in filename[:5]:
-                            inpath = os.path.join(rootDir, filename)
-                            outpath = os.path.join(paths.saromena_out, ota, filename)
-                            shutil.copyfile(inpath, outpath)
-                    progress(progress_counter, len(kt.ota_list))
+                    if basename[0] == 'D' and ota in basename[1:6]:
+                        outpath = os.path.join(paths.saromena_out, ota, basename + ext)
+                        c_copy(fullpath, outpath)
+                    elif ota in basename[:5]:
+                        outpath = os.path.join(paths.saromena_out, ota, basename + ext)
+                        c_copy(fullpath, outpath)
         elif org_folder == 'M':
             log_status.append("MDB's")
-            for rootDir, subdirs, filenames in os.walk(paths.mdb_in):
+            for fullpath, basename, ext in iter_dir(paths.mdb_in):
                 for ota in kt.ota_list:
-                    progress_counter += 1
-                    for filename in filenames:
-                        if ota in filename and 'VSTEAS_REL' in filename:
-                            inpathv = os.path.join(rootDir, filename)
-                            outpathv = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', filename)
-                            shutil.copyfile(inpathv, outpathv)
-                        elif ota in filename:
-                            inpath = os.path.join(rootDir, filename)
-                            outpath = os.path.join(paths.mdb_out, ota, filename)
-                            shutil.copyfile(inpath, outpath)
-                    progress(progress_counter, len(kt.ota_list))
+                    if ota in basename and 'VSTEAS_REL' in basename:
+                        outpath = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', basename + ext)
+                        c_copy(fullpath, outpath)
+                    elif ota in basename:
+                        outpath = os.path.join(paths.mdb_out, ota, basename + ext)
+                        c_copy(fullpath, outpath)
 
         log("Organize files", log_status)
     else:

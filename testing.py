@@ -20,7 +20,6 @@ kt = NamesAndLists(kt_map)
 ##################################################
 
 
-dir_compare(paths.localdata, paths.paradosidata, match='.xml')
-
+# dir_compare(paths.localdata, paths.paradosidata, match='.xml')
 
 
