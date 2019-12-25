@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from handler import *
+from paths import *
 from collections import Counter
 import copy
 import fnmatch
