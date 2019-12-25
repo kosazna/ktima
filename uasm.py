@@ -14,7 +14,7 @@ def get_user_uid():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
         ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'], origin=ktl['temp'][user])
     else:
-        ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'], origin=ktl['temp'][user])
+        ppp = cp([temp_2kp, mdev, 'Diafora', 'paratiriseis', 'uas.json'], origin=ktl['temp'][user])
 
     tpp = cp([users, user, 'ipass.json'])
 

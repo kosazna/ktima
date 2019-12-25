@@ -25,15 +25,6 @@ def time_it(func):
     return wrapper
 
 
-def iter_dir(path):
-    for dirpath, dirnames, filenames in os.walk(path):
-        for filename in filenames:
-            fullpath = os.path.join(dirpath, filename)
-            basename, ext = os.path.splitext(filename)
-
-            yield fullpath, basename, ext
-
-
 def timestamp():
     c_date = time.strftime("%d/%m/%Y")
     c_time = time.strftime("%H:%M:%S")
@@ -85,73 +76,3 @@ def progress(count, total):
 
     sys.stdout.write('[%s] %s %s -- %s\r' % (bar, percents, '%', suffix))
     sys.stdout.flush()
-
-
-def dir_compare(path1, path2, match=None):
-    dir1 = Files(path1)
-    dir2 = Files(path2)
-
-    dir1.list_files(match=match)
-    dir2.list_files(match=match)
-
-    path2_miss = tuple(set(dir1.filenames) - set(dir2.filenames))
-    path1_miss = tuple(set(dir2.filenames) - set(dir1.filenames))
-
-    print('{} - missing:'.format(path2))
-    print('---------------------------')
-    for i in sorted(path2_miss):
-        print(i)
-
-    print('')
-    print('===========================')
-    print('')
-
-    print('{} - missing:'.format(path1))
-    print('---------------------------')
-    for i in sorted(path1_miss):
-        print(i)
-
-
-class Files:
-    def __init__(self, path):
-        self.path = path
-        self.filenames = []
-        self.filepaths = []
-
-    def list_files(self, match=None, filenames_only=False):
-        if match is None:
-            match_wildcard = []
-        elif isinstance(match, list):
-            match_wildcard = match
-        else:
-            match_wildcard = [match]
-
-        if match_wildcard:
-            for _match in match_wildcard:
-                for fullpath, basename, ext in iter_dir(self.path):
-                    if ext == _match:
-                        self.filepaths.append(fullpath)
-                        self.filenames.append(basename + ext)
-        else:
-            for fullpath, basename, ext in iter_dir(self.path):
-                self.filepaths.append(fullpath)
-                self.filenames.append(basename + ext)
-
-        return self.filenames if filenames_only else self.filepaths
-
-    def show_filenames(self):
-        for i in self.filenames:
-            print(i)
-
-    def show_filepaths(self):
-        for i in self.filepaths:
-            print(i)
-
-    def extract(self, what='filepaths'):
-        with open(os.path.join(self.path, 'File_List.txt'), 'w') as f:
-            if what == 'filepaths':
-                for i in self.filepaths:
-                    f.write('{}\n'.format(i))
-            else:
-                for i in self.filenames:
-                    f.write('{}\n'.format(i))

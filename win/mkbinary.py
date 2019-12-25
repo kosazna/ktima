@@ -7,8 +7,8 @@
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
 import py_compile
-from schemas import *
-from win.update import toolboxes
+from handler import *
+from update import toolboxes
 
 
 def compile_ktima():

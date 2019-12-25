@@ -6,8 +6,7 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
-import hashlib
-from ktima.paths import *
+from ktima.uasm import *
 
 
 def p_pass():
@@ -15,9 +14,9 @@ def p_pass():
     if _user == "":
         _user = user
 
-    hk = hashlib.sha1(_user).hexdigest()
+    _hk = hashlib.sha1(_user).hexdigest()
 
-    data = {"{}".format(_user): "{}".format(hk)}
+    data = {"{}".format(_user): "{}".format(_hk)}
 
     write_json(r"{}:\Google Drive\Work\ktima\passes\{}.json".format(gd[user], _user), data)
 
@@ -29,9 +28,9 @@ def t_pass():
 
     c_date = time.strftime("%d/%m/%Y")
 
-    hk = hashlib.sha1('{}-{}'.format(c_date, _user)).hexdigest()
+    _hk = hashlib.sha1('{}-{}'.format(c_date, _user)).hexdigest()
 
-    data = {"{}".format(_user): "{}".format(hk)}
+    data = {"{}".format(_user): "{}".format(_hk)}
 
     if _user == "":
         write_json(r"C:\Users\{}\ipass.json".format(_user), data)

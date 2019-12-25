@@ -6,8 +6,7 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
-from ktima.schemas import *
-import fnmatch
+from ktima.handler import *
 
 
 toolboxes = ["A) General",
@@ -17,21 +16,43 @@ toolboxes = ["A) General",
 
 
 def update_from_server(folder=ktl['temp'][user]):
-    src = cp([mdev, 'Diafora', 'ktima', 'scripts'], origin=folder)
+    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+        src = cp([mdev, 'Diafora', 'ktima', 'scripts'], origin=folder)
+    else:
+        src = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'scripts'], origin=folder)
+
     dst_c = ['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']
     dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1', 'Tools', 'KT-Tools']
 
-    for rootDir, subdirs, filenames in os.walk(src):
-        for filename in filenames:
-            if filename.endswith('.pyc'):
-                inpath = os.path.join(rootDir, filename)
-                out = dst_c + inpath.split('\\')[5:]
+    def d_copy(x):
+        for fullpath, filename, basename, ext in list_dir(src, match=['.pyc', '.pyt']):
+
+            if ext == '.pyc':
+                out = dst_c + fullpath.split('\\')[x:]
                 outpath = cp(out)
-                c_copy(inpath, outpath)
-            elif filename.endswith('.pyt'):
-                inpath = os.path.join(rootDir, filename)
+                c_copy(fullpath, outpath)
+            elif ext == '.pyt':
                 outpath = os.path.join(cp(dst_t), filename)
-                c_copy(inpath, outpath)
+                c_copy(fullpath, outpath)
+
+    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+        d_copy(5)
+    elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
+        d_copy(6)
+    else:
+        print('"company_name" not defined in paths.json')
+
+    # for rootDir, subdirs, filenames in os.walk(src):
+    #     for filename in filenames:
+    #         if filename.endswith('.pyc'):
+    #             inpath = os.path.join(rootDir, filename)
+    #             out = dst_c + inpath.split('\\')[5:]
+    #             outpath = cp(out)
+    #             c_copy(inpath, outpath)
+    #         elif filename.endswith('.pyt'):
+    #             inpath = os.path.join(rootDir, filename)
+    #             outpath = os.path.join(cp(dst_t), filename)
+    #             c_copy(inpath, outpath)
 
 
 def main(_func, _action):
@@ -39,27 +60,39 @@ def main(_func, _action):
         src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
         dst = ['Google Drive', 'Work', 'ktima', 'ktima 5']
 
-        for rootDir, subdirs, filenames in os.walk(src):
-            for filename in fnmatch.filter(filenames, '*py'):
-                inpath = os.path.join(rootDir, filename)
-                out = dst + inpath.split('\\')[6:]
-                outpath = cp(out, origin=gd[user])
+        for fullpath, filename, basename, ext in list_dir(src, match='.py'):
+            out = dst + fullpath.split('\\')[6:]
+            outpath = cp(out, origin=gd[user])
 
-                if __action == 'push':
-                    c_copy(inpath, outpath)
-                else:
-                    c_copy(outpath, inpath)
+            if __action == 'push':
+                c_copy(fullpath, outpath)
+            else:
+                c_copy(outpath, fullpath)
+
+        # for rootDir, subdirs, filenames in os.walk(src):
+        #     for filename in fnmatch.filter(filenames, '*py'):
+        #         inpath = os.path.join(rootDir, filename)
+        #         out = dst + inpath.split('\\')[6:]
+        #         outpath = cp(out, origin=gd[user])
+        #
+        #         if __action == 'push':
+        #             c_copy(inpath, outpath)
+        #         else:
+        #             c_copy(outpath, inpath)
 
     def tools():
         src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima', '!Toolboxes'])
         dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1', 'Tools', 'KT-Tools']
 
-        for rootDir, subdirs, filenames in os.walk(src):
-            for filename in fnmatch.filter(filenames, '*py'):
-                basename = os.path.splitext(filename)[0]
-                inpath = os.path.join(rootDir, filename)
-                outpath = os.path.join(cp(dst_t), '{}.pyt'.format(basename))
-                c_copy(inpath, outpath)
+        for fullpath, filename, basename, ext in list_dir(src):
+            outpath = os.path.join(cp(dst_t), '{}.pyt'.format(basename))
+            c_copy(fullpath, outpath)
+        # for rootDir, subdirs, filenames in os.walk(src):
+        #     for filename in fnmatch.filter(filenames, '*py'):
+        #         basename = os.path.splitext(filename)[0]
+        #         inpath = os.path.join(rootDir, filename)
+        #         outpath = os.path.join(cp(dst_t), '{}.pyt'.format(basename))
+        #         c_copy(inpath, outpath)
 
     if _func == "all_files":
         all_files(_action)

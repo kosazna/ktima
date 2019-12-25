@@ -33,6 +33,7 @@ users = "Users"
 mdev = "! aznavouridis.k"
 anakt = 'Anaktiseis'
 saromena = 'Saromena'
+temp_2kp = '!--2KP_TEMP--'
 
 user = getpass.getuser()
 ktl = load_json(cp([users, user, 'paths.json']))

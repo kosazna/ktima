@@ -6,8 +6,7 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
-from schemas import *
-from cust_win import *
+from handler import *
 
 
 class Paths:

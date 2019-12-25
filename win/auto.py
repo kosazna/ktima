@@ -7,8 +7,9 @@
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
 from ktima.status import *
-from update import *
+from update import update_from_server
 from collections import Counter
+import fnmatch
 
 arcpy.env.overwriteOutput = True
 
@@ -205,25 +206,34 @@ def shapefiles():
 
 
 def roads():
-    copy_list = ['*shp', '*shx', '*dbf']
-
-    if get_pass():
-        def copy_files(x):
-            progress_counter = 0
-            for i in copy_list:
-                for rootDir, subdirs, filenames in os.walk(paths.new_roads):
-                    for filename in fnmatch.filter(filenames, i):
-                        if "ROADS" in filename:
-                            progress_counter += 1
-                            inpath = os.path.join(rootDir, filename)
-                            outpath = os.path.join(paths.old_roads, rootDir[-x:], filename)
-                            shutil.copyfile(inpath, outpath)
-                            progress(progress_counter, 42)
-
-        if kt.mel_type == 1:
-            copy_files(17)
-        else:
-            copy_files(11)
+    for fullpath, filename, basename, ext in list_dir(paths.new_roads, match=['.shp', '.shx', '.dbf']):
+        if basename == 'ROADS':
+            outpath = os.path.join(paths.old_roads, fullpath.split('\\')[4:])
+            c_copy(fullpath, outpath)
+        # copy_list = ['*shp', '*shx', '*dbf']
+        #
+        # if get_pass():
+        #     def copy_files(x):
+        #         for fullpath, basename, ext in list_dir(paths.new_roads, match=['.shp', '.shx', '.dbf']):
+        #             if basename == 'ROADS':
+        #                 outpath = os.path.join(paths.old_roads, fullpath.split('\\')[4:])
+        #                 c_copy(fullpath, outpath)
+        #
+        #         progress_counter = 0
+        #         for i in copy_list:
+        #             for rootDir, subdirs, filenames in os.walk(paths.new_roads):
+        #                 for filename in fnmatch.filter(filenames, i):
+        #                     if "ROADS" in filename:
+        #                         progress_counter += 1
+        #                         inpath = os.path.join(rootDir, filename)
+        #                         outpath = os.path.join(paths.old_roads, rootDir[-x:], filename)
+        #                         shutil.copyfile(inpath, outpath)
+        #                         progress(progress_counter, 42)
+        #
+        #     if kt.mel_type == 1:
+        #         copy_files(17)
+        #     else:
+        #         copy_files(11)
 
         status.update("SHAPE", "iROADS", False)
         log('New ROADS to InputRoads folder')
@@ -363,30 +373,30 @@ def organize():
     if get_pass():
         if org_folder == 'A':
             log_status.append('Anaktiseis')
-            for fullpath, basename, ext in iter_dir(paths.anakt_in):
+            for fullpath, filename, basename, ext in list_dir(paths.anakt_in):
                 for ota in kt.ota_list:
                     if ota in basename[9:14]:
-                        outpath = os.path.join(paths.anakt_out, ota, basename + ext)
+                        outpath = os.path.join(paths.anakt_out, ota, filename)
                         c_copy(fullpath, outpath)
         elif org_folder == 'S':
             log_status.append('Saromena')
-            for fullpath, basename, ext in iter_dir(paths.saromena_in):
+            for fullpath, filename, basename, ext in list_dir(paths.saromena_in):
                 for ota in kt.ota_list:
                     if basename[0] == 'D' and ota in basename[1:6]:
-                        outpath = os.path.join(paths.saromena_out, ota, basename + ext)
+                        outpath = os.path.join(paths.saromena_out, ota, filename)
                         c_copy(fullpath, outpath)
                     elif ota in basename[:5]:
-                        outpath = os.path.join(paths.saromena_out, ota, basename + ext)
+                        outpath = os.path.join(paths.saromena_out, ota, filename)
                         c_copy(fullpath, outpath)
         elif org_folder == 'M':
             log_status.append("MDB's")
-            for fullpath, basename, ext in iter_dir(paths.mdb_in):
+            for fullpath, filename, basename, ext in list_dir(paths.mdb_in):
                 for ota in kt.ota_list:
                     if ota in basename and 'VSTEAS_REL' in basename:
-                        outpath = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', basename + ext)
+                        outpath = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', filename)
                         c_copy(fullpath, outpath)
                     elif ota in basename:
-                        outpath = os.path.join(paths.mdb_out, ota, basename + ext)
+                        outpath = os.path.join(paths.mdb_out, ota, filename)
                         c_copy(fullpath, outpath)
 
         log("Organize files", log_status)
