@@ -206,34 +206,13 @@ def shapefiles():
 
 
 def roads():
-    for fullpath, filename, basename, ext in list_dir(paths.new_roads, match=['.shp', '.shx', '.dbf']):
-        if basename == 'ROADS':
-            outpath = os.path.join(paths.old_roads, fullpath.split('\\')[4:])
-            c_copy(fullpath, outpath)
-        # copy_list = ['*shp', '*shx', '*dbf']
-        #
-        # if get_pass():
-        #     def copy_files(x):
-        #         for fullpath, basename, ext in list_dir(paths.new_roads, match=['.shp', '.shx', '.dbf']):
-        #             if basename == 'ROADS':
-        #                 outpath = os.path.join(paths.old_roads, fullpath.split('\\')[4:])
-        #                 c_copy(fullpath, outpath)
-        #
-        #         progress_counter = 0
-        #         for i in copy_list:
-        #             for rootDir, subdirs, filenames in os.walk(paths.new_roads):
-        #                 for filename in fnmatch.filter(filenames, i):
-        #                     if "ROADS" in filename:
-        #                         progress_counter += 1
-        #                         inpath = os.path.join(rootDir, filename)
-        #                         outpath = os.path.join(paths.old_roads, rootDir[-x:], filename)
-        #                         shutil.copyfile(inpath, outpath)
-        #                         progress(progress_counter, 42)
-        #
-        #     if kt.mel_type == 1:
-        #         copy_files(17)
-        #     else:
-        #         copy_files(11)
+    if get_pass():
+        for fullpath, filename, basename, ext in list_dir(paths.new_roads, match=['.shp', '.shx', '.dbf']):
+            if basename == 'ROADS':
+                base = paths.old_roads.split('\\')[1:]
+                base += fullpath.split('\\')[4:]
+                outpath = cp(base)
+                c_copy(fullpath, outpath)
 
         status.update("SHAPE", "iROADS", False)
         log('New ROADS to InputRoads folder')
@@ -276,38 +255,33 @@ def clear():
     del_list = []
 
     if clear_type == "A":
-        del_list = ['*sbn', '*sbx', '*shp.xml', '*prj', '*idx', '*cpg', '*shp', '*shx', '*dbf', '*mdb', '*lock']
+        del_list = ['.sbn', '.sbx', '.xml', '.prj', '.idx', '.cpg', '.shp', '.shx', '.dbf', '.mdb', '.lock']
         log_status.append('all')
     elif clear_type == "S":
-        del_list = ['*sbn', '*sbx', '*shp.xml', '*prj', '*idx', '*cpg', '*lock']
+        del_list = ['.sbn', '.sbx', '.xml', '.prj', '.idx', '.cpg', '.lock']
         log_status.append('standard')
 
     if get_pass():
-        progress_counter = 0
-        if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
-            for i in del_list:
-                progress_counter += 1
-                for rootDir, subdirs, filenames in os.walk(clearlocalpath):
-                    for filename in fnmatch.filter(filenames, i):
-                        if clear_type == "A" and clear_folder == "P" and os.path.splitext(filename)[0] in kt.no_del_list:
-                            pass
-                        else:
-                            try:
-                                os.remove(os.path.join(rootDir, filename))
-                            except OSError:
-                                print("Error while deleting file")
-                progress(progress_counter, len(del_list))
 
+        if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
+
+            for fullpath, filename, basename, ext in list_dir(clearlocalpath, match=del_list):
+                if clear_type == "A" and clear_folder == "P" and basename in kt.no_del_list:
+                    pass
+                else:
+                    try:
+                        os.remove(fullpath)
+                    except OSError:
+                        print("Error while deleting file")
             log('Clear directories', log_status)
 
             print("DONE !")
         else:
-            for rootDir, subdirs, filenames in os.walk(clearlocalpath):
-                for filename in filenames:
-                    try:
-                        os.remove(os.path.join(rootDir, filename))
-                    except OSError:
-                        print("Error while deleting file")
+            for fullpath, filename, basename, ext in list_dir(clearlocalpath):
+                try:
+                    os.remove(fullpath)
+                except OSError:
+                    print("Error while deleting file")
     else:
         pass
 

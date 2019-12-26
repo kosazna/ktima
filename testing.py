@@ -19,17 +19,6 @@ kt = NamesAndLists(kt_map)
 ##################################################
 
 
-# ls = dir_compare(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']), cp(['Google Drive', 'Work', 'ktima', 'ktima 5'], origin='D'), match='.py')
-
-# for i in ls:
-#     print(i, ls[i])
-
-# code = Files(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']))
-# mapping = code.list_files(match='.py')
-#
-# code.extract('filepaths')
-
-
 # def all_files():
 #     src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 #     dst = cp(['Google Drive', 'Work', 'ktima', 'ktima 5'], origin=gd[user])
@@ -48,6 +37,9 @@ kt = NamesAndLists(kt_map)
 files = Files(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']))
 files.list_files(match='.py')
 
+c = 0
+
 for i in files.filepaths:
-    basename, ext = base_ext(i)
-    print(basename, ext)
+    count = len(open(i).readlines())
+    c += count
+print(c)
