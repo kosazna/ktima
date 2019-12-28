@@ -9,7 +9,6 @@
 from ktima.status import *
 from update import update_from_server
 from collections import Counter
-import fnmatch
 
 arcpy.env.overwriteOutput = True
 
