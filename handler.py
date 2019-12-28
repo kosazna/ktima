@@ -85,9 +85,16 @@ class Files:
         if match_wildcard:
             for _match in match_wildcard:
                 for fullpath, basename, ext in Files.iter_dir(self.path):
-                    if ext == _match:
-                        self.filepaths.append(fullpath)
-                        self.filenames.append(basename + ext)
+                    if len(basename.split('.')) == 1:
+                        if ext == _match:
+                            self.filepaths.append(fullpath)
+                            self.filenames.append(basename + ext)
+                    else:
+                        extra_ext = basename.split('.')[1]
+                        double_ext = '.{}{}'.format(extra_ext, ext)
+                        if double_ext == _match:
+                            self.filepaths.append(fullpath)
+                            self.filenames.append(basename + ext)
         else:
             for fullpath, basename, ext in Files.iter_dir(self.path):
                 self.filepaths.append(fullpath)

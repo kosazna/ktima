@@ -255,10 +255,10 @@ def clear():
     del_list = []
 
     if clear_type == "A":
-        del_list = ['.sbn', '.sbx', '.xml', '.prj', '.idx', '.cpg', '.shp', '.shx', '.dbf', '.mdb', '.lock']
+        del_list = ['.sbn', '.sbx', '.shp.xml', '.prj', '.idx', '.cpg', '.shp', '.shx', '.dbf', '.mdb', '.lock']
         log_status.append('all')
     elif clear_type == "S":
-        del_list = ['.sbn', '.sbx', '.xml', '.prj', '.idx', '.cpg', '.lock']
+        del_list = ['.sbn', '.sbx', '.shp.xml', '.prj', '.idx', '.cpg', '.lock']
         log_status.append('standard')
 
     if get_pass():
