@@ -18,6 +18,11 @@ def count_lines():
     print(c)
 
 
+def show_files(path, match=None):
+    for fullpath, filename, basename, ext in list_dir(path, match=match):
+        print('{:<100}{:<20}{:<20}{:<10}'.format(fullpath, filename, basename, ext))
+
+
 ##################################################
 meleti = 'KT2-11'
 company_name = 'NAMA'
@@ -26,6 +31,7 @@ paths = Paths(meleti, mel_type, company_name)
 kt_map = load_json(paths.kt_info_path)
 kt = NamesAndLists(kt_map)
 ##################################################
+
 
 # def all_files():
 #     src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])

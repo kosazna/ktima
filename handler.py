@@ -11,7 +11,17 @@ from schemas import *
 
 def base_ext(path):
     filename = os.path.split(path)[1]
-    basename, ext = os.path.splitext(filename)
+    filename_parts = filename.split('.')
+    quantity = len(filename_parts)
+
+    if quantity == 2:
+        basename, ext = os.path.splitext(filename)
+    elif quantity == 3:
+        basename = filename_parts[0]
+        ext = '.{0[1]}.{0[2]}'.format(filename_parts)
+    else:
+        basename = filename
+        ext = None
 
     return filename, basename, ext
 
@@ -70,9 +80,9 @@ class Files:
         for dirpath, dirnames, filenames in os.walk(path):
             for filename in filenames:
                 fullpath = os.path.join(dirpath, filename)
-                basename, ext = os.path.splitext(filename)
+                filename, basename, ext = base_ext(fullpath)
 
-                yield fullpath, basename, ext
+                yield fullpath, filename, basename, ext
 
     def list_files(self, match=None):
         if match is None:
@@ -84,21 +94,14 @@ class Files:
 
         if match_wildcard:
             for _match in match_wildcard:
-                for fullpath, basename, ext in Files.iter_dir(self.path):
-                    if len(basename.split('.')) == 1:
-                        if ext == _match:
-                            self.filepaths.append(fullpath)
-                            self.filenames.append(basename + ext)
-                    else:
-                        extra_ext = basename.split('.')[1]
-                        double_ext = '.{}{}'.format(extra_ext, ext)
-                        if double_ext == _match:
-                            self.filepaths.append(fullpath)
-                            self.filenames.append(basename + ext)
+                for fullpath, filename, basename, ext in Files.iter_dir(self.path):
+                    if ext == _match:
+                        self.filepaths.append(fullpath)
+                        self.filenames.append(filename)
         else:
-            for fullpath, basename, ext in Files.iter_dir(self.path):
+            for fullpath, filename, basename, ext in Files.iter_dir(self.path):
                 self.filepaths.append(fullpath)
-                self.filenames.append(basename + ext)
+                self.filenames.append(filename)
 
         return {filename: fullpath for filename, fullpath in zip(self.filenames, self.filepaths)}
 
