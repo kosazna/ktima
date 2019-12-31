@@ -30,18 +30,22 @@ mel_type = 1
 paths = Paths(meleti, mel_type, company_name)
 kt_map = load_json(paths.kt_info_path)
 kt = NamesAndLists(kt_map)
+
+
 ##################################################
 
 
-# def all_files():
-#     src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
-#     dst = cp(['Google Drive', 'Work', 'ktima', 'ktima 5'], origin=gd[user])
-#
-#     mapping = dir_compare(src, dst, match='.py')
-#
-#     if mapping:
-#         for i in mapping:
-#             print(mapping[i][0], mapping[i][1])
-#     else:
-#         print("\nWARNING! - Directories don't match\n")
-#
+def all_files():
+    src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
+    dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
+
+    mapping = dir_compare(src, dst, match='.py')
+
+    if mapping:
+        for i in mapping:
+            print(mapping[i][0], mapping[i][1])
+    else:
+        print("\nWARNING! - Directories don't match\n")
+
+
+all_files()

@@ -90,13 +90,13 @@ def start_logs():
     user_target = cp([users, user, 'KT_log.txt'])
 
     with open(kt_target, 'w') as f:
-        f.write('DATETIME\tMELETI\tACTION\tCOMMENTS')
+        f.write('{:<22}{:<9}{:<25}{}'.format('DATETIME', 'MELETI', 'ACTION', 'COMMENTS'))
 
     if os.path.exists(user_target):
         print('User {} already logging'.format(user))
     else:
         with open(user_target, 'w') as f:
-            f.write('DATETIME\tMELETI\tACTION\tCOMMENTS')
+            f.write('{:<22}{:<9}{:<20}{:<9}{:<25}{}'.format('DATETIME', 'SERVER', 'USER', 'MELETI', 'ACTION', 'COMMENTS'))
 
 
 def updatetree():

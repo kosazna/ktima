@@ -44,7 +44,7 @@ class Log:
 
         try:
             with open(self.company_log, 'a') as company_f:
-                company_f.write('\n{}\t{}\t{}\t{}\t{}'.format(_datetime, _user, self.meleti, msgf, commentsf))
+                company_f.write('\n{}   {:<20}{:<9}{:<25}{}'.format(_datetime, _user, self.meleti, msgf, commentsf))
                 server_loged = 'YES'
         except IOError:
             pm('\n\n! Logging !\n\n')
@@ -52,8 +52,8 @@ class Log:
 
         with open(self.general_log, 'a') as general_f:
             with open(self.kt_log, 'a') as local_f:
-                general_f.write('\n{}\t{}\t{}\t{}\t{}\t{}'.format(_datetime, server_loged, _user, self.meleti, msgf, commentsf))
-                local_f.write('\n{}\t{}\t{}\t{}'.format(_datetime, self.meleti, msgf, commentsf))
+                general_f.write('\n{}   {:<9}{:<20}{:<9}{:<25}{}'.format(_datetime, server_loged, _user, self.meleti, msgf, commentsf))
+                local_f.write('\n{}   {:<9}{:<25}{}'.format(_datetime, self.meleti, msgf, commentsf))
 
     def __call__(self, msg, log_list=None):
         time_now = datetime.datetime.now().replace(microsecond=0)
@@ -106,7 +106,7 @@ class Log:
         elif msg == "Organize files":
             comments = "Organized {} to !OutputData".format(log_list[0])
             self.write_to_file(time_now, msg, comments)
-        elif msg == 'New ROADS to InputRoads folder':
+        elif msg == 'New ROADS to InputData':
             comments = "Copied new ROADS to Inputs folder for future testing".format(log_list)
             self.write_to_file(time_now, msg, comments)
         elif msg == 'Clear directories':
@@ -124,7 +124,7 @@ class Log:
         elif msg == 'Fix FBOUND Geometry':
             comments = 'Repaired FBOUND geometry in OTA : {}'.format(log_list)
             self.write_to_file(time_now, msg, comments)
-        elif msg == 'Copied old Roads to LocalData':
+        elif msg == 'Copied iROADS to Local':
             comments = 'Copied old Roads to LocalData'
             self.write_to_file(time_now, msg, comments)
         elif msg == 'Metadata':

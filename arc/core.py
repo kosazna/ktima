@@ -744,7 +744,7 @@ class Create:
 
             status.update("SHAPE", "ROADS", False)
 
-            log('Copied old Roads to LocalData')
+            log('Copied iROADS to Local')
 
             pm("\nDONE !\n")
 

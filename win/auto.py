@@ -214,7 +214,7 @@ def roads():
                 c_copy(fullpath, outpath)
 
         status.update("SHAPE", "iROADS", False)
-        log('New ROADS to InputRoads folder')
+        log('New ROADS to InputData')
 
         print("DONE !")
     else:
