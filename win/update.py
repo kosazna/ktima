@@ -24,22 +24,16 @@ def update_from_server(folder=ktl['temp'][user]):
     dst_c = ['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']
     dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1', 'Tools', 'KT-Tools']
 
-    def d_copy(x):
-        for fullpath, filename, basename, ext in list_dir(src, match=['.pyc', '.pyt']):
-            if ext == '.pyc':
-                out = dst_c + fullpath.split('\\')[x:]
-                outpath = cp(out)
-                c_copy(fullpath, outpath)
-            elif ext == '.pyt':
-                outpath = os.path.join(cp(dst_t), filename)
-                c_copy(fullpath, outpath)
+    pointer = len(src.split('\\'))
 
-    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        d_copy(5)
-    elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        d_copy(6)
-    else:
-        print('"company_name" not defined in paths.json')
+    for fullpath, filename, basename, ext in list_dir(src, match=['.pyc', '.pyt']):
+        if ext == '.pyc':
+            out = dst_c + fullpath.split('\\')[pointer:]
+            outpath = cp(out)
+            c_copy(fullpath, outpath)
+        elif ext == '.pyt':
+            outpath = os.path.join(cp(dst_t), filename)
+            c_copy(fullpath, outpath)
 
 
 def main(_func, _action):
@@ -47,8 +41,10 @@ def main(_func, _action):
         src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
         dst = ['Google Drive', 'Work', 'ktima', 'ktima_6']
 
+        pointer = len(src.split('\\'))
+
         for fullpath, filename, basename, ext in list_dir(src, match='.py'):
-            out = dst + fullpath.split('\\')[6:]
+            out = dst + fullpath.split('\\')[pointer:]
             outpath = cp(out, origin=gd[user])
 
             if __action == 'push':

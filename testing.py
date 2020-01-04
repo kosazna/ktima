@@ -1,18 +1,12 @@
 # -*- coding: utf-8 -*-
 from paths import *
-from collections import Counter
-import copy
-import fnmatch
-import shutil
-import getpass
-import sys
 
 
 def count_lines():
     files = Files(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']))
-    files.list_files(match='.py')
+    files.ls(match='.py')
     c = 0
-    for i in files.filepaths:
+    for i in files.paths:
         count = len(open(i).readlines())
         c += count
     print(c)
@@ -31,21 +25,19 @@ paths = Paths(meleti, mel_type, company_name)
 kt_map = load_json(paths.kt_info_path)
 kt = NamesAndLists(kt_map)
 
-
 ##################################################
+src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
+dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 
+# src = r"C:\Users\kazna\Desktop\compare\new"
+# dst = r"C:\Users\kazna\Desktop\compare\old"
 
-def all_files():
-    src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
-    dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
+compare = Compare(src, dst, match='.py')
 
-    mapping = dir_compare(src, dst, match='.py')
+# src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
+#
+#
+# files = Files(r'C:\KT2-11\!OutputData\ParadosiData')
+# files.ls()
 
-    if mapping:
-        for i in mapping:
-            print(mapping[i][0], mapping[i][1])
-    else:
-        print("\nWARNING! - Directories don't match\n")
-
-
-all_files()
+count_lines()

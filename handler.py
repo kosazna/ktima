@@ -28,52 +28,117 @@ def base_ext(path):
 
 def list_dir(path, match=None):
     files = Files(path)
-    files.list_files(match=match)
+    files.ls(match=match)
 
-    for fullpath in files.filepaths:
+    for fullpath in files.paths:
         filename, basename, ext = base_ext(fullpath)
 
         yield fullpath, filename, basename, ext
 
 
-def dir_compare(path1, path2, match=None):
-    dir1 = Files(path1)
-    dir2 = Files(path2)
+class Compare:
+    def __init__(self, path_1, path_2, match=None):
+        self.path_1 = path_1
+        self.path_2 = path_2
+        self.dir_1 = Files(self.path_1)
+        self.dir_2 = Files(self.path_2)
+        self.dir_1.sort_ls(match=match)
+        self.dir_2.sort_ls(match=match)
+        self.map_1 = self.dir_1.mapper
+        self.map_2 = self.dir_2.mapper
+        self.dir_1_count = self.dir_1.file_counter
+        self.dir_2_count = self.dir_2.file_counter
+        self.path_1_miss = tuple(set(self.dir_2.names) - set(self.dir_1.names))
+        self.path_2_miss = tuple(set(self.dir_1.names) - set(self.dir_2.names))
+        self.mapper_all, self.mapper_common, self.mapper_diff = Compare.all_files_mapping(self.map_1, self.map_2)
 
-    dir1.list_files(match=match)
-    dir2.list_files(match=match)
+    def show_missing(self):
+        print('{} - missing:'.format(self.path_1))
+        print('---------------------------')
+        for i in sorted(self.path_1_miss):
+            print(i)
 
-    path2_miss = tuple(set(dir1.filenames) - set(dir2.filenames))
-    path1_miss = tuple(set(dir2.filenames) - set(dir1.filenames))
+        print('')
+        print('***************************')
+        print('')
 
-    print('{} - missing:'.format(path2))
-    print('---------------------------')
-    for i in sorted(path2_miss):
-        print(i)
+        print('{} - missing:'.format(self.path_2))
+        print('---------------------------')
+        for i in sorted(self.path_2_miss):
+            print(i)
 
-    print('')
-    print('===========================')
-    print('')
+    @staticmethod
+    def all_files_mapping(_1, _2):
+        map_all = {}
+        map_common = {}
+        map_diff = {}
 
-    print('{} - missing:'.format(path1))
-    print('---------------------------')
-    for i in sorted(path1_miss):
-        print(i)
+        for i in _1:
+            map_all[i] = [_1[i], _2.get(i, None)]
 
-    file_mapping = {i: [k, l]
-                    for i, j, k, l in zip(dir1.filenames, dir2.filenames, dir1.filepaths, dir2.filepaths)
-                    if i == j}
+        for i in _2:
+            if i not in map_all:
+                map_all[i] = [_1.get(i, None), _2[i]]
 
-    return file_mapping if file_mapping else []
+        for i in map_all:
+            if map_all[i][0] and map_all[i][1]:
+                map_common[i] = [map_all[i][0], map_all[i][1]]
+            else:
+                map_diff[i] = [map_all[i][0], map_all[i][1]]
 
-    # return file_mapping if not path1_miss and not path2_miss else None
+        return map_all, map_common, map_diff
+
+    def extract_diff(self):
+        if self.mapper_diff:
+            target = self.path_1.split('\\')[1:-1] + ['Difference']
+            path_1_miss = target + ['Missing_from_path_1_({})'.format(self.path_1.split('\\')[-1])]
+            path_2_miss = target + ['Missing_from_path_2_({})'.format(self.path_2.split('\\')[-1])]
+            p1p = cp(path_1_miss)
+            p2p = cp(path_2_miss)
+
+            if not os.path.exists(p1p):
+                os.makedirs(p1p)
+
+            if not os.path.exists(p2p):
+                os.makedirs(p2p)
+
+            for i in self.mapper_diff:
+                if self.mapper_diff[i][0]:
+                    _dst = os.path.join(p2p, os.path.split(self.mapper_diff[i][0])[1])
+                    c_copy(self.mapper_diff[i][0], _dst)
+                elif self.mapper_diff[i][1]:
+                    _dst = os.path.join(p1p, os.path.split(self.mapper_diff[i][1])[1])
+                    c_copy(self.mapper_diff[i][1], _dst)
+
+            print('\n{} - was created for files missing'.format(p1p))
+            print('\n{} - was created for files missing '.format(p2p))
+        else:
+            print('Directories are identical. No extraction was performed')
+
+    def show(self, what='all'):
+        if what == 'all':
+            for i in self.mapper_all:
+                print(' {:<20}  {:<75}  {:<75}'.format(i, self.mapper_all[i][0], self.mapper_all[i][1]))
+                print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+        elif what == 'common':
+            for i in self.mapper_common:
+                print(' {:<20}  {:<75}  {:<75}'.format(i, self.mapper_common[i][0], self.mapper_common[i][1]))
+                print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+        elif what == 'diff':
+            for i in self.mapper_diff:
+                print(' {:<20}  {:<75}  {:<75}'.format(i, self.mapper_diff[i][0], self.mapper_diff[i][1]))
+                print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
 
 
 class Files:
     def __init__(self, path):
         self.path = path
-        self.filenames = []
-        self.filepaths = []
+        self.names = []
+        self.paths = []
+        self.mapper = dict()
+        self.mapper_nd = dict()
+        self.c_mapper = dict()
+        self.file_counter = 0
 
     @staticmethod
     def iter_dir(path):
@@ -84,7 +149,8 @@ class Files:
 
                 yield fullpath, filename, basename, ext
 
-    def list_files(self, match=None):
+    @staticmethod
+    def matcher(match):
         if match is None:
             match_wildcard = []
         elif isinstance(match, list):
@@ -92,32 +158,90 @@ class Files:
         else:
             match_wildcard = [match]
 
+        return match_wildcard
+
+    def ls(self, match=None):
+        match_wildcard = Files.matcher(match)
+
         if match_wildcard:
             for _match in match_wildcard:
                 for fullpath, filename, basename, ext in Files.iter_dir(self.path):
                     if ext == _match:
-                        self.filepaths.append(fullpath)
-                        self.filenames.append(filename)
+                        key = os.path.split(fullpath)[0]
+
+                        if key not in self.mapper:
+                            self.mapper[key] = []
+                            self.c_mapper[key] = 0
+
+                        self.paths.append(fullpath)
+                        self.names.append(filename)
+                        self.file_counter += 1
+                        self.mapper[key].append(filename)
+                        self.c_mapper[key] += 1
         else:
             for fullpath, filename, basename, ext in Files.iter_dir(self.path):
-                self.filepaths.append(fullpath)
-                self.filenames.append(filename)
+                key = os.path.split(fullpath)[0]
 
-        return {filename: fullpath for filename, fullpath in zip(self.filenames, self.filepaths)}
+                if key not in self.mapper:
+                    self.mapper[key] = []
+                    self.c_mapper[key] = 0
 
-    def show_filenames(self, split=False):
-        for i in self.filenames:
-            print(os.path.splitext(i)[0] if split else i)
+                self.paths.append(fullpath)
+                self.names.append(filename)
+                self.file_counter += 1
+                self.mapper[key].append(filename)
+                self.c_mapper[key] += 1
 
-    def show_filepaths(self):
-        for i in self.filepaths:
-            print(i)
+    def sort_ls(self, match=None):
+        match_wildcard = Files.matcher(match)
 
-    def extract(self, what='filepaths'):
+        if match_wildcard:
+            for _match in match_wildcard:
+                for fullpath, filename, basename, ext in Files.iter_dir(self.path):
+                    if ext == _match:
+                        self.paths.append(fullpath)
+                        self.names.append(filename)
+                        self.file_counter += 1
+        else:
+            for fullpath, filename, basename, ext in Files.iter_dir(self.path):
+                self.paths.append(fullpath)
+                self.names.append(filename)
+                self.file_counter += 1
+
+        for filename, fullpath in zip(self.names, self.paths):
+            self.mapper[filename] = fullpath
+
+    def show_names(self, split=False):
+        print('-----  {} Files  -----'.format(self.file_counter))
+        for i, j in enumerate(sorted(self.names)):
+            print('{:>5})  {}'.format(i + 1, os.path.splitext(j)[0] if split else j))
+        print('-----  {} Files  -----'.format(self.file_counter))
+
+    def show_paths(self):
+        print('-----  {} Files  -----'.format(self.file_counter))
+        for i, j in enumerate(sorted(self.paths)):
+            print('{:>5})  {}'.format(i + 1, j))
+        print('-----  {} Files  -----'.format(self.file_counter))
+
+    def show_tree(self):
+        for i in sorted(self.mapper):
+            print('{}  --  {} files'.format(i, self.c_mapper[i]))
+            for j in self.mapper[i]:
+                print("|----- {}".format(j))
+            print('\n')
+
+    def extract(self, what='filepaths', split=False):
         with open(os.path.join(self.path, 'File_List.txt'), 'w') as f:
             if what == 'filepaths':
-                for i in self.filepaths:
+                for i in self.paths:
                     f.write('{}\n'.format(i))
             else:
-                for i in self.filenames:
-                    f.write('{}\n'.format(i))
+                for i in self.names:
+                    f.write('{}\n'.format(os.path.splitext(i)[0] if split else i))
+
+    def gather(self, new_path):
+        if not os.path.exists(new_path):
+            os.makedirs(new_path)
+
+        for fullpath, filename in zip(self.paths, self.names):
+            c_copy(fullpath, os.path.join(new_path, filename))

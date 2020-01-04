@@ -384,18 +384,18 @@ def counter(path_to_count=paths.paradosidata):
     mdb = Files(path_to_count)
     xml = Files(path_to_count)
 
-    shapes.list_files(match='.shp')
-    mdb.list_files(match='.mdb')
-    xml.list_files(match='.xml')
+    shapes.ls(match='.shp')
+    mdb.ls(match='.mdb')
+    xml.ls(match='.xml')
 
-    cnt_shapes = Counter(shapes.filenames)
-    cnt_mdb = Counter([i[6:] for i in mdb.filenames])
-    cnt_xml = Counter(xml.filenames)
+    cnt_shapes = Counter(shapes.names)
+    cnt_mdb = Counter([i[6:] for i in mdb.names])
+    cnt_xml = Counter(xml.names)
 
     ota_counter = {os.path.splitext(k)[0]: [] for k in cnt_shapes.keys()}
     missing_counter = {os.path.splitext(k)[0]: [] for k in cnt_shapes.keys()}
 
-    for i in shapes.filepaths:
+    for i in shapes.paths:
         path_list = i.split('\\')
         if kt.mel_type == 1:
             ota_counter[path_list[6]].append(int(path_list[4]))
