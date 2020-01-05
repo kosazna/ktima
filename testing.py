@@ -3,18 +3,13 @@ from paths import *
 
 
 def count_lines():
-    files = Files(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']))
-    files.ls(match='.py')
+    _files = Files(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']))
+    _files.ls(match='.py')
     c = 0
-    for i in files.paths:
+    for i in _files.paths:
         count = len(open(i).readlines())
         c += count
     print(c)
-
-
-def show_files(path, match=None):
-    for fullpath, filename, basename, ext in list_dir(path, match=match):
-        print('{:<100}{:<20}{:<20}{:<10}'.format(fullpath, filename, basename, ext))
 
 
 ##################################################
@@ -40,4 +35,7 @@ dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 # files = Files(src)
 # files.ls()
 
-count_lines()
+
+# files = Files(r"D:\Topografika")
+# files.ls()
+# files.show_tree()

@@ -36,6 +36,12 @@ def list_dir(path, match=None):
         yield fullpath, filename, basename, ext
 
 
+def show_files(path, match=None):
+    for fullpath, filename, basename, ext in list_dir(path, match=match):
+        print('{:<140}{:<30}{:<10}'.format(fullpath, basename, ext))
+        print('----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+
+
 class Compare:
     def __init__(self, path_1, path_2, match=None):
         self.path_1 = path_1
