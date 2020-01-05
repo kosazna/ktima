@@ -20,8 +20,11 @@ if username == mdev.strip('! ') and password == build_pass:
 def buildtree():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
         repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
-    else:
+    elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
         repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
+    else:
+        print('"company_name" not defined in paths.json')
+        return
 
     target = r"C:\{}".format(meleti)
 
@@ -38,17 +41,14 @@ def update_folder_structure():
         repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
+        return
 
-    def _d(x):
-        for dirpath, dirnames, filenames in os.walk(repo):
-            outpath = cp(dirpath.split('\\')[x:])
-            if not os.path.exists(outpath):
-                os.makedirs(outpath)
+    pointer = len(repo) - 1
 
-    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        _d(5)
-    elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        _d(6)
+    for dirpath, dirnames, filenames in os.walk(repo):
+        outpath = cp(dirpath.split('\\')[pointer:])
+        if not os.path.exists(outpath):
+            os.makedirs(outpath)
 
 
 def update_file_structure():
@@ -58,18 +58,15 @@ def update_file_structure():
         repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
+        return
 
-    def _d(x):
-        for dirpath, dirnames, filenames in os.walk(repo):
-            for filename in filenames:
-                inpath = os.path.join(dirpath, filename)
-                outpath = cp(inpath.split('\\')[x:])
-                c_copy(inpath, outpath)
+    pointer = len(repo) - 1
 
-    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        _d(5)
-    else:
-        _d(6)
+    for dirpath, dirnames, filenames in os.walk(repo):
+        for filename in filenames:
+            inpath = os.path.join(dirpath, filename)
+            outpath = cp(inpath.split('\\')[pointer:])
+            c_copy(inpath, outpath)
 
 
 def make_empty_dirs():
@@ -106,26 +103,26 @@ def updatetree():
         repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
+        return
 
-    def _d(x):
-        for dirpath, dirnames, filenames in os.walk(repo):
-            outpath = [meleti] + dirpath.split('\\')[x:]
-            _dir = cp(outpath)
-            if not os.path.exists(_dir):
-                os.makedirs(_dir)
-                print('{} - Created'.format(_dir))
+    pointer = len(repo)
 
-    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        _d(5)
-    else:
-        _d(6)
+    for dirpath, dirnames, filenames in os.walk(repo):
+        outpath = [meleti] + dirpath.split('\\')[pointer:]
+        _dir = cp(outpath)
+        if not os.path.exists(_dir):
+            os.makedirs(_dir)
+            print('{} - Created'.format(_dir))
 
 
 def update_ktima_info():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
         repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti, inputdata, docs_i, 'KT_Info.json'], origin=ktl['temp'][user])
-    else:
+    elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
         repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti, inputdata, docs_i, 'KT_Info.json'], origin=ktl['temp'][user])
+    else:
+        print('"company_name" not defined in paths.json')
+        return
 
     target = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
@@ -135,8 +132,11 @@ def update_ktima_info():
 def update_temp_paths():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
         repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'], origin=ktl['temp'][user])
-    else:
+    elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
         repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'paths.json'], origin=ktl['temp'][user])
+    else:
+        print('"company_name" not defined in paths.json')
+        return
 
     target = cp([users, user, 'paths.json'])
 

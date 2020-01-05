@@ -42,10 +42,10 @@ class Compare:
         self.path_2 = path_2
         self.dir_1 = Files(self.path_1)
         self.dir_2 = Files(self.path_2)
-        self.dir_1.sort_ls(match=match)
-        self.dir_2.sort_ls(match=match)
-        self.map_1 = self.dir_1.mapper
-        self.map_2 = self.dir_2.mapper
+        self.dir_1.ls(match=match)
+        self.dir_2.ls(match=match)
+        self.map_1 = self.dir_1.mapper_nd
+        self.map_2 = self.dir_2.mapper_nd
         self.dir_1_count = self.dir_1.file_counter
         self.dir_2_count = self.dir_2.file_counter
         self.path_1_miss = tuple(set(self.dir_2.names) - set(self.dir_1.names))
@@ -192,24 +192,7 @@ class Files:
                 self.mapper[key].append(filename)
                 self.c_mapper[key] += 1
 
-    def sort_ls(self, match=None):
-        match_wildcard = Files.matcher(match)
-
-        if match_wildcard:
-            for _match in match_wildcard:
-                for fullpath, filename, basename, ext in Files.iter_dir(self.path):
-                    if ext == _match:
-                        self.paths.append(fullpath)
-                        self.names.append(filename)
-                        self.file_counter += 1
-        else:
-            for fullpath, filename, basename, ext in Files.iter_dir(self.path):
-                self.paths.append(fullpath)
-                self.names.append(filename)
-                self.file_counter += 1
-
-        for filename, fullpath in zip(self.names, self.paths):
-            self.mapper[filename] = fullpath
+        self.mapper_nd = dict(zip(self.names, self.paths))
 
     def show_names(self, split=False):
         print('-----  {} Files  -----'.format(self.file_counter))

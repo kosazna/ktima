@@ -7,7 +7,7 @@
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
 import py_compile
-from handler import *
+from ktima.handler import *
 from update import toolboxes
 
 
@@ -15,18 +15,16 @@ def compile_ktima():
     no_compile = ['testing', 'pass', 'mkbinary']
     src = cp([users, user, 'Desktop', 'compiled code'])
 
-    for dirpath, dirnames, filenames in os.walk(src):
-        for filename in filenames:
-            basename = os.path.splitext(filename)[0]
-            _src = os.path.join(dirpath, filename)
-            if filename.endswith('.py') and basename not in toolboxes and basename not in no_compile:
-                py_compile.compile(_src, doraise=True)
-                os.remove(_src)
-            elif filename.endswith('.py') and basename in toolboxes:
-                _dst = os.path.join(dirpath, '{}.pyt'.format(basename))
-                os.rename(_src, _dst)
-            else:
-                os.remove(_src)
+    for fullpath, filename, basename, ext in list_dir(src, match='.py'):
+        if basename not in toolboxes and basename not in no_compile:
+            py_compile.compile(fullpath, doraise=True)
+            os.remove(fullpath)
+        elif basename in toolboxes:
+            relative = os.path.split(fullpath)[0]
+            new_path = os.path.join(relative, '{}.pyt'.format(basename))
+            os.rename(fullpath, new_path)
+        else:
+            os.remove(fullpath)
 
 
 if __name__ == "__main__":

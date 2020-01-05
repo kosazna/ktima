@@ -150,13 +150,11 @@ def shapefiles():
         elif get_folder == "L" and export_folder == "P":
             inpath = paths.ktima(e_ota, e_shape, ext=True)
             outpath = paths.ktima(e_ota, e_shape, ext=True, spatial_folder=paradosidata_o)
-        else:
-            print("Wrong letter combination")
 
         if arcpy.Exists(inpath):
             arcpy.CopyFeatures_management(inpath, outpath)
         else:
-            missing_name = e_shape + "_" + e_ota
+            missing_name = '_'.join([e_shape, e_ota])
             missing_list.append(missing_name)
 
         return
@@ -263,7 +261,6 @@ def clear():
     if get_pass():
 
         if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
-
             for fullpath, filename, basename, ext in list_dir(clearlocalpath, match=del_list):
                 if clear_type == "A" and clear_folder == "P" and basename in kt.no_del_list:
                     pass
@@ -272,8 +269,8 @@ def clear():
                         os.remove(fullpath)
                     except OSError:
                         print("Error while deleting file")
-            log('Clear directories', log_status)
 
+            log('Clear directories', log_status)
             print("DONE !")
         else:
             for fullpath, filename, basename, ext in list_dir(clearlocalpath):
@@ -402,7 +399,7 @@ def counter(path_to_count=paths.paradosidata):
         else:
             ota_counter[path_list[5]].append(int(path_list[4]))
 
-    otas = [int(i) for i in kt.ota_list]
+    otas = list(map(int, kt.ota_list))
 
     for i in otas:
         for shp in ota_counter:

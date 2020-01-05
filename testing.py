@@ -32,12 +32,12 @@ dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 # src = r"C:\Users\kazna\Desktop\compare\new"
 # dst = r"C:\Users\kazna\Desktop\compare\old"
 
-compare = Compare(src, dst, match='.py')
+# compare = Compare(src, dst, match='.py')
 
 # src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 #
 #
-# files = Files(r'C:\KT2-11\!OutputData\ParadosiData')
+# files = Files(src)
 # files.ls()
 
 count_lines()
