@@ -36,12 +36,6 @@ def list_dir(path, match=None):
         yield fullpath, filename, basename, ext
 
 
-def show_files(path, match=None):
-    for fullpath, filename, basename, ext in list_dir(path, match=match):
-        print('{:<140}{:<30}{:<10}'.format(fullpath, basename, ext))
-        print('----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
-
-
 class Compare:
     def __init__(self, path_1, path_2, match=None):
         self.path_1 = path_1
@@ -146,6 +140,11 @@ class Files:
         self.c_mapper = dict()
         self.file_counter = 0
 
+    @classmethod
+    def from_list(cls, _list):
+        new_path = cp(_list)
+        return cls(new_path)
+
     @staticmethod
     def iter_dir(path):
         for dirpath, dirnames, filenames in os.walk(path):
@@ -234,3 +233,12 @@ class Files:
 
         for fullpath, filename in zip(self.paths, self.names):
             c_copy(fullpath, os.path.join(new_path, filename))
+
+    # def __getattr__(self, item):
+    #     return self.mapper_nd[item]
+
+    def __getitem__(self, item):
+        return self.mapper_nd[item]
+
+    def __setitem__(self, key, value):
+        self.mapper_nd[key] = value

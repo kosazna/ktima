@@ -43,7 +43,7 @@ def update_folder_structure():
         print('"company_name" not defined in paths.json')
         return
 
-    pointer = len(repo) - 1
+    pointer = len(repo.split('\\')) - 1
 
     for dirpath, dirnames, filenames in os.walk(repo):
         outpath = cp(dirpath.split('\\')[pointer:])
@@ -60,7 +60,7 @@ def update_file_structure():
         print('"company_name" not defined in paths.json')
         return
 
-    pointer = len(repo) - 1
+    pointer = len(repo.split('\\')) - 1
 
     for dirpath, dirnames, filenames in os.walk(repo):
         for filename in filenames:
@@ -105,7 +105,7 @@ def updatetree():
         print('"company_name" not defined in paths.json')
         return
 
-    pointer = len(repo)
+    pointer = len(repo.split('\\'))
 
     for dirpath, dirnames, filenames in os.walk(repo):
         outpath = [meleti] + dirpath.split('\\')[pointer:]

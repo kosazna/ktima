@@ -307,9 +307,14 @@ def metadata():
         pass
 
     if kt.mel_type == 1:
-        metas = {'BLOCK_PNT_METADATA': block_pnt_cont,
-                 'ROADS_METADATA': roads_cont,
-                 'GEO_METADATA': geo_cont}
+        try:
+            metas = {'BLOCK_PNT_METADATA': block_pnt_cont,
+                     'ROADS_METADATA': roads_cont,
+                     'GEO_METADATA': geo_cont}
+        except UnboundLocalError:
+            metas = {'ROADS_METADATA': roads_cont,
+                     'GEO_METADATA': geo_cont}
+
     else:
         metas = {'ROADS_METADATA': roads_cont,
                  'GEO_METADATA': geo_cont}
@@ -386,7 +391,8 @@ def counter(path_to_count=paths.paradosidata):
     xml.ls(match='.xml')
 
     cnt_shapes = Counter(shapes.names)
-    cnt_mdb = Counter([i[6:] for i in mdb.names])
+    # cnt_mdb = Counter([i[6:] for i in mdb.names])
+    cnt_mdb = Counter([i[6:] if not i == 'POWNERS.mdb' else i for i in mdb.names])
     cnt_xml = Counter(xml.names)
 
     ota_counter = {os.path.splitext(k)[0]: [] for k in cnt_shapes.keys()}

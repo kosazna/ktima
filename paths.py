@@ -59,6 +59,8 @@ class Paths:
         self.saromena_in = cp([meleti, inputdata, saromena])
         self.saromena_out = cp([meleti, outputdata, saromena])
 
+        self.checks_out = cp([mdev, '! --CHECKS-- !', meleti], origin=ktl['temp'][user])
+
     def server(self, ota, shp):
         if self.company_name == 'NAMA':
             return cp([ota, 'SHP', shp + '.shp'], origin='K')

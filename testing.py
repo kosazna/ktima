@@ -3,13 +3,18 @@ from paths import *
 
 
 def count_lines():
-    _files = Files(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']))
-    _files.ls(match='.py')
+    files = Files(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']))
+    files.ls(match='.py')
     c = 0
-    for i in _files.paths:
+    for i in files.paths:
         count = len(open(i).readlines())
         c += count
     print(c)
+
+
+def show_files(path, match=None):
+    for fullpath, filename, basename, ext in list_dir(path, match=match):
+        print('{:<100}{:<20}{:<20}{:<10}'.format(fullpath, filename, basename, ext))
 
 
 ##################################################
@@ -24,18 +29,10 @@ kt = NamesAndLists(kt_map)
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 
-# src = r"C:\Users\kazna\Desktop\compare\new"
-# dst = r"C:\Users\kazna\Desktop\compare\old"
+mxd = {22022, 22049, 22140}
+loc = {}
 
-# compare = Compare(src, dst, match='.py')
+loc_miss = mxd.difference(loc)
 
-# src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
-#
-#
-# files = Files(src)
-# files.ls()
+print(bool(loc))
 
-
-# files = Files(r"D:\Topografika")
-# files.ls()
-# files.show_tree()

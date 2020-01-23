@@ -30,7 +30,7 @@ class Geoprocessing:
                 f_name = "merge_" + _shape
 
                 try:
-                    arcpy.Merge_management(mxd_fl[_shape]['list'], paths.gdbm(f_name))
+                    arcpy.Merge_management(list(mxd_fl[_shape]['list']), paths.gdbm(f_name))
                     pm("\nMerged {}\n".format(_shape))
                     status.update('SHAPE', shapefile, True)
                     log_list.append(str(shapefile))
@@ -54,12 +54,17 @@ class Geoprocessing:
                 pm("Union for {}\n".format(shapefile))
 
                 feature_name = "union_" + shapefile
-                arcpy.Union_analysis(mxd_fl[shapefile]['list'], paths.gdbm(feature_name), "NO_FID", precision, _gaps)
+                arcpy.Union_analysis(list(mxd_fl[shapefile]['list']), paths.gdbm(feature_name), "NO_FID", precision, _gaps)
 
             log("Union Shapefiles")
         else:
             feature_name = "union_" + shape
-            arcpy.Union_analysis(mxd_fl[shape]['list'], paths.gdbm(feature_name), "NO_FID", precision, _gaps)
+            arcpy.Union_analysis(list(mxd_fl[shape]['list']), paths.gdbm(feature_name), "NO_FID", precision, _gaps)
+
+    @staticmethod
+    def export_to_server(copy_files):
+        for shp in copy_files:
+            arcpy.CopyFeatures_management(paths.gdbc(shp), os.path.join(paths.checks_out, '{}.shp'.format(shp)))
 
 
 class Queries:
@@ -89,6 +94,26 @@ class Queries:
         arcpy.SelectLayerByAttribute_management(kt.pstM, "NEW_SELECTION", " PROP_TYPE = '0702' ")
         arcpy.CopyFeatures_management(kt.pstM, paths.gdbm(kt.pr))
         pm('\nDONE !  -->  {}\n'.format(kt.pr))
+
+    @staticmethod
+    def find_identical(what, in_what):
+        if isinstance(what, list):
+            _what = what
+        else:
+            _what = [what]
+
+        pm('\n')
+
+        for shp in _what:
+            arcpy.SelectLayerByLocation_management(shp, "ARE_IDENTICAL_TO", in_what)
+            identical = get_count(shp)
+            clear_selection(shp)
+            all_rows = get_count(shp)
+            percentage = round((identical / float(all_rows)) * 100, 2)
+            pm('{:<20} : {:<6}/{:<6} are identical  /  {:<5} %'.format(shp, identical, all_rows, percentage))
+            pm('--------------------------------------------------------------')
+
+        pm('\nDone!\n')
 
 
 class General:
@@ -328,7 +353,7 @@ class Check:
     def fbound_geometry():
         if status.check('EXPORTED', "FBOUND"):
             try:
-                arcpy.CheckGeometry_management(mxdFBOUND, paths.gdbc(kt.fbound_geom))
+                arcpy.CheckGeometry_management(list(mxdFBOUND), paths.gdbc(kt.fbound_geom))
 
                 count_geom = get_count(kt.fbound_geom)
                 problematic_set = set()

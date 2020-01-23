@@ -9,35 +9,35 @@
 from data import *
 
 
-mxdASTENOT = []
-mxdASTIK = []
-mxdASTOTA = []
-mxdASTTOM = []
-mxdBLD = []
-mxdCBOUND = []
-mxdDBOUND = []
-mxdEAS = []
-mxdPST = []
-mxdVST = []
-mxdRBOUND = []
-mxdROADS = []
-mxdFBOUND = []
-mxdPRE_FBOUND = []
+mxdASTENOT = set()
+mxdASTIK = set()
+mxdASTOTA = set()
+mxdASTTOM = set()
+mxdBLD = set()
+mxdCBOUND = set()
+mxdDBOUND = set()
+mxdEAS = set()
+mxdPST = set()
+mxdVST = set()
+mxdRBOUND = set()
+mxdROADS = set()
+mxdFBOUND = set()
+mxdPRE_FBOUND = set()
 
-locASTENOT = []
-locASTIK = []
-locASTOTA = []
-locASTTOM = []
-locBLD = []
-locCBOUND = []
-locDBOUND = []
-locEAS = []
-locPST = []
-locVST = []
-locRBOUND = []
-locROADS = []
-locFBOUND = []
-locPRE_FBOUND = []
+locASTENOT = set()
+locASTIK = set()
+locASTOTA = set()
+locASTTOM = set()
+locBLD = set()
+locCBOUND = set()
+locDBOUND = set()
+locEAS = set()
+locPST = set()
+locVST = set()
+locRBOUND = set()
+locROADS = set()
+locFBOUND = set()
+locPRE_FBOUND = set()
 
 mxd_fl = {"ASTENOT": {"list": mxdASTENOT, "in_mxd": False},
           "ASTIK": {"list": mxdASTIK, "in_mxd": False},
@@ -108,7 +108,11 @@ def add_layer(features, lyr=False):
 
             for feature in shapes_list:
                 try:
-                    lyr_name = "{}.lyr".format(feature)
+                    if mode:
+                        lyr_name = "{}_all.lyr".format(feature)
+                    else:
+                        lyr_name = "{}.lyr".format(feature)
+
                     path = cp([meleti, lyr_i, lyr_name])
 
                     layer_to_add = arcpy.mapping.Layer(path)
@@ -141,7 +145,7 @@ def mxdfiles():
 
             try:
                 if _lyr.name not in mxd_fl[lyr_name]['list']:
-                    mxd_fl[lyr_name]['list'].append(str(_lyr.name))
+                    mxd_fl[lyr_name]['list'].add(str(_lyr.name))
                     if not mxd_fl[lyr_name]['in_mxd']:
                         mxd_fl[lyr_name]['in_mxd'] = True
             except KeyError:
@@ -157,15 +161,15 @@ def localfiles():
 
             if arcpy.Exists(local_lyr):
                 try:
-                    loc_fl[shape].append(str(lyr_name))
+                    loc_fl[shape].add(str(lyr_name))
                 except KeyError:
                     pass
 
 
 def validate():
     def find_missing(mxdlist, locallist):
-        loc_miss = tuple(set(mxdlist) - set(locallist))
-        mxd_miss = tuple(set(locallist) - set(mxdlist))
+        loc_miss = mxdlist.difference(locallist)
+        mxd_miss = locallist.difference(mxdlist)
 
         lm = sorted(loc_miss)
         mm = sorted(mxd_miss)
@@ -180,6 +184,13 @@ def validate():
     for shape in mxd_fl:
         if mxd_fl[shape]['in_mxd']:
             find_missing(mxd_fl[shape]['list'], loc_fl[shape])
+
+
+def change_mode():
+    kt.ota_list = ['06005', '06013', '06041', '06060', '06062', '06075', '06111', '06132', '06191', '06199', '06200', '06212']
+    mode.append('ALL')
+    localfiles()
+    pm('\n\nChanged Mode for {}\nMode : {}\n'.format(meleti, mode))
 
 
 def mxd(func):

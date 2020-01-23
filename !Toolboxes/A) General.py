@@ -13,7 +13,10 @@ class Toolbox(object):
 
         # List of tool classes associated with this toolbox
         if core.get_pass():
-            self.tools = [Merge, Queries, Info, Isolate, OtaExport]
+            if core.meleti == 'KT1-05':
+                self.tools = [Merge, Queries, Info, Isolate, OtaExport, Identical, Export, ChangeMode]
+            else:
+                self.tools = [Merge, Queries, Info, Isolate, OtaExport, Identical, Export]
         else:
             self.tools = []
 
@@ -292,15 +295,15 @@ class OtaExport(object):
         return
 
 
-class ImportData(object):
+class Identical(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "Import Shapefiles (beta)"
-        self.description = ""
+        self.label = "Find Identical"
+        self.description = "Identical"
         self.canRunInBackground = False
 
     def getParameterInfo(self):
-        shape = arcpy.Parameter(
+        what = arcpy.Parameter(
             displayName="Shape",
             name="shapetype",
             datatype="String",
@@ -308,33 +311,103 @@ class ImportData(object):
             direction="Input",
             multiValue=True)
 
-        merging_list = copy.copy(core.kt.local_data_shape_list)
-        merging_list.append("IROADS")
+        in_what = arcpy.Parameter(
+            displayName="Spapefile to check against:",
+            name="shapefile",
+            datatype="Layer",
+            parameterType="Required",
+            direction="Input")
 
-        shape.filter.list = merging_list
+        fc_list = core.list_layers()
 
-        params = [shape]
+        if fc_list:
+            in_what.filter.list = fc_list
+            what.filter.list = fc_list
+
+        params = [what, in_what]
         return params
 
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
 
-    def updateParameters(self, parameters):
-        """Modify the values and properties of parameters before internal
-        validation is performed.  This method is called whenever a parameter
-        has been changed."""
+    def updateParameters(self, params):
+        new_list = core.list_layers()
+        params[0].filter.list = new_list
         return
-
 
     def updateMessages(self, parameters):
         """Modify the messages created by internal validation for each tool
         parameter.  This method is called after internal validation."""
         return
 
+    def execute(self, params, messages):
+        arcpy.env.addOutputsToMap = False
+
+        shapes = params[0].valueAsText
+        what_to = shapes.split(";")
+
+        in_what = params[1].valueAsText
+
+        core.find.find_identical(what_to, in_what)
+
+        return
+
+
+class ChangeMode(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "! CHANGE MODE ({} All) !".format(core.meleti)
+        self.description = "Changing check mode".format(core.meleti)
+        self.canRunInBackground = False
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
-        shapetype = params[0].valueAsText
-        shapetypes = shapetype.split(";")
 
-        core.add_layer(shapetypes)
+        core.change_mode()
+
+
+class Export(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "! Export to Server"
+        self.description = "Export shapefiles to kthma_temp"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        what = arcpy.Parameter(
+            displayName="Shape",
+            name="shapetype",
+            datatype="String",
+            parameterType="Required",
+            direction="Input",
+            multiValue=True)
+
+        fc_list = core.list_gdb(core.paths.gdb_check)
+
+        what.filter.list = fc_list
+
+        params = [what]
+        return params
+
+    def isLicensed(self):
+        """Set whether tool is licensed to execute."""
+        return True
+
+    def updateParameters(self, params):
+        return
+
+    def updateMessages(self, parameters):
+        """Modify the messages created by internal validation for each tool
+        parameter.  This method is called after internal validation."""
+        return
+
+    def execute(self, params, messages):
+        arcpy.env.addOutputsToMap = False
+
+        shapes = params[0].valueAsText
+        what_to = shapes.split(";")
+
+        core.geoprocessing.export_to_server(what_to)
 
         return

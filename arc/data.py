@@ -19,6 +19,7 @@ mxdKtimaName = "Ktima.mxd"
 
 meleti = "None"
 mel_type = "None"
+mode = []
 
 if get_pass():
     if mxdName == mxdGeneralName or mxdName == mxdKtimaName:
