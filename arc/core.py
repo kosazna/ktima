@@ -751,21 +751,12 @@ class Create:
 
             pm("\nDONE !\n")
         else:
-            copy_list = ['*shp', '*shx', '*dbf']
-
-            def copy_files(x):
-                for _i in copy_list:
-                    for rootDir, subdirs, filenames in os.walk(paths.old_roads):
-                        for filename in fnmatch.filter(filenames, _i):
-                            if "ROADS" in filename:
-                                _inpath = os.path.join(rootDir, filename)
-                                _outpath = os.path.join(paths.new_roads, rootDir[-x:], filename)
-                                shutil.copyfile(_inpath, _outpath)
-
-            if mel_type == 1:
-                copy_files(17)
-            else:
-                copy_files(11)
+            for fullpath, filename, basename, ext in list_dir(paths.old_roads, match=['.shp', '.shx', '.dbf']):
+                if basename == 'ROADS':
+                    base = paths.new_roads.split('\\')[1:]
+                    base += fullpath.split('\\')[4:]
+                    outpath = cp(base)
+                    c_copy(fullpath, outpath)
 
             status.update("SHAPE", "ROADS", False)
 
