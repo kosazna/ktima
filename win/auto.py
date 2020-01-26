@@ -92,16 +92,6 @@ def user_in(_func):
     return user_action
 
 
-if get_pass():
-    action_type = user_in('action_type')
-
-    if action_type == "1LPAA4PS5":
-        mod_date = (raw_input("\nDate for Metadata (xx/xx/xxxx) : \n").upper())
-else:
-    print("\nAccess denied\n")
-    action_type = "None"
-
-
 def shapefiles():
     if action_type == "1LPAA4PS5":
         get_folder = "L"
@@ -469,30 +459,44 @@ def get_scanned():
 
 
 if get_pass():
-    if action_type == "1":
-        shapefiles()
-    elif action_type == "2":
-        organize()
-    elif action_type == "3":
-        metadata()
-    elif action_type == "4":
-        roads()
-    elif action_type == "5":
-        status.show()
-    elif action_type == "6":
-        clear()
-    elif action_type == "7":
-        counter()
-    elif action_type == "8":
-        get_scanned()
-    elif action_type == '9':
-        extract('Temp', ktl['temp'][user])
-        update_from_server()
-    elif action_type == "1LPAA4PS5":
-        shapefiles()
-        clear()
-        metadata()
-    else:
-        extract('Local', ktl['temp'][user])
+    while True:
+        print('\nGive a command:\n')
+        action_type = user_in('action_type')
+
+        if action_type == "1LPAA4PS5":
+            mod_date = (raw_input("\nDate for Metadata (xx/xx/xxxx) : \n").upper())
+
+        print('_________________________________________________________________________________________________')
+        print('*************************************************************************************************')
+
+        if action_type == "1":
+            shapefiles()
+        elif action_type == "2":
+            organize()
+        elif action_type == "3":
+            metadata()
+        elif action_type == "4":
+            roads()
+        elif action_type == "5":
+            status.show()
+        elif action_type == "6":
+            clear()
+        elif action_type == "7":
+            counter()
+        elif action_type == "8":
+            get_scanned()
+        elif action_type == '9':
+            extract('Temp', ktl['temp'][user])
+            update_from_server()
+        elif action_type == "1LPAA4PS5":
+            shapefiles()
+            clear()
+            metadata()
+        else:
+            extract('Local', ktl['temp'][user])
+
+        print('_________________________________________________________________________________________________')
+        print('*************************************************************************************************')
 else:
-    pass
+    print("\nAccess denied\n")
+    action_type = "None"

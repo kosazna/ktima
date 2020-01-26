@@ -318,13 +318,21 @@ class Identical(object):
             parameterType="Required",
             direction="Input")
 
+        export = arcpy.Parameter(
+            displayName="Export Identical as Shapefile",
+            name="dtb",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
+
         fc_list = core.list_layers()
+        export.value = "false"
 
         if fc_list:
             in_what.filter.list = fc_list
             what.filter.list = fc_list
 
-        params = [what, in_what]
+        params = [what, in_what, export]
         return params
 
     def isLicensed(self):
@@ -349,7 +357,9 @@ class Identical(object):
 
         in_what = params[1].valueAsText
 
-        core.find.find_identical(what_to, in_what)
+        export = bool(params[2].valueAsText)
+
+        core.find.find_identical(what_to, in_what, export)
 
         return
 

@@ -7,7 +7,6 @@
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
 import csv
-import fnmatch
 from organize import *
 
 
@@ -96,11 +95,13 @@ class Queries:
         pm('\nDONE !  -->  {}\n'.format(kt.pr))
 
     @staticmethod
-    def find_identical(what, in_what):
+    def find_identical(what, in_what, export=False):
         if isinstance(what, list):
             _what = what
         else:
             _what = [what]
+
+        to_merge = []
 
         pm('\n')
 
@@ -109,9 +110,19 @@ class Queries:
             identical = get_count(shp)
             clear_selection(shp)
             all_rows = get_count(shp)
-            percentage = round((identical / float(all_rows)) * 100, 2)
+            percentage = round((identical / float(all_rows)) * 100, 1)
+
+            if percentage:
+                to_merge.append(shp)
+
             pm('{:<20} : {:<6}/{:<6} are identical  /  {:<5} %'.format(shp, identical, all_rows, percentage))
             pm('--------------------------------------------------------------')
+
+        if export:
+            for shp in _what:
+                arcpy.SelectLayerByLocation_management(shp, "ARE_IDENTICAL_TO", in_what, selection_type="ADD_TO_SELECTION")
+
+            arcpy.Merge_management(to_merge, paths.gdbm('identical'))
 
         pm('\nDone!\n')
 
