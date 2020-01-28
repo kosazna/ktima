@@ -62,8 +62,13 @@ class Geoprocessing:
 
     @staticmethod
     def export_to_server(copy_files):
+        _path = os.path.join(paths.checks_out, time.strftime("%Y-%m-%d_%H%M"))
+
+        if not os.path.exists(_path):
+            os.mkdir(_path)
+
         for shp in copy_files:
-            arcpy.CopyFeatures_management(paths.gdbc(shp), os.path.join(paths.checks_out, '{}.shp'.format(shp)))
+            arcpy.CopyFeatures_management(paths.gdbc(shp), os.path.join(_path, '{}.shp'.format(shp)))
 
 
 class Queries:

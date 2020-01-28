@@ -29,7 +29,7 @@ kt = NamesAndLists(kt_map)
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 
-kos = Files(src)
-kos.ls(match='.py')
-
-write_json(r'C:\Users\user1\Desktop\tifs\test.json', kos.mapper_nd)
+# kos = Files(src)
+# kos.ls(match='.py')
+#
+# write_json(r'C:\Users\user1\Desktop\tifs\test.json', kos.mapper_nd)
