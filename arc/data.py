@@ -35,9 +35,9 @@ kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
 if get_pass():
     data = load_json(kt_info_path)
-    kt = NamesAndLists(data)
+    lut = NamesAndLists(data)
     if mxdName == mxdGeneralName or mxdName == mxdKtimaName:
-        paths = Paths(meleti, kt.mel_type, kt.company_name)
+        paths = Paths(meleti, lut.mel_type, lut.company_name)
         status = Status(meleti)
         log = Log(meleti)
 else:

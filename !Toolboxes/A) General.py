@@ -30,7 +30,7 @@ class Merge(object):
 
     def getParameterInfo(self):
         shape = arcpy.Parameter(
-            displayName="Shape",
+            displayName="Shapefiles",
             name="shapetype",
             datatype="String",
             parameterType="Required",
@@ -52,7 +52,7 @@ class Merge(object):
             direction="Input")
 
         if core.mxdName == core.mxdGeneralName or core.mxdName == core.mxdKtimaName:
-            merging_list = copy.copy(core.kt.merging_list)
+            merging_list = copy.copy(core.lut.merging_list)
 
             shape.filter.list = merging_list
 
@@ -114,7 +114,7 @@ class Queries(object):
 
     def getParameterInfo(self):
         shape = arcpy.Parameter(
-            displayName="Shape",
+            displayName="Query",
             name="shapetype",
             datatype="String",
             parameterType="Required",
@@ -178,7 +178,7 @@ class Isolate(object):
 
     def getParameterInfo(self):
         shape = arcpy.Parameter(
-            displayName="Shape",
+            displayName="Shapefile",
             name="shapetype",
             datatype="Layer",
             parameterType="Required",
@@ -304,7 +304,7 @@ class Identical(object):
 
     def getParameterInfo(self):
         what = arcpy.Parameter(
-            displayName="Shape",
+            displayName="Shapefile",
             name="shapetype",
             datatype="String",
             parameterType="Required",
@@ -386,7 +386,7 @@ class Export(object):
 
     def getParameterInfo(self):
         what = arcpy.Parameter(
-            displayName="Shape",
+            displayName="Shapefile from {}".format('checks.gdb'),
             name="shapetype",
             datatype="String",
             parameterType="Required",

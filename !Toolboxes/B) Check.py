@@ -42,36 +42,6 @@ class Shapes(object):
         return
 
 
-class GeometryPst(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Geometry Shapefiles"
-        self.description = "Check PST geometry"
-        self.canRunInBackground = False
-
-    def execute(self, parameters, messages):
-        arcpy.env.addOutputsToMap = True
-
-        core.check.pst_geometry()
-
-        return
-
-
-class GeometryFbound(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Geometry FBOUND"
-        self.description = "Check FBOUND geometry"
-        self.canRunInBackground = False
-
-    def execute(self, parameters, messages):
-        arcpy.env.addOutputsToMap = True
-
-        core.check.fbound_geometry()
-
-        return
-
-
 class Geometry(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
@@ -81,7 +51,7 @@ class Geometry(object):
 
     def getParameterInfo(self):
         fields = arcpy.Parameter(
-            displayName="Shape",
+            displayName="Shapefiles",
             name="shapetype",
             datatype="String",
             parameterType="Required",
@@ -95,7 +65,6 @@ class Geometry(object):
 
         params = [fields]
         return params
-
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True

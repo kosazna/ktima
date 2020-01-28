@@ -69,7 +69,7 @@ loc_fl = {"ASTENOT": locASTENOT,
           "VST": locVST,
           "RBOUND": locRBOUND}
 
-req_map = {'merge': kt.merging_list,
+req_map = {'merge': lut.merging_list,
            'shapes': ['ASTENOT', 'ASTTOM', 'PST'],
            'export_per_ota': ['ASTOTA'],
            'fbound_geometry': ['FBOUND'],
@@ -153,8 +153,8 @@ def mxdfiles():
 
 
 def localfiles():
-    for ota in kt.ota_list:
-        for shape in kt.local_data_to_index_list:
+    for ota in lut.ota_list:
+        for shape in lut.local_data_to_index_list:
             local_lyr = paths.ktima(ota, shape, ext=True)
 
             lyr_name = shape + "_" + ota
@@ -187,7 +187,7 @@ def validate():
 
 
 def change_mode():
-    kt.ota_list = ['06005', '06013', '06041', '06060', '06062', '06075', '06111', '06132', '06191', '06199', '06200', '06212']
+    lut.ota_list = ['06005', '06013', '06041', '06060', '06062', '06075', '06111', '06132', '06191', '06199', '06200', '06212']
     mode.append('ALL')
     localfiles()
     pm('\n\nChanged Mode for {}\nMode : {}\n'.format(meleti, mode))

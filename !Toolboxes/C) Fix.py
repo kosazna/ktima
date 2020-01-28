@@ -17,36 +17,6 @@ class Toolbox(object):
             self.tools = []
 
 
-class GeometryPst(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Geometry Shapefiles"
-        self.description = "Fix geometry of all problematic shapefiles"
-        self.canRunInBackground = False
-
-    def execute(self, parameters, messages):
-        arcpy.env.addOutputsToMap = False
-
-        core.fix.pst_geometry()
-
-        return
-
-
-class GeometryFbound(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Geometry FBOUND"
-        self.description = "Fix geometry of problematic FBOUND's"
-        self.canRunInBackground = False
-
-    def execute(self, parameters, messages):
-        arcpy.env.addOutputsToMap = False
-
-        core.fix.fbound_geometry()
-
-        return
-
-
 class Geometry(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
@@ -56,7 +26,7 @@ class Geometry(object):
 
     def getParameterInfo(self):
         fields = arcpy.Parameter(
-            displayName="Shape",
+            displayName="Shapefiles",
             name="shapetype",
             datatype="String",
             parameterType="Required",
@@ -103,51 +73,6 @@ class Roads(object):
         return
 
 
-class PstFields(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Fields PST"
-        self.description = ""
-        self.canRunInBackground = False
-
-    def execute(self, parameters, messages):
-        arcpy.env.addOutputsToMap = False
-
-        core.fields.pst()
-
-        return
-
-
-class AsttomFields(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Fields ASTTOM"
-        self.description = ""
-        self.canRunInBackground = False
-
-    def execute(self, parameters, messages):
-        arcpy.env.addOutputsToMap = False
-
-        core.fields.asttom()
-
-        return
-
-
-class AstenotFields(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Fields ASTENOT"
-        self.description = ""
-        self.canRunInBackground = False
-
-    def execute(self, parameters, messages):
-        arcpy.env.addOutputsToMap = False
-
-        core.fields.astenot()
-
-        return
-
-
 class Fields(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
@@ -157,7 +82,7 @@ class Fields(object):
 
     def getParameterInfo(self):
         fields = arcpy.Parameter(
-            displayName="Shape",
+            displayName="Shapefiles",
             name="shapetype",
             datatype="String",
             parameterType="Required",

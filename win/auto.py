@@ -15,8 +15,8 @@ arcpy.env.overwriteOutput = True
 meleti = str(sys.argv[1].split('\\')[1])
 data = load_json(cp([meleti, inputdata, docs_i, 'KT_Info.json']))
 
-kt = NamesAndLists(data)
-paths = Paths(meleti, kt.mel_type, kt.company_name)
+lut = NamesAndLists(data)
+paths = Paths(meleti, lut.mel_type, lut.company_name)
 status = Status(meleti)
 log = Log(meleti)
 
@@ -48,8 +48,8 @@ def user_in(_func):
 
     sl = ['']
     ol = ['']
-    [sl.append(i) for i in kt.local_list]
-    [ol.append(i) for i in kt.ota_list]
+    [sl.append(i) for i in lut.local_list]
+    [ol.append(i) for i in lut.ota_list]
 
     approved = {'action_type': ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '1LPAA4PS5'],
                 'get_folder': ['S', 'L'],
@@ -112,19 +112,19 @@ def shapefiles():
     log_status = []
 
     if get_folder == "S" and export_folder == "L":
-        shape_list = kt.server_list
+        shape_list = lut.server_list
         log_status.append('Server')
         log_status.append('LocalData')
 
         if not shapes:
-            for shape in kt.status_list:
+            for shape in lut.status_list:
                 status.update('SHAPE', shape, False)
             status.update('EXPORTED', "FBOUND", False)
         else:
             for shape in user_shapes:
                 status.update('SHAPE', shape, False)
     elif get_folder == "L" and export_folder == "P":
-        shape_list = kt.local_list
+        shape_list = lut.local_list
         log_status.append('LocalData')
         log_status.append('ParadosiData')
 
@@ -153,11 +153,11 @@ def shapefiles():
 
     if get_pass():
         if ota_code == "" and shapes == "":
-            for ota in kt.ota_list:
+            for ota in lut.ota_list:
                 progress_counter += 1
                 for shape in shape_list:
                     export(shape, ota)
-                progress(progress_counter, len(kt.ota_list))
+                progress(progress_counter, len(lut.ota_list))
         elif ota_code != "" and shapes != "":
             for ota in user_ota_list:
                 progress_counter += 1
@@ -171,11 +171,11 @@ def shapefiles():
                     export(shape, ota)
                 progress(progress_counter, len(user_ota_list))
         elif shapes != "":
-            for ota in kt.ota_list:
+            for ota in lut.ota_list:
                 progress_counter += 1
                 for shape in user_shapes:
                     export(shape, ota)
-                progress(progress_counter, len(kt.ota_list))
+                progress(progress_counter, len(lut.ota_list))
 
         missing_list.sort()
 
@@ -252,7 +252,7 @@ def clear():
 
         if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
             for fullpath, filename, basename, ext in list_dir(clearlocalpath, match=del_list):
-                if clear_type == "A" and clear_folder == "P" and basename in kt.no_del_list:
+                if clear_type == "A" and clear_folder == "P" and basename in lut.no_del_list:
                     pass
                 else:
                     try:
@@ -296,7 +296,7 @@ def metadata():
     except IOError:
         pass
 
-    if kt.mel_type == 1:
+    if lut.mel_type == 1:
         try:
             metas = {'BLOCK_PNT_METADATA': block_pnt_cont,
                      'ROADS_METADATA': roads_cont,
@@ -311,7 +311,7 @@ def metadata():
 
     if get_pass():
         progress_counter = 0
-        for ota in kt.ota_list:
+        for ota in lut.ota_list:
             progress_counter += 1
             for meta in metas:
                 path = paths.meta(ota, meta)
@@ -322,7 +322,7 @@ def metadata():
                 with open(path, 'w') as meta_f:
                     meta_f.write(content)
 
-            progress(progress_counter, len(kt.ota_list))
+            progress(progress_counter, len(lut.ota_list))
 
         log("Metadata")
 
@@ -339,14 +339,14 @@ def organize():
         if org_folder == 'A':
             log_status.append('Anaktiseis')
             for fullpath, filename, basename, ext in list_dir(paths.anakt_in):
-                for ota in kt.ota_list:
+                for ota in lut.ota_list:
                     if ota in basename[9:14]:
                         outpath = os.path.join(paths.anakt_out, ota, filename)
                         c_copy(fullpath, outpath)
         elif org_folder == 'S':
             log_status.append('Saromena')
             for fullpath, filename, basename, ext in list_dir(paths.saromena_in):
-                for ota in kt.ota_list:
+                for ota in lut.ota_list:
                     if basename[0] == 'D' and ota in basename[1:6]:
                         outpath = os.path.join(paths.saromena_out, ota, filename)
                         c_copy(fullpath, outpath)
@@ -356,7 +356,7 @@ def organize():
         elif org_folder == 'M':
             log_status.append("MDB's")
             for fullpath, filename, basename, ext in list_dir(paths.mdb_in):
-                for ota in kt.ota_list:
+                for ota in lut.ota_list:
                     if ota in basename and 'VSTEAS_REL' in basename:
                         outpath = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', filename)
                         c_copy(fullpath, outpath)
@@ -390,12 +390,12 @@ def counter(path_to_count=paths.paradosidata):
 
     for i in shapes.paths:
         path_list = i.split('\\')
-        if kt.mel_type == 1:
+        if lut.mel_type == 1:
             ota_counter[path_list[6]].append(int(path_list[4]))
         else:
             ota_counter[path_list[5]].append(int(path_list[4]))
 
-    otas = list(map(int, kt.ota_list))
+    otas = list(map(int, lut.ota_list))
 
     for i in otas:
         for shp in ota_counter:
@@ -444,7 +444,7 @@ def get_scanned():
     progress_counter = 0
     files = 0
 
-    for ota in kt.ota_list:
+    for ota in lut.ota_list:
         with open(cp([meleti, outputdata, 'Scanned_List', '{}_Scanned_Files'.format(ota)]), 'w') as f:
             progress_counter += 1
             repo = cp([ota], origin=drive_letter)
@@ -453,7 +453,7 @@ def get_scanned():
                     if filename.endswith('.tif') or filename.endswith('.TIF'):
                         files += 1
                         f.write('{}\n'.format(os.path.join(dirpath, filename)))
-        progress(progress_counter, len(kt.ota_list))
+        progress(progress_counter, len(lut.ota_list))
 
     pm('\n\n{} scanned documents extracted from {}:/\n\n'.format(files, drive_letter))
 
