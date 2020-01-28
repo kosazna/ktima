@@ -33,3 +33,5 @@ dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 # kos.ls(match='.py')
 #
 # write_json(r'C:\Users\user1\Desktop\tifs\test.json', kos.mapper_nd)
+
+count_lines()
