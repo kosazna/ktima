@@ -153,8 +153,7 @@ class General:
 
     @staticmethod
     @mxd
-    def export_per_ota(fc, spatial=True, field='KAEK', export_shp=True, database=False, formal=False, name=None):
-
+    def export_per_ota(fc, spatial, field='KAEK', export_shp=True, database=False, formal=False, name=None):
         def export(_fc, _ota):
             if export_shp:
                 if database:

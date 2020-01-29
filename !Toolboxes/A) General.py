@@ -274,7 +274,7 @@ class OtaExport(object):
         if params[0].valueAsText:
             params[2].filter.list = core.list_fields(params[0].valueAsText, 'name')
 
-        return
+        return params
 
     def updateMessages(self, parameters):
         """Modify the messages created by internal validation for each tool
@@ -285,12 +285,12 @@ class OtaExport(object):
         arcpy.env.addOutputsToMap = False
 
         shapetype = params[0].valueAsText
-        spatial = bool(params[1].valueAsText)
-        field = params[2].valueAsText
-        export = bool(params[3].valueAsText)
-        dtbase = bool(params[4].valueAsText)
+        _spatial = bool(params[1].value)
+        _field = params[2].valueAsText
+        export = bool(params[3].value)
+        dtbase = bool(params[4].value)
 
-        core.general.export_per_ota(shapetype, spatial=spatial, field=field, export_shp=export, database=dtbase)
+        core.general.export_per_ota(shapetype, spatial=_spatial, field=_field, export_shp=export, database=dtbase)
 
         return
 
@@ -357,7 +357,7 @@ class Identical(object):
 
         in_what = params[1].valueAsText
 
-        export = bool(params[2].valueAsText)
+        export = bool(params[2].value)
 
         core.find.find_identical(what_to, in_what, export)
 
