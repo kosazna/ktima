@@ -72,7 +72,11 @@ class ChangeMode(object):
         mode = params[0].valueAsText
 
         _otas = params[1].valueAsText
-        otas = _otas.split(';')
+
+        if _otas:
+            otas = _otas.split(';')
+        else:
+            otas = core.lut.ota_list
 
         core.kt.reset_mode(mode.lower(), otas)
 
