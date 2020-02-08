@@ -229,7 +229,7 @@ class General:
         self.gdb = gdb[mode]
 
     def isolate(self, fc):
-        if status[self.mode].check('SHAPE', 'ASTOTA'):
+        if ca('ASTOTA'):
             org[self.mode].add_layer([lut.astotaM])
 
             arcpy.Dissolve_management(lut.astotaM, self.gdb(lut.oria_etairias))
@@ -241,8 +241,6 @@ class General:
 
             mdf(lut.oria_etairias, importance='!!')
             mdf(fc_n)
-        else:
-            raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
     @mxd
     def export_per_ota(self, fc, spatial, field='KAEK',
