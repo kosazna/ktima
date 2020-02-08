@@ -15,7 +15,7 @@ class Paths:
         self.company_name = company_name
         self.meleti = meleti
 
-        self.company_gdb_name = 'company.gdb'
+        self.company_gdb_name = 'ktima.gdb'
         self.standalone_gdb_name = 'standalone.gdb'
         # self.gdb_check = cp([meleti, geodatabases, 'checks.gdb'])
         # self.gdb_misc = cp([meleti, geodatabases, 'misc.gdb'])

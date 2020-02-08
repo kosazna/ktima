@@ -24,6 +24,8 @@ class Toolbox(object):
             self.tools = []
 
 
+###############################################################################
+
 class Fbound(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
@@ -31,13 +33,21 @@ class Fbound(object):
         self.description = "Create new FBOUND's"
         self.canRunInBackground = False
 
+    def getParameterInfo(self):
+        return
+
+    def updateParameters(self, params):
+        return
+
     def execute(self, parameters, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.create.fbound()
+        core.create[core.kt.mode].fbound()
 
         return
 
+
+###############################################################################
 
 class Roads(object):
     def __init__(self):
@@ -46,13 +56,21 @@ class Roads(object):
         self.description = "Create New ROADS's"
         self.canRunInBackground = False
 
+    def getParameterInfo(self):
+        return
+
+    def updateParameters(self, params):
+        return
+
     def execute(self, parameters, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.create.roads()
+        core.create[core.kt.mode].roads()
 
         return
 
+
+###############################################################################
 
 class Diekdikisi(object):
     def __init__(self):
@@ -61,13 +79,21 @@ class Diekdikisi(object):
         self.description = "Creare FBOUND claim"
         self.canRunInBackground = False
 
+    def getParameterInfo(self):
+        return
+
+    def updateParameters(self, params):
+        return
+
     def execute(self, parameters, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.create.fboundclaim()
+        core.create[core.kt.mode].fboundclaim()
 
         return
 
+
+###############################################################################
 
 class PreFbound(object):
     def __init__(self):
@@ -76,9 +102,15 @@ class PreFbound(object):
         self.description = "Create PRE_FBOUND's"
         self.canRunInBackground = False
 
+    def getParameterInfo(self):
+        return
+
+    def updateParameters(self, params):
+        return
+
     def execute(self, parameters, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.create.pre_fbound()
+        core.create[core.kt.mode].pre_fbound()
 
         return

@@ -10,6 +10,21 @@ import csv
 from organize import *
 
 
+# Check - Approve
+def ca(*args):
+    checker = 0
+    for shp in args:
+        if not status[kt.mode].check('SHAPE', shp):
+            pm('\n{} not Merged'.format(shp))
+            checker += 1
+
+    if not checker:
+        return True
+    else:
+        pm('!! Task Aborted !!')
+        return False
+
+
 class Geoprocessing:
     def __init__(self, mode, standalone=False):
         self.mode = mode
@@ -35,7 +50,9 @@ class Geoprocessing:
                         arcpy.Merge_management(
                             list(org[self.mode].mxd_fl[_shape]['list']),
                             self.gdb(f_name))
+
                         pm("\nMerged {}\n".format(_shape))
+
                         status[self.mode].update('SHAPE', shapefile, True)
                         log_list.append(str(shapefile))
                     except RuntimeError:
@@ -59,8 +76,6 @@ class Geoprocessing:
                 for ota in kt.otas:
                     tomerge.append(r'{}\{}_{}'.format(shapefile.lower(),
                                                       shapefile, ota))
-
-                pm(tomerge)
 
                 try:
                     arcpy.Merge_management(tomerge, self.gdb(f_name))
@@ -293,9 +308,7 @@ class Check:
 
     @mxd
     def shapes(self, x):
-        if status[self.mode].check('SHAPE', "PST") and \
-                status[self.mode].check('SHAPE', "ASTTOM") and \
-                status[self.mode].check('SHAPE', "ASTENOT"):
+        if ca('PST', 'ASTTOM', 'ASTENOT'):
 
             precision = float(10 ** -x)
             precision_txt = '{:.{}f} m'.format(precision, x)
@@ -303,17 +316,15 @@ class Check:
             pm("\nCheck accuracy : {}\n".format(precision_txt))
 
             # geoprocessing
-            # if not standalone:
-            #     geoprocessing.union("PST", precision, gaps=False)
-            #     geoprocessing.union("ASTENOT", precision, gaps=True)
-            #     geoprocessing.union("ASTTOM", precision, gaps=False)
-            # else:
-            #     geoprocessing.union("PST", precision,
-            #                         gaps=False, standalone=True, otas=otas)
-            #     geoprocessing.union("ASTENOT", precision,
-            #                         gaps=True, standalone=True, otas=otas)
-            #     geoprocessing.union("ASTTOM", precision,
-            #                         gaps=False, standalone=True, otas=otas)
+            if self.mode == ktima_m:
+                geoprocessing[self.mode].union(['PST', 'ASTENOT', 'ASTTOM'],
+                                               precision,
+                                               gaps=False)
+            else:
+                geoprocessing[self.mode].union(['PST', 'ASTENOT', 'ASTTOM'],
+                                               precision,
+                                               gaps=False,
+                                               standalone=True, otas=kt.otas)
 
             turn_off()
             org[self.mode].add_layer([self.pst, self.astenot, self.asttom])
@@ -461,11 +472,9 @@ class Check:
                                      count_astenot_asttom)
             status[self.mode].update("WRONG_KAEK", "PST_ASTENOT",
                                      count_pst_astenot)
-        else:
-            raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
     def pst_geometry(self):
-        if status[self.mode].check('SHAPE', "PST"):
+        if ca('PST'):
             org[self.mode].add_layer([self.pst])
             turn_off()
 
@@ -524,8 +533,6 @@ class Check:
             pm("\nDONE !\n")
 
             log('Check PST Geometry', log_geometry)
-        else:
-            raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
     @mxd
     def fbound_geometry(self):
@@ -587,10 +594,8 @@ class Check:
 
     def roads(self, _roads='old'):
         roads = choose_roads(_roads)
-        if status[self.mode].check('SHAPE', "PST") and \
-                status[self.mode].check('SHAPE', roads) and \
-                status[self.mode].check('SHAPE', "ASTENOT"):
 
+        if ca('PST', 'ASTENOT', roads):
             org[self.mode].add_layer([self.pst, lut.roadsM, self.astenot])
 
             # Eksagwgh kai enosi eidikwn ektasewn
@@ -647,11 +652,9 @@ class Check:
             status[self.mode].update("ROADS", "PROBS", count_inter_astenot)
             status[self.mode].update("ROADS", "CD", time_now)
             status[self.mode].update("ROADS", "CPROBS", bool(count_inter_all))
-        else:
-            raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
     def dbound(self):
-        if status[self.mode].check('SHAPE', "DBOUND"):
+        if ca('DBOUND'):
             # Elegxos gia DBOUND pou mporei na toys leipei eite to
             # DEC_ID eite to DEC_DATE
             org[self.mode].add_layer([self.dbound])
@@ -677,11 +680,9 @@ class Check:
             log('Check DBOUND', count_dbound)
             status[self.mode].update("DBOUND", "PROBS", count_dbound)
             status[self.mode].update("DBOUND", "CD", time_now)
-        else:
-            raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
     def bld(self):
-        if status[self.mode].check('SHAPE', "BLD"):
+        if ca('BLD'):
             # Elegxos gia BLD pou mporei na exoun thn timh '0' eite
             # sto BLD_T_C eite sto BLD_NUM
             org[self.mode].add_layer([self.bld])
@@ -710,8 +711,6 @@ class Check:
             log('Check BLD', count_bld)
             status[self.mode].update("BLD", "PROBS", count_bld)
             status[self.mode].update("BLD", "CD", time_now)
-        else:
-            raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
 
 class Fix:
@@ -871,7 +870,7 @@ class Create:
         self.fbound = self.gdb(lut.fboundM)
 
     def fbound(self):
-        if status[self.mode].check('SHAPE', "ASTOTA"):
+        if ca('ASTOTA'):
             # Dhmiourgia tou sunolikou FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis([self.gdb(self.astota), paths.dasinpath],
                                      self.gdb(lut.gdb_fbound_all),
@@ -958,8 +957,6 @@ class Create:
             status[self.mode].update("EXPORTED", "FBOUND_ED", time_now)
 
             log('Create FBOUND')
-        else:
-            raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
     def roads(self):
         if status[self.mode].check("ROADS", "CPROBS") and not status[
@@ -1075,8 +1072,7 @@ class Create:
             pm("\nDONE !\n")
 
     def fboundclaim(self):
-        if status[self.mode].check('SHAPE', "PST") and \
-                status[self.mode].check('SHAPE', "FBOUND"):
+        if ca('PST', 'FBOUND'):
             # Dhmiourgia tou pinaka tis diekdikisis tou dasous
             arcpy.Intersect_analysis(
                 [self.gdb(self.pst), self.gdb(lut.fboundM)],
@@ -1142,11 +1138,9 @@ class Create:
                     count_claims))
 
             log('Create FBOUND Claims', count_claims)
-        else:
-            raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
     def pre_fbound(self):
-        if status[self.mode].check('SHAPE', "ASTOTA"):
+        if ca('ASTOTA'):
             # Dhmiourgia tou sunolikoy PRE_FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis(
                 [self.gdb(self.astota), paths.predasinpath],

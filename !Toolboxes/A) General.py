@@ -21,7 +21,7 @@ class Toolbox(object):
         # List of tool classes associated with this toolbox
         if core.get_pass():
             self.tools = [Merge, Queries, Info, Isolate, OtaExport,
-                          Identical, Export, ChangeMode]
+                          Identical, ExportToServer, ChangeMode]
         else:
             self.tools = []
 
@@ -51,8 +51,8 @@ class ChangeMode(object):
             direction="Input",
             multiValue=True)
 
-        mode.value = 'COMPANY'
-        mode.filter.list = ['COMPANY', 'STANDALONE']
+        mode.value = 'KTIMA'
+        mode.filter.list = ['KTIMA', 'STANDALONE']
         otas.filter.list = []
 
         params = [mode, otas]
@@ -86,6 +86,9 @@ class Info(object):
         self.description = "Show Shapefile status and problems of {}".format(
             core.meleti)
         self.canRunInBackground = False
+
+    def updateParameters(self, params):
+        return
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
@@ -147,10 +150,6 @@ class OtaExport(object):
         return params
 
     def updateParameters(self, params):
-        """Modify the values and properties of parameters before internal
-        validation is performed.  This method is called whenever a parameter
-        has been changed."""
-
         if params[0].valueAsText:
             params[2].filter.list = core.list_fields(params[0].valueAsText,
                                                      'name')
@@ -177,7 +176,7 @@ class OtaExport(object):
 
 ###############################################################################
 
-class Export(object):
+class ExportToServer(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
         self.label = "! Export to Server"
@@ -305,10 +304,7 @@ class Isolate(object):
         params = [shape]
         return params
 
-    def updateParameters(self, parameters):
-        """Modify the values and properties of parameters before internal
-        validation is performed.  This method is called whenever a parameter
-        has been changed."""
+    def updateParameters(self, params):
         return
 
     def execute(self, params, messages):
@@ -410,16 +406,16 @@ class Merge(object):
             except ValueError:
                 pass
 
-        # if core.mxdName == core.mxdKtimaName and not standalone_merge:
-        #     core.add_layer(shapes, lyr=True)
-        #     core.geoprocessing.merge(shapetypes, force_merge, roads)
-        # elif standalone_merge:
-        #     core.add_layer(shapes, lyr=True)
-        #     core.geoprocessing.merge(shapetypes, force_merge, roads,
-        #                              standalone_merge, otas)
-        # else:
-        #     core.pm('!! Merge is performed only in -- {} -- !!'.format(
-        #         core.mxdKtimaName))
+            # if core.mxdName == core.mxdKtimaName and not standalone_merge:
+            #     core.add_layer(shapes, lyr=True)
+            #     core.geoprocessing.merge(shapetypes, force_merge, roads)
+            # elif standalone_merge:
+            #     core.add_layer(shapes, lyr=True)
+            #     core.geoprocessing.merge(shapetypes, force_merge, roads,
+            #                              standalone_merge, otas)
+            # else:
+            #     core.pm('!! Merge is performed only in -- {} -- !!'.format(
+            #         core.mxdKtimaName))
 
             core.org[core.kt.mode].add_layer(shapes, lyr=True)
 
@@ -452,10 +448,7 @@ class Queries(object):
         params = [shape]
         return params
 
-    def updateParameters(self, parameters):
-        """Modify the values and properties of parameters before internal
-        validation is performed.  This method is called whenever a parameter
-        has been changed."""
+    def updateParameters(self, params):
         return
 
     def execute(self, params, messages):

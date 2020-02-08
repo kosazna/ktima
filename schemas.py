@@ -9,6 +9,12 @@
 import getpass
 from cust_win import *
 
+ktima_m = 'ktima'
+standalone_m = 'standalone'
+
+json_status = {ktima_m: 'KT_Status_Ktima.json',
+               standalone_m: 'KT_Status_Standalone.json'}
+
 gd = {'aznavouridis.k': 'D',
       'user1': 'C',
       'kazna': 'D'}

@@ -8,15 +8,13 @@
 # ---------------------------------------------------#
 from logger import *
 
-json_status = {'company': 'KT_Status_company.json',
-               'standalone': 'KT_Status_standalone.json'}
-
 
 class Status:
 
-    def __init__(self, meleti, mode):
+    def __init__(self, meleti, mode, otas):
         self.mode = mode
         self.meleti = meleti
+        self.otas = otas
         self.status_path = cp([meleti, inputdata, docs_i, json_status[mode]])
 
     def check(self, shape_type, shape):
@@ -36,7 +34,10 @@ class Status:
     def show(self):
         data = load_json(self.status_path)
 
-        pm("\nMeleti: {}  --  {}" .format(self.meleti, self.mode.upper()))
+        pm("\nMeleti: {}  --  {}".format(self.meleti, self.mode.upper()))
+
+        if self.mode == standalone_m:
+            pm("\nOTA : {}".format(self.otas))
 
         pm("\nGeometry Status")
         pm("---------------------")

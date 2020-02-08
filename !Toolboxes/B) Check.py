@@ -25,6 +25,8 @@ class Toolbox(object):
             self.tools = []
 
 
+###############################################################################
+
 class Shapes(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
@@ -65,7 +67,6 @@ class Shapes(object):
         return params
 
     def updateParameters(self, params):
-
         # if params[1].value:
         #     otas_values = copy.copy(core.lut.ota_list)
         #     params[2].filter.list = otas_values
@@ -79,10 +80,12 @@ class Shapes(object):
         # otas = otas_to_merge.split(";")
         # standalone_merge = bool(params[1].value)
 
-        core.check.shapes(params[0].value)
+        core.check[core.kt.mode].shapes(params[0].value)
 
         return
 
+
+###############################################################################
 
 class Geometry(object):
     def __init__(self):
@@ -92,7 +95,7 @@ class Geometry(object):
         self.canRunInBackground = False
 
     def getParameterInfo(self):
-        fields = arcpy.Parameter(
+        shape = arcpy.Parameter(
             displayName="Shapefiles",
             name="shapetype",
             datatype="String",
@@ -100,28 +103,33 @@ class Geometry(object):
             direction="Input",
             multiValue=True)
 
-        fields.filter.list = ["PST", "FBOUND"]
+        shape.filter.list = ["PST", "FBOUND"]
 
-        params = [fields]
+        params = [shape]
 
         return params
+
+    def updateParameters(self, params):
+        return
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
 
-        _fields = params[0].valueAsText
-        shapes = _fields.split(";")
+        shape = params[0].valueAsText
+        shapes = shape.split(";")
 
         for _shape in shapes:
             if _shape == "PST":
-                core.check.pst_geometry()
+                core.check[core.kt.mode].pst_geometry()
             elif _shape == "FBOUND":
-                core.check.fbound_geometry()
+                core.check[core.kt.mode].fbound_geometry()
             else:
                 pass
 
         return
 
+
+###############################################################################
 
 class Roads(object):
     def __init__(self):
@@ -143,6 +151,9 @@ class Roads(object):
         params = [roads]
         return params
 
+    def updateParameters(self, params):
+        return
+
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
         new_roads = bool(params[0].value)
@@ -152,10 +163,12 @@ class Roads(object):
         else:
             roads = 'old'
 
-        core.check.roads(roads)
+        core.check[core.kt.mode].roads(roads)
 
         return
 
+
+###############################################################################
 
 class Dbound(object):
     def __init__(self):
@@ -164,13 +177,21 @@ class Dbound(object):
         self.description = "Check DBOUND for missing values"
         self.canRunInBackground = False
 
+    def getParameterInfo(self):
+        return
+
+    def updateParameters(self, params):
+        return
+
     def execute(self, parameters, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check.dbound()
+        core.check[core.kt.mode].dbound()
 
         return
 
+
+###############################################################################
 
 class Bld(object):
     def __init__(self):
@@ -179,9 +200,15 @@ class Bld(object):
         self.description = "Check BLD for missing values"
         self.canRunInBackground = False
 
+    def getParameterInfo(self):
+        return
+
+    def updateParameters(self, params):
+        return
+
     def execute(self, parameters, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check.bld()
+        core.check[core.kt.mode].bld()
 
         return

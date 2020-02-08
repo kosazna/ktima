@@ -24,6 +24,8 @@ class Toolbox(object):
             self.tools = []
 
 
+###############################################################################
+
 class Geometry(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
@@ -40,13 +42,16 @@ class Geometry(object):
             direction="Input",
             multiValue=True)
 
-        if core.mxdName == core.mxdGeneralName or core.mxdName == core.mxdKtimaName:
+        if core.mxdName == core.mxdKtimaName:
             fields.filter.list = ["PST", "FBOUND"]
         else:
             fields.filter.list = ["PST"]
 
         params = [fields]
         return params
+
+    def updateParameters(self, params):
+        return
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = False
@@ -56,14 +61,16 @@ class Geometry(object):
 
         for _shape in shapes:
             if _shape == "PST":
-                core.fix.pst_geometry()
+                core.fix[core.kt.mode].pst_geometry()
             elif _shape == "FBOUND":
-                core.fix.fbound_geometry()
+                core.fix[core.kt.mode].fbound_geometry()
             else:
                 pass
 
         return
 
+
+###############################################################################
 
 class Roads(object):
     def __init__(self):
@@ -72,13 +79,21 @@ class Roads(object):
         self.description = "Fix roads so as not to intersect with nothing"
         self.canRunInBackground = False
 
+    def getParameterInfo(self):
+        return
+
+    def updateParameters(self, params):
+        return
+
     def execute(self, parameters, messages):
         arcpy.env.addOutputsToMap = False
 
-        core.fix.roads()
+        core.fix[core.kt.mode].roads()
 
         return
 
+
+###############################################################################
 
 class Fields(object):
     def __init__(self):
@@ -101,6 +116,9 @@ class Fields(object):
         params = [fields]
         return params
 
+    def updateParameters(self, params):
+        return
+
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = False
 
@@ -109,11 +127,11 @@ class Fields(object):
 
         for _shape in shapes:
             if _shape == "ASTENOT":
-                core.fields.astenot()
+                core.fields[core.kt.mode].astenot()
             elif _shape == "ASTTOM":
-                core.fields.asttom()
+                core.fields[core.kt.mode].asttom()
             elif _shape == "PST":
-                core.fields.pst()
+                core.fields[core.kt.mode].pst()
             else:
                 pass
 

@@ -15,8 +15,6 @@ mxdPath = mxd.filePath
 mxdName = os.path.basename(mxdPath)
 
 mxdKtimaName = "Ktima.mxd"
-ktima_m = 'ktima'
-standalone_m = 'standalone'
 
 meleti = "None"
 mel_type = "None"
@@ -31,6 +29,16 @@ class Kt:
     def reset_mode(self, mode, otas):
         self.mode = mode
         self.otas = otas
+        status[self.mode].otas = self.otas
+
+        pm('''
+        Mode Changed !\n
+        Mode : {}
+        OTA : {}
+        '''.format(self.mode, self.otas))
+
+        for shape in lut.merging_list:
+            status[self.mode].update('SHAPE', shape, False)
 
 
 if get_pass():
@@ -55,8 +63,8 @@ lut = NamesAndLists(data)
 kt = Kt(meleti, ktima_m, lut.ota_list)
 log = Log(meleti)
 
-status = {ktima_m: Status(meleti, ktima_m),
-          standalone_m: Status(meleti, standalone_m)}
+status = {ktima_m: Status(meleti, ktima_m, lut.ota_list),
+          standalone_m: Status(meleti, standalone_m, kt.otas)}
 
 gdb = {ktima_m: paths.gdbc,
        standalone_m: paths.gdbs}
