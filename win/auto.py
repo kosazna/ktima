@@ -17,7 +17,7 @@ data = load_json(cp([meleti, inputdata, docs_i, 'KT_Info.json']))
 
 lut = NamesAndLists(data)
 paths = Paths(meleti, lut.mel_type, lut.company_name)
-status = Status(meleti)
+status = Status(meleti, 'company')
 log = Log(meleti)
 
 

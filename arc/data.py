@@ -14,15 +14,25 @@ mxd = arcpy.mapping.MapDocument("CURRENT")
 mxdPath = mxd.filePath
 mxdName = os.path.basename(mxdPath)
 
-mxdGeneralName = "General.mxd"
+mxdStandaloneName = "Standalone.mxd"
 mxdKtimaName = "Ktima.mxd"
 
 meleti = "None"
 mel_type = "None"
-mode = []
+
+
+class Kt:
+    def __init__(self, mode, otas):
+        self.mode = mode
+        self.otas = otas
+
+    def reset_mode(self, mode, otas):
+        self.mode = mode
+        self.otas = otas
+
 
 if get_pass():
-    if mxdName == mxdGeneralName or mxdName == mxdKtimaName:
+    if mxdName == mxdStandaloneName or mxdName == mxdKtimaName:
         meleti = mxdPath.split('\\')[1]
     else:
         pass
@@ -30,18 +40,24 @@ else:
     pm("\nAccess denied\n")
     print("\nAccess denied\n")
 
-arcpy.env.workspace = cp([meleti, geodatabases, 'checks.gdb'])
+arcpy.env.workspace = cp([meleti, gdbs, 'company.gdb'])
 kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
-if get_pass():
-    data = load_json(kt_info_path)
-    lut = NamesAndLists(data)
-    if mxdName == mxdGeneralName or mxdName == mxdKtimaName:
-        paths = Paths(meleti, lut.mel_type, lut.company_name)
-        status = Status(meleti)
-        log = Log(meleti)
-else:
-    pass
+data = load_json(kt_info_path)
+
+# Instantiating Classes
+
+lut = NamesAndLists(data)
+paths = Paths(meleti, lut.mel_type, lut.company_name)
+lut = NamesAndLists(data)
+kt = Kt('company', lut.ota_list)
+log = Log(meleti)
+
+status = {'company': Status(meleti, 'company'),
+          'standalone': Status(meleti, 'standalone')}
+
+gdb = {'company': paths.gdbc,
+       'standalone': paths.gdbs}
 
 
 def df_now(step="list_layers"):

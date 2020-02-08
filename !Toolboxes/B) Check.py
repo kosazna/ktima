@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import arcpy
 from ktima.arc import *
+import copy
 
 
 class Toolbox(object):
@@ -32,11 +33,45 @@ class Shapes(object):
             parameterType="Required",
             direction="Input")
 
+        # standalone = arcpy.Parameter(
+        #     displayName="Standalone check",
+        #     name="Standalone Merge",
+        #     datatype="Boolean",
+        #     parameterType="Required",
+        #     direction="Input")
+        #
+        # otas_to_merge = arcpy.Parameter(
+        #     displayName="OTA",
+        #     name="OTA",
+        #     datatype="String",
+        #     parameterType="Optional",
+        #     direction="Input",
+        #     multiValue=True)
+
+        # if core.mxdName == core.mxdGeneralName or core.mxdName == core.mxdKtimaName:
+        #     otas_values = copy.copy(core.lut.ota_list)
+        #     otas_to_merge.filter.list = []
+        #
+        # standalone.value = "false"
+
         params = [dekadika]
         return params
 
+    def updateParameters(self, params):
+
+        # if params[1].value:
+        #     otas_values = copy.copy(core.lut.ota_list)
+        #     params[2].filter.list = otas_values
+
+        return
+
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
+
+        # otas_to_merge = params[2].valueAsText
+        # otas = otas_to_merge.split(";")
+        # standalone_merge = bool(params[1].value)
+
         core.check.shapes(params[0].value)
 
         return
@@ -58,12 +93,10 @@ class Geometry(object):
             direction="Input",
             multiValue=True)
 
-        if core.mxdName == core.mxdGeneralName or core.mxdName == core.mxdKtimaName:
-            fields.filter.list = ["PST", "FBOUND"]
-        else:
-            fields.filter.list = ["PST"]
+        fields.filter.list = ["PST", "FBOUND"]
 
         params = [fields]
+
         return params
 
     def execute(self, params, messages):

@@ -8,208 +8,85 @@ class Toolbox(object):
     def __init__(self):
         """Define the toolbox (the name of the toolbox is the name of the
         .pyt file)."""
-        self.label = "ServerExport"
+        self.label = "General_Tasks"
         self.alias = ""
 
         # List of tool classes associated with this toolbox
         if core.get_pass():
-            if core.meleti == 'KT1-05':
-                self.tools = [Merge, Queries, Info, Isolate, OtaExport, Identical, Export, ChangeMode]
-            else:
-                self.tools = [Merge, Queries, Info, Isolate, OtaExport, Identical, Export]
+            self.tools = [Merge, Queries, Info, Isolate, OtaExport,
+                          Identical, Export, ChangeMode]
         else:
             self.tools = []
 
 
-class Merge(object):
+###############################################################################
+
+class ChangeMode(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "Merge Shapefiles"
-        self.description = "ROADS merge is done in old ROADS by default"
+        self.label = "! Change Mode !".format(core.meleti)
+        self.description = "Changing check mode".format(core.meleti)
         self.canRunInBackground = False
 
     def getParameterInfo(self):
-        shape = arcpy.Parameter(
-            displayName="Shapefiles",
-            name="shapetype",
+        mode = arcpy.Parameter(
+            displayName="Mode",
+            name="Mode",
             datatype="String",
             parameterType="Required",
+            direction="Input")
+
+        otas = arcpy.Parameter(
+            displayName="OTA",
+            name="OTA",
+            datatype="String",
+            parameterType="Optional",
             direction="Input",
             multiValue=True)
 
-        force = arcpy.Parameter(
-            displayName="Force Merge",
-            name="force merge",
-            datatype="Boolean",
-            parameterType="Required",
-            direction="Input")
+        mode.value = 'COMPANY'
+        mode.filter.list = ['COMPANY', 'STANDALONE']
+        otas.filter.list = []
 
-        roads = arcpy.Parameter(
-            displayName="Merge new ROADS",
-            name="roads",
-            datatype="Boolean",
-            parameterType="Required",
-            direction="Input")
+        params = [mode, otas]
 
-        if core.mxdName == core.mxdGeneralName or core.mxdName == core.mxdKtimaName:
-            merging_list = copy.copy(core.lut.merging_list)
-
-            shape.filter.list = merging_list
-
-        force.value = "false"
-        roads.value = "false"
-
-        params = [shape, force, roads]
         return params
 
-    def isLicensed(self):
-        """Set whether tool is licensed to execute."""
-        return True
-
-    def updateParameters(self, parameters):
-        """Modify the values and properties of parameters before internal
-        validation is performed.  This method is called whenever a parameter
-        has been changed."""
-        return
-
-    def updateMessages(self, parameters):
-        """Modify the messages created by internal validation for each tool
-        parameter.  This method is called after internal validation."""
-        return
-
-    def execute(self, params, messages):
-        arcpy.env.addOutputsToMap = False
-        shapetype = params[0].valueAsText
-        shapetypes = shapetype.split(";")
-
-        force_merge = bool(params[1].value)
-        new_roads = bool(params[2].value)
-
-        if new_roads:
-            roads = 'new'
-            shapes = copy.copy(shapetypes)
+    def updateParameters(self, params):
+        if params[0].valueAsText == 'STANDALONE':
+            otas_values = copy.copy(core.lut.ota_list)
+            params[1].filter.list = otas_values
         else:
-            roads = 'old'
-            shapes = copy.copy(shapetypes)
-            try:
-                shapes[shapes.index('ROADS')] = 'IROADS'
-            except ValueError:
-                pass
-
-        if core.mxdName == core.mxdKtimaName:
-            core.add_layer(shapes, lyr=True)
-            core.geoprocessing.merge(shapetypes, force_merge, roads)
-        else:
-            core.pm('!! Merge is performed only in -- {} -- !!'.format(core.mxdKtimaName))
-
-        return
-
-
-class Queries(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Spatial Queries"
-        self.description = ""
-        self.canRunInBackground = False
-
-    def getParameterInfo(self):
-        shape = arcpy.Parameter(
-            displayName="Query",
-            name="shapetype",
-            datatype="String",
-            parameterType="Required",
-            direction="Input")
-
-        shape.filter.list = ["KAEK_in_DBOUND", "KAEK_in_ASTIK", "RD", "PR"]
-
-        params = [shape]
-        return params
-
-    def isLicensed(self):
-        """Set whether tool is licensed to execute."""
-        return True
-
-    def updateParameters(self, parameters):
-        """Modify the values and properties of parameters before internal
-        validation is performed.  This method is called whenever a parameter
-        has been changed."""
-        return
-
-    def updateMessages(self, parameters):
-        """Modify the messages created by internal validation for each tool
-        parameter.  This method is called after internal validation."""
-        return
+            params[1].filter.list = []
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
-        shapetype = params[0].valueAsText
 
-        if shapetype == "KAEK_in_DBOUND":
-            core.find.kaek_in_dbound()
-        elif shapetype == "KAEK_in_ASTIK":
-            core.find.kaek_in_astik()
-        elif shapetype == "RD":
-            core.find.rd()
-        elif shapetype == "PR":
-            core.find.pr()
+        mode = params[0].valueAsText
 
-        return
+        _otas = params[1].valueAsText
+        otas = _otas.split(';')
 
+        core.kt.reset_mode(mode.lower(), otas)
+
+
+###############################################################################
 
 class Info(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
         self.label = "! Info ({})".format(core.meleti)
-        self.description = "Show Shapefile status and problems of {}".format(core.meleti)
+        self.description = "Show Shapefile status and problems of {}".format(
+            core.meleti)
         self.canRunInBackground = False
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.status.show()
+        core.status[core.kt.mode].show()
 
 
-class Isolate(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "Isolate"
-        self.description = "Isolate features to the specific area of {}".format(core.meleti)
-        self.canRunInBackground = False
-
-    def getParameterInfo(self):
-        shape = arcpy.Parameter(
-            displayName="Shapefile",
-            name="shapetype",
-            datatype="Layer",
-            parameterType="Required",
-            direction="Input")
-
-        params = [shape]
-        return params
-
-    def isLicensed(self):
-        """Set whether tool is licensed to execute."""
-        return True
-
-    def updateParameters(self, parameters):
-        """Modify the values and properties of parameters before internal
-        validation is performed.  This method is called whenever a parameter
-        has been changed."""
-        return
-
-    def updateMessages(self, parameters):
-        """Modify the messages created by internal validation for each tool
-        parameter.  This method is called after internal validation."""
-        return
-
-    def execute(self, params, messages):
-        arcpy.env.addOutputsToMap = True
-        shapetype = params[0].valueAsText
-
-        core.general.isolate(shapetype)
-
-        return
-
+###############################################################################
 
 class OtaExport(object):
     def __init__(self):
@@ -241,7 +118,7 @@ class OtaExport(object):
             direction="Input")
 
         spatial = arcpy.Parameter(
-            displayName="Spatial Selection    ( If UNCHECKED choose a field below )",
+            displayName="Spatial Selection (If UNCHECKED choose a field below)",
             name="shapetype",
             datatype="Boolean",
             parameterType="Required",
@@ -262,38 +139,83 @@ class OtaExport(object):
         params = [shape, spatial, fields, export, database]
         return params
 
-    def isLicensed(self):
-        """Set whether tool is licensed to execute."""
-        return True
-
     def updateParameters(self, params):
         """Modify the values and properties of parameters before internal
         validation is performed.  This method is called whenever a parameter
         has been changed."""
 
         if params[0].valueAsText:
-            params[2].filter.list = core.list_fields(params[0].valueAsText, 'name')
+            params[2].filter.list = core.list_fields(params[0].valueAsText,
+                                                     'name')
 
         return params
 
-    def updateMessages(self, parameters):
-        """Modify the messages created by internal validation for each tool
-        parameter.  This method is called after internal validation."""
+    def execute(self, params, messages):
+        arcpy.env.addOutputsToMap = False
+
+        shape = params[0].valueAsText
+        spatial = bool(params[1].value)
+        field = params[2].valueAsText
+        export = bool(params[3].value)
+        dtbase = bool(params[4].value)
+
+        core.general[core.kt.mode].export_per_ota(shape,
+                                                  spatial=spatial,
+                                                  field=field,
+                                                  export_shp=export,
+                                                  database=dtbase)
+
+        return
+
+
+###############################################################################
+
+class Export(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "! Export to Server"
+        self.description = "Export shapefiles to kthma_temp"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        company = arcpy.Parameter(
+            displayName="Shapefile from {}".format(core.paths.company_gdb_name),
+            name="shapetype",
+            datatype="String",
+            parameterType="Required",
+            direction="Input",
+            multiValue=True)
+
+        standalone = arcpy.Parameter(
+            displayName="Shapefile from {}".format(
+                core.paths.standalone_gdb_name),
+            name="shapetype",
+            datatype="String",
+            parameterType="Required",
+            direction="Input",
+            multiValue=True)
+
+        company.filter.list = core.list_gdb(core.paths.gdb_company)
+        standalone.filter.list = core.list_gdb(core.paths.gdb_standalone)
+
+        params = [company, standalone]
+        return params
+
+    def updateParameters(self, params):
         return
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = False
 
-        shapetype = params[0].valueAsText
-        _spatial = bool(params[1].value)
-        _field = params[2].valueAsText
-        export = bool(params[3].value)
-        dtbase = bool(params[4].value)
+        _shapes = params[0].valueAsText
+        shapes = _shapes.split(";")
 
-        core.general.export_per_ota(shapetype, spatial=_spatial, field=_field, export_shp=export, database=dtbase)
+        core.geoprocessing[core.kt.mode].export_to_server(shapes)
 
         return
 
+
+###############################################################################
 
 class Identical(object):
     def __init__(self):
@@ -335,18 +257,9 @@ class Identical(object):
         params = [what, in_what, export]
         return params
 
-    def isLicensed(self):
-        """Set whether tool is licensed to execute."""
-        return True
-
     def updateParameters(self, params):
         new_list = core.list_layers()
         params[0].filter.list = new_list
-        return
-
-    def updateMessages(self, parameters):
-        """Modify the messages created by internal validation for each tool
-        parameter.  This method is called after internal validation."""
         return
 
     def execute(self, params, messages):
@@ -359,65 +272,196 @@ class Identical(object):
 
         export = bool(params[2].value)
 
-        core.find.find_identical(what_to, in_what, export)
+        core.find[core.kt.mode].find_identical(what_to, in_what, export)
 
         return
 
 
-class ChangeMode(object):
+###############################################################################
+
+class Isolate(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "! CHANGE MODE ({} All) !".format(core.meleti)
-        self.description = "Changing check mode".format(core.meleti)
-        self.canRunInBackground = False
-
-    def execute(self, params, messages):
-        arcpy.env.addOutputsToMap = True
-
-        core.change_mode()
-
-
-class Export(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "! Export to Server"
-        self.description = "Export shapefiles to kthma_temp"
+        self.label = "Isolate"
+        self.description = "Isolate features to the specific area of {}".format(
+            core.meleti)
         self.canRunInBackground = False
 
     def getParameterInfo(self):
-        what = arcpy.Parameter(
-            displayName="Shapefile from {}".format('checks.gdb'),
+        shape = arcpy.Parameter(
+            displayName="Shapefile",
+            name="shapetype",
+            datatype="Layer",
+            parameterType="Required",
+            direction="Input")
+
+        params = [shape]
+        return params
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def execute(self, params, messages):
+        arcpy.env.addOutputsToMap = True
+        shapetype = params[0].valueAsText
+
+        core.general[core.kt.mode].isolate(shapetype)
+
+        return
+
+
+###############################################################################
+
+class Merge(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Merge Shapefiles"
+        self.description = "ROADS merge is done in old ROADS by default"
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        shape = arcpy.Parameter(
+            displayName="Shapefiles",
             name="shapetype",
             datatype="String",
             parameterType="Required",
             direction="Input",
             multiValue=True)
 
-        fc_list = core.list_gdb(core.paths.gdb_check)
+        force = arcpy.Parameter(
+            displayName="Force Merge",
+            name="force merge",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
 
-        what.filter.list = fc_list
+        roads = arcpy.Parameter(
+            displayName="Merge new ROADS",
+            name="roads",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
 
-        params = [what]
+        # standalone = arcpy.Parameter(
+        #     displayName="Standalone Merge",
+        #     name="Standalone Merge",
+        #     datatype="Boolean",
+        #     parameterType="Required",
+        #     direction="Input")
+        #
+        # otas_to_merge = arcpy.Parameter(
+        #     displayName="OTA",
+        #     name="OTA",
+        #     datatype="String",
+        #     parameterType="Optional",
+        #     direction="Input",
+        #     multiValue=True)
+
+        merging_list = copy.copy(core.lut.merging_list)
+
+        shape.filter.list = merging_list
+        # otas_to_merge.filter.list = []
+
+        force.value = "false"
+        roads.value = "false"
+        # standalone.value = "false"
+
+        params = [shape, force, roads]
         return params
 
-    def isLicensed(self):
-        """Set whether tool is licensed to execute."""
-        return True
-
     def updateParameters(self, params):
-        return
 
-    def updateMessages(self, parameters):
-        """Modify the messages created by internal validation for each tool
-        parameter.  This method is called after internal validation."""
+        # if params[3].value:
+        #     otas_values = copy.copy(core.lut.ota_list)
+        #     params[4].filter.list = otas_values
+
         return
 
     def execute(self, params, messages):
         arcpy.env.addOutputsToMap = False
+        shapetype = params[0].valueAsText
+        # otas_to_merge = params[4].valueAsText
 
-        shapes = params[0].valueAsText
-        what_to = shapes.split(";")
+        shapetypes = shapetype.split(";")
+        # otas = otas_to_merge.split(";")
 
-        core.geoprocessing.export_to_server(what_to)
+        force_merge = bool(params[1].value)
+        new_roads = bool(params[2].value)
+        # standalone_merge = bool(params[3].value)
+
+        if new_roads:
+            roads = 'new'
+            shapes = copy.copy(shapetypes)
+        else:
+            roads = 'old'
+            shapes = copy.copy(shapetypes)
+            try:
+                shapes[shapes.index('ROADS')] = 'IROADS'
+            except ValueError:
+                pass
+
+        # if core.mxdName == core.mxdKtimaName and not standalone_merge:
+        #     core.add_layer(shapes, lyr=True)
+        #     core.geoprocessing.merge(shapetypes, force_merge, roads)
+        # elif standalone_merge:
+        #     core.add_layer(shapes, lyr=True)
+        #     core.geoprocessing.merge(shapetypes, force_merge, roads,
+        #                              standalone_merge, otas)
+        # else:
+        #     core.pm('!! Merge is performed only in -- {} -- !!'.format(
+        #         core.mxdKtimaName))
+
+            core.org[core.kt.mode].add_layer(shapes, lyr=True)
+
+            core.geoprocessing[core.kt.mode].merge(shapetypes,
+                                                   force_merge,
+                                                   roads)
+
+        return
+
+
+###############################################################################
+
+class Queries(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "Spatial Queries"
+        self.description = ""
+        self.canRunInBackground = False
+
+    def getParameterInfo(self):
+        shape = arcpy.Parameter(
+            displayName="Query",
+            name="shapetype",
+            datatype="String",
+            parameterType="Required",
+            direction="Input")
+
+        shape.filter.list = ["KAEK_in_DBOUND", "KAEK_in_ASTIK", "RD", "PR"]
+
+        params = [shape]
+        return params
+
+    def updateParameters(self, parameters):
+        """Modify the values and properties of parameters before internal
+        validation is performed.  This method is called whenever a parameter
+        has been changed."""
+        return
+
+    def execute(self, params, messages):
+        arcpy.env.addOutputsToMap = True
+        shapetype = params[0].valueAsText
+
+        if shapetype == "KAEK_in_DBOUND":
+            core.find[core.kt.mode].kaek_in_dbound()
+        elif shapetype == "KAEK_in_ASTIK":
+            core.find[core.kt.mode].kaek_in_astik()
+        elif shapetype == "RD":
+            core.find[core.kt.mode].rd()
+        elif shapetype == "PR":
+            core.find[core.kt.mode].pr()
 
         return

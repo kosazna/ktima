@@ -15,9 +15,14 @@ class Paths:
         self.company_name = company_name
         self.meleti = meleti
 
-        self.gdb_check = cp([meleti, geodatabases, 'checks.gdb'])
-        self.mdb_general = cp([meleti, geodatabases, 'archive.mdb'])
-        self.gdb_misc = cp([meleti, geodatabases, 'misc.gdb'])
+        self.company_gdb_name = 'company.gdb'
+        self.standalone_gdb_name = 'standalone.gdb'
+        # self.gdb_check = cp([meleti, geodatabases, 'checks.gdb'])
+        # self.gdb_misc = cp([meleti, geodatabases, 'misc.gdb'])
+
+        self.mdb_general = cp([meleti, gdbs, 'archive.mdb'])
+        self.gdb_standalone = cp([meleti, gdbs, self.standalone_gdb_name])
+        self.gdb_company = cp([meleti, gdbs, self.company_gdb_name])
 
         self.rdoutpath = cp([meleti, inputdata, shapefiles_i])
         self.rdinpath = cp([meleti, inputdata, shapefiles_i, 'ROADS_ALL.shp'])
@@ -63,9 +68,9 @@ class Paths:
 
     def server(self, ota, shp):
         if self.company_name == 'NAMA':
-            return cp([ota, 'SHP', shp + '.shp'], origin='K')
+            return cp([ota, 'SHP', shp + '.shp'], origin=ktl['data'][user])
         elif self.company_name == '2KP':
-            return cp([ota, 'SHP', shp, shp + '.shp'], origin='K')
+            return cp([ota, 'SHP', shp, shp + '.shp'], origin=ktl['data'][user])
 
     def ktima(self, ota_folder, fc, ext=False, spatial_folder=localdata_o):
         if ext:
@@ -93,18 +98,30 @@ class Paths:
 
     def gdbc(self, fc=None):
         if fc is None:
-            return self.gdb_check
+            return self.gdb_company
         else:
-            return os.path.join(self.gdb_check, fc)
+            return os.path.join(self.gdb_company, fc)
 
-    def gdbm(self, fc=None):
+    def gdbs(self, fc=None):
         if fc is None:
-            return self.gdb_misc
+            return self.gdb_standalone
         else:
-            return os.path.join(self.gdb_misc, fc)
+            return os.path.join(self.gdb_standalone, fc)
 
     def mdb(self, fc=None):
         if fc is None:
             return self.mdb_general
         else:
             return os.path.join(self.mdb_general, fc)
+
+    # def gdbm(self, fc=None):
+    #     if fc is None:
+    #         return self.gdb_misc
+    #     else:
+    #         return os.path.join(self.gdb_misc, fc)
+    #
+    # def gdbc(self, fc=None):
+    #     if fc is None:
+    #         return self.gdb_check
+    #     else:
+    #         return os.path.join(self.gdb_check, fc)

@@ -17,7 +17,7 @@ build_pass = 'ktima()azna'
 
 inputdata = "!InputData"
 outputdata = "!OutputData"
-geodatabases = "Geodatabases"
+gdbs = "Geodatabases"
 shapefiles_i = "Shapefiles"
 docs_i = "Docs"
 po_i = "PO"
@@ -44,6 +44,7 @@ class NamesAndLists:
         self.company_name = ktdata.get("company_name", 'NOT_FOUND')
         self.meleti = ktdata.get("meleti", 'NOT_FOUND')
         self.mel_type = ktdata.get("mel_type", 'NOT_FOUND')
+        self.precision = ktdata.get("precision", 0.000001)
 
         self.ota_list = ktdata.get("ota_list", 'NOT_FOUND')
         self.status_list = ktdata.get("status_list", 'NOT_FOUND')

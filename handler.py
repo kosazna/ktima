@@ -179,7 +179,7 @@ class Files:
                             self.c_mapper[key] = 0
 
                         self.paths.append(fullpath)
-                        self.names.append(filename)
+                        self.names.append(basename)
                         self.file_counter += 1
                         self.mapper[key].append(filename)
                         self.c_mapper[key] += 1
@@ -192,7 +192,7 @@ class Files:
                     self.c_mapper[key] = 0
 
                 self.paths.append(fullpath)
-                self.names.append(filename)
+                self.names.append(basename)
                 self.file_counter += 1
                 self.mapper[key].append(filename)
                 self.c_mapper[key] += 1

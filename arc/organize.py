@@ -8,25 +8,17 @@
 # ---------------------------------------------------#
 from data import *
 
+req_map = {'merge': lut.merging_list,
+           'shapes': ['ASTENOT', 'ASTTOM', 'PST'],
+           'export_per_ota': ['ASTOTA'],
+           'fbound_geometry': ['FBOUND'],
+           'pst': ['PST'],
+           'asttom': ['ASTTOM'],
+           'astenot': ['ASTENOT']}
 
-mxdASTENOT = set()
-mxdASTIK = set()
-mxdASTOTA = set()
-mxdASTTOM = set()
-mxdBLD = set()
-mxdCBOUND = set()
-mxdDBOUND = set()
-mxdEAS = set()
-mxdPST = set()
-mxdVST = set()
-mxdRBOUND = set()
-mxdROADS = set()
-mxdFBOUND = set()
-mxdPRE_FBOUND = set()
-
-locASTENOT = set()
 locASTIK = set()
 locASTOTA = set()
+locASTENOT = set()
 locASTTOM = set()
 locBLD = set()
 locCBOUND = set()
@@ -38,21 +30,6 @@ locRBOUND = set()
 locROADS = set()
 locFBOUND = set()
 locPRE_FBOUND = set()
-
-mxd_fl = {"ASTENOT": {"list": mxdASTENOT, "in_mxd": False},
-          "ASTIK": {"list": mxdASTIK, "in_mxd": False},
-          "ASTOTA": {"list": mxdASTOTA, "in_mxd": False},
-          "ASTTOM": {"list": mxdASTTOM, "in_mxd": False},
-          "BLD": {"list": mxdBLD, "in_mxd": False},
-          "CBOUND": {"list": mxdCBOUND, "in_mxd": False},
-          "DBOUND": {"list": mxdDBOUND, "in_mxd": False},
-          "FBOUND": {"list": mxdFBOUND, "in_mxd": False},
-          "PRE_FBOUND": {"list": mxdPRE_FBOUND, "in_mxd": False},
-          "PST": {"list": mxdPST, "in_mxd": False},
-          "ROADS": {"list": mxdROADS, "in_mxd": False},
-          "EAS": {"list": mxdEAS, "in_mxd": False},
-          "VST": {"list": mxdVST, "in_mxd": False},
-          "RBOUND": {"list": mxdRBOUND, "in_mxd": False}}
 
 loc_fl = {"ASTENOT": locASTENOT,
           "ASTIK": locASTIK,
@@ -69,13 +46,130 @@ loc_fl = {"ASTENOT": locASTENOT,
           "VST": locVST,
           "RBOUND": locRBOUND}
 
-req_map = {'merge': lut.merging_list,
-           'shapes': ['ASTENOT', 'ASTTOM', 'PST'],
-           'export_per_ota': ['ASTOTA'],
-           'fbound_geometry': ['FBOUND'],
-           'pst': ['PST'],
-           'asttom': ['ASTTOM'],
-           'astenot': ['ASTENOT']}
+
+class Organizer:
+    def __init__(self, mode):
+        self.mode = mode
+        self.gdb = gdb[mode]
+
+        self.mxdASTENOT = set()
+        self.mxdASTIK = set()
+        self.mxdASTOTA = set()
+        self.mxdASTTOM = set()
+        self.mxdBLD = set()
+        self.mxdCBOUND = set()
+        self.mxdDBOUND = set()
+        self.mxdEAS = set()
+        self.mxdPST = set()
+        self.mxdVST = set()
+        self.mxdRBOUND = set()
+        self.mxdROADS = set()
+        self.mxdFBOUND = set()
+        self.mxdPRE_FBOUND = set()
+
+        self.mxd_fl = {"ASTENOT": {"list": self.mxdASTENOT,
+                                   "in_mxd": False},
+                       "ASTIK": {"list": self.mxdASTIK,
+                                 "in_mxd": False},
+                       "ASTOTA": {"list": self.mxdASTOTA,
+                                  "in_mxd": False},
+                       "ASTTOM": {"list": self.mxdASTTOM,
+                                  "in_mxd": False},
+                       "BLD": {"list": self.mxdBLD,
+                               "in_mxd": False},
+                       "CBOUND": {"list": self.mxdCBOUND,
+                                  "in_mxd": False},
+                       "DBOUND": {"list": self.mxdDBOUND,
+                                  "in_mxd": False},
+                       "FBOUND": {"list": self.mxdFBOUND,
+                                  "in_mxd": False},
+                       "PRE_FBOUND": {"list": self.mxdPRE_FBOUND,
+                                      "in_mxd": False},
+                       "PST": {"list": self.mxdPST,
+                               "in_mxd": False},
+                       "ROADS": {"list": self.mxdROADS,
+                                 "in_mxd": False},
+                       "EAS": {"list": self.mxdEAS,
+                               "in_mxd": False},
+                       "VST": {"list": self.mxdVST,
+                               "in_mxd": False},
+                       "RBOUND": {"list": self.mxdRBOUND,
+                                  "in_mxd": False}}
+
+    def add_layer(self, features, lyr=False):
+        if get_pass():
+            dataframes = df_now('add_layers')
+
+            if lyr:
+                shapes_list = [str(shape.lower()) for shape in features]
+
+                for feature in shapes_list:
+                    try:
+                        lyr_name = "{}.lyr".format(feature)
+
+                        path = cp([meleti, lyr_i, lyr_name])
+
+                        layer_to_add = arcpy.mapping.Layer(path)
+                        arcpy.mapping.AddLayer(dataframes,
+                                               layer_to_add,
+                                               "AUTO_ARRANGE")
+                    except ValueError:
+                        pm("Den uparxei to lyr arxeio : {}".format(feature))
+            else:
+                for feature in features:
+                    try:
+                        layer_to_add = arcpy.mapping.Layer(self.gdb(feature))
+                        arcpy.mapping.AddLayer(dataframes,
+                                               layer_to_add,
+                                               "AUTO_ARRANGE")
+                    except ValueError:
+                        pm("Den uparxei to arxeio : {}".format(feature))
+
+            if not lyr:
+                turn_off()
+
+            arcpy.RefreshTOC()
+            arcpy.RefreshActiveView()
+        else:
+            pass
+
+    def mxdfiles(self):
+        dataframes = df_now()
+
+        for df in dataframes:
+            for _lyr in arcpy.mapping.ListLayers(mxd, "", df):
+                lyr_name = _lyr.name[:-6]
+
+                try:
+                    if _lyr.name not in self.mxd_fl[lyr_name]['list']:
+                        self.mxd_fl[lyr_name]['list'].add(str(_lyr.name))
+                        if not self.mxd_fl[lyr_name]['in_mxd']:
+                            self.mxd_fl[lyr_name]['in_mxd'] = True
+                except KeyError:
+                    pass
+
+    def validate(self):
+        def find_missing(shp_name, mxdlist, locallist):
+            loc_miss = mxdlist.difference(locallist)
+            mxd_miss = locallist.difference(mxdlist)
+
+            lm = sorted([i[-5:] for i in loc_miss])
+            mm = sorted([i[-5:] for i in mxd_miss])
+
+            if not mm and not lm:
+                pm("OK - {}".format(shp_name))
+            elif mm:
+                pm("MXD missing - {}: {}".format(shp_name, mm))
+            elif lm:
+                pm("LocalData missing - {}: {}".format(shp_name, lm))
+
+        for shape in self.mxd_fl:
+            if self.mxd_fl[shape]['in_mxd']:
+                find_missing(shape, self.mxd_fl[shape]['list'], loc_fl[shape])
+
+
+def availaible(mxd_files, local_files):
+    return list(mxd_files.intersection(local_files))
 
 
 def choose_roads(roads):
@@ -90,66 +184,15 @@ def choose_roads(roads):
 def turn_off():
     dataframes = df_now()
 
+    chk = ['merge_', 'union_', '_sum', '_in', 'FBOUND']
+
     for df in dataframes:
         for _lyr in arcpy.mapping.ListLayers(mxd, "", df):
-            if "merge_" in _lyr.name or "union_" in _lyr.name or "_sum" in _lyr.name or "_in" in _lyr.name or "FBOUND" in _lyr.name:
+            if _lyr.name in chk:
                 _lyr.visible = False
 
     arcpy.RefreshTOC()
     arcpy.RefreshActiveView()
-
-
-def add_layer(features, lyr=False):
-    if get_pass():
-        dataframes = df_now('add_layers')
-
-        if lyr:
-            shapes_list = [str(shape.lower()) for shape in features]
-
-            for feature in shapes_list:
-                try:
-                    if mode:
-                        lyr_name = "{}_all.lyr".format(feature)
-                    else:
-                        lyr_name = "{}.lyr".format(feature)
-
-                    path = cp([meleti, lyr_i, lyr_name])
-
-                    layer_to_add = arcpy.mapping.Layer(path)
-                    arcpy.mapping.AddLayer(dataframes, layer_to_add, "AUTO_ARRANGE")
-                except ValueError:
-                    pm("Den uparxei to lyr arxeio : {}".format(feature))
-        else:
-            for feature in features:
-                try:
-                    layer_to_add = arcpy.mapping.Layer(paths.gdbm(feature))
-                    arcpy.mapping.AddLayer(dataframes, layer_to_add, "AUTO_ARRANGE")
-                except ValueError:
-                    pm("Den uparxei to arxeio : {}".format(feature))
-
-        if not lyr:
-            turn_off()
-
-        arcpy.RefreshTOC()
-        arcpy.RefreshActiveView()
-    else:
-        pass
-
-
-def mxdfiles():
-    dataframes = df_now()
-
-    for df in dataframes:
-        for _lyr in arcpy.mapping.ListLayers(mxd, "", df):
-            lyr_name = _lyr.name[:-6]
-
-            try:
-                if _lyr.name not in mxd_fl[lyr_name]['list']:
-                    mxd_fl[lyr_name]['list'].add(str(_lyr.name))
-                    if not mxd_fl[lyr_name]['in_mxd']:
-                        mxd_fl[lyr_name]['in_mxd'] = True
-            except KeyError:
-                pass
 
 
 def localfiles():
@@ -166,43 +209,17 @@ def localfiles():
                     pass
 
 
-def validate():
-    def find_missing(mxdlist, locallist):
-        loc_miss = mxdlist.difference(locallist)
-        mxd_miss = locallist.difference(mxdlist)
-
-        lm = sorted(loc_miss)
-        mm = sorted(mxd_miss)
-
-        if not mm and not lm:
-            pm("OK")
-        elif mm:
-            pm("MXD missing --> {}".format(mm))
-        elif lm:
-            pm("LocalData missing --> {}".format(lm))
-
-    for shape in mxd_fl:
-        if mxd_fl[shape]['in_mxd']:
-            find_missing(mxd_fl[shape]['list'], loc_fl[shape])
-
-
-def change_mode():
-    lut.ota_list = ['06005', '06013', '06041', '06060', '06062', '06075', '06111', '06132', '06191', '06199', '06200', '06212']
-    mode.append('ALL')
-    localfiles()
-    pm('\n\nChanged Mode for {}\nMode : {}\n'.format(meleti, mode))
-
-
 def mxd(func):
     def wrapper(*args, **kwargs):
         if mxdName == mxdKtimaName and func.__name__ != 'merge':
-            add_layer(req_map[func.__name__], lyr=True)  # add_layer() from 'merge' is executed from the toolbox
-            mxdfiles()
-            validate()
+            org[kt.mode].add_layer(req_map[func.__name__], lyr=True)
+            # add_layer() from 'merge' is executed from the toolbox
+            org[kt.mode].mxdfiles()
+            org[kt.mode].validate()
             result = func(*args, **kwargs)
         else:
-            mxdfiles()
-            validate()
+            org[kt.mode].mxdfiles()
+            org[kt.mode].validate()
             result = func(*args, **kwargs)
 
         return result
@@ -211,3 +228,6 @@ def mxd(func):
 
 
 localfiles()
+
+org = {'company': Organizer('company'),
+       'standalone': Organizer('standalone')}

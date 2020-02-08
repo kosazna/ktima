@@ -33,7 +33,7 @@ class Log:
     def __init__(self, meleti):
         self.meleti = meleti
         self.kt_log = cp([self.meleti, '!{}_log.txt'.format(self.meleti)])
-        self.company_log = cp(['KTHMA_log.txt'], origin="K")
+        self.company_log = cp(['KTHMA_log.txt'], origin=ktl['data'][user])
         self.general_log = cp([users, user, 'KT_log.txt'])
 
     def write_to_file(self, _datetime, msgf, commentsf):

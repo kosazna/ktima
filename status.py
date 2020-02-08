@@ -8,39 +8,43 @@
 # ---------------------------------------------------#
 from logger import *
 
+json_status = {'company': 'KT_Status_company.json',
+               'standalone': 'KT_Status_standalone.json'}
+
 
 class Status:
 
-    def __init__(self, meleti):
+    def __init__(self, meleti, mode):
+        self.mode = mode
         self.meleti = meleti
+        self.status_path = cp([meleti, inputdata, docs_i, json_status[mode]])
 
     def check(self, shape_type, shape):
-        status_path = cp([self.meleti, inputdata, docs_i, 'KT_Status.json'])
-        data = load_json(status_path)
+        data = load_json(self.status_path)
 
         status = data[shape_type][shape]
 
         return status
 
     def update(self, shape_type, shape, status):
-        status_path = cp([self.meleti, inputdata, docs_i, 'KT_Status.json'])
-        data = load_json(status_path)
+        data = load_json(self.status_path)
 
         data[shape_type][shape] = status
 
-        write_json(status_path, data)
+        write_json(self.status_path, data)
 
     def show(self):
-        status_path = cp([self.meleti, inputdata, docs_i, 'KT_Status.json'])
-        data = load_json(status_path)
+        data = load_json(self.status_path)
 
-        pm("\nMeleti: " + self.meleti)
+        pm("\nMeleti: {}  --  {}" .format(self.meleti, self.mode.upper()))
 
         pm("\nGeometry Status")
         pm("---------------------")
-        pm("FBOUND  -  Geometry Problems : {}".format(data["FBOUND_GEOMETRY"]["OTA"])) if data["FBOUND_GEOMETRY"]["PROBS"] else pm("FBOUND  -  Geometry OK")
+        pm("FBOUND  -  Geometry Problems : {}".format(data["FBOUND_GEOMETRY"]["OTA"])) if data["FBOUND_GEOMETRY"]["PROBS"] else pm(
+            "FBOUND  -  Geometry OK")
         pm("Check Date : {}\n".format(data["FBOUND_GEOMETRY"]["CD"]))
-        pm("SHAPES  -  Geometry Problems : {}".format(data["SHAPES_GEOMETRY"]["OTA"])) if data["SHAPES_GEOMETRY"]["PROBS"] else pm("SHAPES  -  Geometry OK")
+        pm("SHAPES  -  Geometry Problems : {}".format(data["SHAPES_GEOMETRY"]["OTA"])) if data["SHAPES_GEOMETRY"]["PROBS"] else pm(
+            "SHAPES  -  Geometry OK")
         pm("Check Date : {}\n".format(data["SHAPES_GEOMETRY"]["CD"]))
 
         pm("\nMerging Status")
