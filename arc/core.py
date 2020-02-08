@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ---------------------------------------------------#
 #        Ergaleia Xorikwn Elegxwn Shapefile          #
-#                       2019                         #
+#                    2019 - 2020                     #
 #             Aznavouridis Konstantinos              #
 #                                                    #
 #             aznavouridis.k@gmail.com               #
@@ -17,8 +17,7 @@ class Geoprocessing:
         self.standalone = standalone
 
     @mxd
-    def merge(self, shapes, force_merge=False,
-              _roads='old'):
+    def merge(self, shapes, force_merge=False, _roads='old'):
         log_list = []
 
         if not self.standalone:
@@ -1198,17 +1197,17 @@ class Create:
             raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
 
-geoprocessing = {'company': Geoprocessing('company'),
-                 'standalone': Geoprocessing('standalone', standalone=True)}
-find = {'company': Queries('company'),
-        'standalone': Queries('standalone')}
-general = {'company': General('company'),
-           'standalone': General('standalone')}
-check = {'company': Check('company'),
-         'standalone': Check('standalone')}
-fix = {'company': Fix('company'),
-       'standalone': Fix('standalone')}
-fields = {'company': Fields('company'),
-          'standalone': Fields('standalone')}
-create = {'company': Create('company'),
-          'standalone': Create('standalone')}
+geoprocessing = {ktima_m: Geoprocessing(ktima_m),
+                 standalone_m: Geoprocessing(standalone_m, standalone=True)}
+find = {ktima_m: Queries(ktima_m),
+        standalone_m: Queries(standalone_m)}
+general = {ktima_m: General(ktima_m),
+           standalone_m: General(standalone_m)}
+check = {ktima_m: Check(ktima_m),
+         standalone_m: Check(standalone_m)}
+fix = {ktima_m: Fix(ktima_m),
+       standalone_m: Fix(standalone_m)}
+fields = {ktima_m: Fields(ktima_m),
+          standalone_m: Fields(standalone_m)}
+create = {ktima_m: Create(ktima_m),
+          standalone_m: Create(standalone_m)}

@@ -26,6 +26,7 @@ kt_map = load_json(paths.kt_info_path)
 kt = NamesAndLists(kt_map)
 
 ##################################################
+
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 

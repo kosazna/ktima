@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ---------------------------------------------------#
 #        Ergaleia Xorikwn Elegxwn Shapefile          #
-#                       2019                         #
+#                    2019 - 2020                     #
 #             Aznavouridis Konstantinos              #
 #                                                    #
 #             aznavouridis.k@gmail.com               #
@@ -14,17 +14,19 @@ mxd = arcpy.mapping.MapDocument("CURRENT")
 mxdPath = mxd.filePath
 mxdName = os.path.basename(mxdPath)
 
-mxdStandaloneName = "Standalone.mxd"
 mxdKtimaName = "Ktima.mxd"
+ktima_m = 'ktima'
+standalone_m = 'standalone'
 
 meleti = "None"
 mel_type = "None"
 
 
 class Kt:
-    def __init__(self, mode, otas):
+    def __init__(self, meleti_, mode, otas):
         self.mode = mode
         self.otas = otas
+        self.meleti = meleti_
 
     def reset_mode(self, mode, otas):
         self.mode = mode
@@ -32,7 +34,7 @@ class Kt:
 
 
 if get_pass():
-    if mxdName == mxdStandaloneName or mxdName == mxdKtimaName:
+    if mxdName == mxdKtimaName:
         meleti = mxdPath.split('\\')[1]
     else:
         pass
@@ -40,7 +42,7 @@ else:
     pm("\nAccess denied\n")
     print("\nAccess denied\n")
 
-arcpy.env.workspace = cp([meleti, gdbs, 'company.gdb'])
+arcpy.env.workspace = cp([meleti, gdbs, 'ktima.gdb'])
 kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
 data = load_json(kt_info_path)
@@ -50,14 +52,14 @@ data = load_json(kt_info_path)
 lut = NamesAndLists(data)
 paths = Paths(meleti, lut.mel_type, lut.company_name)
 lut = NamesAndLists(data)
-kt = Kt('company', lut.ota_list)
+kt = Kt(meleti, ktima_m, lut.ota_list)
 log = Log(meleti)
 
-status = {'company': Status(meleti, 'company'),
-          'standalone': Status(meleti, 'standalone')}
+status = {ktima_m: Status(meleti, ktima_m),
+          standalone_m: Status(meleti, standalone_m)}
 
-gdb = {'company': paths.gdbc,
-       'standalone': paths.gdbs}
+gdb = {ktima_m: paths.gdbc,
+       standalone_m: paths.gdbs}
 
 
 def df_now(step="list_layers"):

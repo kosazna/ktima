@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # ---------------------------------------------------#
 #        Ergaleia Xorikwn Elegxwn Shapefile          #
-#                       2019                         #
+#                    2019 - 2020                     #
 #             Aznavouridis Konstantinos              #
 #                                                    #
 #             aznavouridis.k@gmail.com               #
@@ -229,5 +229,5 @@ def mxd(func):
 
 localfiles()
 
-org = {'company': Organizer('company'),
-       'standalone': Organizer('standalone')}
+org = {ktima_m: Organizer(ktima_m),
+       standalone_m: Organizer(standalone_m)}

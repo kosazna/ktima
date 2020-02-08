@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+# ---------------------------------------------------#
+#        Ergaleia Xorikwn Elegxwn Shapefile          #
+#                    2019 - 2020                     #
+#             Aznavouridis Konstantinos              #
+#                                                    #
+#             aznavouridis.k@gmail.com               #
+# ---------------------------------------------------#
 import arcpy
 import copy
 from ktima.arc import *
