@@ -55,7 +55,7 @@ class ChangeMode(object):
             displayName="Set as Default Mode",
             name="default",
             datatype="Boolean",
-            parameterType="Optional",
+            parameterType="Required",
             direction="Input")
 
         mode.value = core.lut.mode
