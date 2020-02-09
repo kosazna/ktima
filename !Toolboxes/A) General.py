@@ -78,7 +78,7 @@ class ChangeMode(object):
         else:
             otas = core.lut.ota_list
 
-        core.kt.reset_mode(mode.lower(), otas)
+        core.kt.reset_mode(mode.lower(), core.strize(otas))
 
 
 ###############################################################################

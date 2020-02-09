@@ -31,11 +31,8 @@ class Kt:
         self.otas = otas
         status[self.mode].otas = self.otas
 
-        pm('''
-        Mode Changed !\n
-        Mode : {}
-        OTA : {}
-        '''.format(self.mode, self.otas))
+        pm('\nMODE : {}\n'.format(self.mode))
+        pm('\nOTA : {}\n'.format(self.otas))
 
         for shape in lut.merging_list:
             status[self.mode].update('SHAPE', shape, False)

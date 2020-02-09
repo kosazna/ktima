@@ -262,8 +262,8 @@ class General:
                 arcpy.CopyFeatures_management(_fc, self.gdb(fc_name))
 
         if spatial:
-            for lyr_astota in org[self.mode].mxdASTOTA:
-                ota = str(lyr_astota[7:])
+            for lyr_astota in org[self.mode].available('ASTOTA'):
+                ota = str(lyr_astota[-5:])
                 arcpy.SelectLayerByLocation_management(fc, 'WITHIN', lyr_astota)
 
                 if get_count(fc) != 0:

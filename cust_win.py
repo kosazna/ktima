@@ -18,7 +18,9 @@ def time_it(func):
         start = time.time()
         result = func(*args, **kwargs)
         end = time.time()
-        print('{} --> {:.0f} min {:.4f} sec'.format(func.__name__, (end - start) // 60, (end - start) % 60))
+        print('{} --> {:.0f} min {:.4f} sec'.format(func.__name__,
+                                                    (end - start) // 60,
+                                                    (end - start) % 60))
 
         return result
 
@@ -76,3 +78,7 @@ def progress(count, total):
 
     sys.stdout.write('[%s] %s %s -- %s\r' % (bar, percents, '%', suffix))
     sys.stdout.flush()
+
+
+def strize(iterable):
+    return [str(i) for i in iterable]

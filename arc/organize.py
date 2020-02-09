@@ -167,9 +167,10 @@ class Organizer:
             if self.mxd_fl[shape]['in_mxd']:
                 find_missing(shape, self.mxd_fl[shape]['list'], loc_fl[shape])
 
-
-def availaible(mxd_files, local_files):
-    return list(mxd_files.intersection(local_files))
+    def available(self, feature):
+        _mxd = self.mxd_fl[feature]['list']
+        _local = set(loc_fl[feature])
+        return list(_mxd.intersection(_local))
 
 
 def choose_roads(roads):
