@@ -28,14 +28,20 @@ class Kt:
 
     def reset_mode(self, mode, otas):
         self.mode = mode
-        self.otas = otas
-        status[self.mode].otas = self.otas
+        self.otas = sorted(otas)
+        status[self.mode].otas = otas
 
         pm('\nMODE : {}\n'.format(self.mode))
         pm('\nOTA : {}\n'.format(self.otas))
 
         for shape in lut.merging_list:
-            status[self.mode].update('SHAPE', shape, False)
+            status[mode].update('SHAPE', shape, False)
+
+    @staticmethod
+    def set_default_mode(mode):
+        data = load_json(kt_info_path)
+        data['mode'] = mode
+        write_json(kt_info_path, data)
 
 
 if get_pass():
@@ -48,17 +54,20 @@ else:
     print("\nAccess denied\n")
 
 arcpy.env.workspace = cp([meleti, gdbs, 'ktima.gdb'])
-kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
-data = load_json(kt_info_path)
+kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
+naming_path = cp([meleti, inputdata, docs_i, 'KT_Naming_Schema.json'])
+
+info_data = load_json(kt_info_path)
+naming_data = load_json(naming_path)
 
 # Instantiating Classes
 
-lut = NamesAndLists(data)
+lut = NamesAndLists(info_data, naming_data)
 paths = Paths(meleti, lut.mel_type, lut.company_name)
-lut = NamesAndLists(data)
-kt = Kt(meleti, ktima_m, lut.ota_list)
 log = Log(meleti)
+
+kt = Kt(meleti, lut.mode, lut.ota_list)
 
 status = {ktima_m: Status(meleti, ktima_m, lut.ota_list),
           standalone_m: Status(meleti, standalone_m, kt.otas)}
