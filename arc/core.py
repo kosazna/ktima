@@ -21,7 +21,7 @@ def ca(*args):
     if not checker:
         return True
     else:
-        pm('!! Task Aborted !!')
+        pm('\n\n\n!! Task Aborted !!\n\n\n')
         return False
 
 
