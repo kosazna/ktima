@@ -10,12 +10,16 @@ from ktima.status import *
 from update import update_from_server
 from collections import Counter
 
-arcpy.env.overwriteOutput = True
 
 meleti = str(sys.argv[1].split('\\')[1])
-data = load_json(cp([meleti, inputdata, docs_i, 'KT_Info.json']))
 
-lut = NamesAndLists(data)
+kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
+naming_path = cp([meleti, inputdata, docs_i, 'KT_Naming_Schema.json'])
+
+info_data = load_json(kt_info_path)
+naming_data = load_json(naming_path)
+
+lut = NamesAndLists(info_data, naming_data)
 paths = Paths(meleti, lut.mel_type, lut.company_name)
 status = Status(meleti, ktima_m, lut.ota_list)
 log = Log(meleti)
@@ -51,7 +55,8 @@ def user_in(_func):
     [sl.append(i) for i in lut.local_list]
     [ol.append(i) for i in lut.ota_list]
 
-    approved = {'action_type': ['', '1', '2', '3', '4', '5', '6', '7', '8', '9', '1LPAA4PS5'],
+    approved = {'action_type': ['', '1', '2', '3', '4', '5',
+                                '6', '7', '8', '9', '1LPAA4PS5'],
                 'get_folder': ['S', 'L'],
                 'export_folder': ['L', 'P'],
                 'shapes': sl,
@@ -135,17 +140,21 @@ def shapefiles():
         outpath = ""
 
         if get_folder == "S" and export_folder == "L":
-            inpath = paths.server(e_ota, e_shape)
-            outpath = paths.ktima(e_ota, e_shape, ext=True)
+            inpath = paths.server_folder(e_ota, e_shape)
+            outpath = paths.ktima_folder(e_ota, e_shape)
         elif get_folder == "L" and export_folder == "P":
-            inpath = paths.ktima(e_ota, e_shape, ext=True)
-            outpath = paths.ktima(e_ota, e_shape, ext=True, spatial_folder=paradosidata_o)
+            inpath = paths.ktima_folder(e_ota, e_shape)
+            outpath = paths.ktima_folder(e_ota, e_shape,
+                                         spatial_folder=paradosidata_o)
 
-        if arcpy.Exists(inpath):
-            arcpy.CopyFeatures_management(inpath, outpath)
-        else:
-            missing_name = '_'.join([e_shape, e_ota])
-            missing_list.append(missing_name)
+        for fpath, fname, bname, ext in list_dir(inpath, match=['.shp',
+                                                                '.shx',
+                                                                '.dbf']):
+            if fpath:
+                shutil.copyfile(fpath, os.path.join(outpath, fname))
+            else:
+                missing_name = '_'.join([e_shape, e_ota])
+                missing_list.append(missing_name)
 
         return
 
@@ -194,12 +203,15 @@ def shapefiles():
 
 def roads():
     if get_pass():
-        for fullpath, filename, basename, ext in list_dir(paths.new_roads, match=['.shp', '.shx', '.dbf']):
-            if basename == 'ROADS':
+        for fpath, fname, bname, ext in list_dir(paths.new_roads,
+                                                 match=['.shp',
+                                                        '.shx',
+                                                        '.dbf']):
+            if bname == 'ROADS':
                 base = paths.old_roads.split('\\')[1:]
-                base += fullpath.split('\\')[4:]
+                base += fpath.split('\\')[4:]
                 outpath = cp(base)
-                c_copy(fullpath, outpath)
+                c_copy(fpath, outpath)
 
         status.update("SHAPE", "iROADS", False)
         log('New ROADS to InputData')
@@ -242,7 +254,8 @@ def clear():
     del_list = []
 
     if clear_type == "A":
-        del_list = ['.sbn', '.sbx', '.shp.xml', '.prj', '.idx', '.cpg', '.shp', '.shx', '.dbf', '.mdb', '.lock']
+        del_list = ['.sbn', '.sbx', '.shp.xml', '.prj',
+                    '.idx', '.cpg', '.shp', '.shx', '.dbf', '.mdb', '.lock']
         log_status.append('all')
     elif clear_type == "S":
         del_list = ['.sbn', '.sbx', '.shp.xml', '.prj', '.idx', '.cpg', '.lock']
@@ -251,21 +264,23 @@ def clear():
     if get_pass():
 
         if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
-            for fullpath, filename, basename, ext in list_dir(clearlocalpath, match=del_list):
-                if clear_type == "A" and clear_folder == "P" and basename in lut.no_del_list:
+            for fpath, fname, bname, ext in list_dir(clearlocalpath,
+                                                     match=del_list):
+                if clear_type == "A" \
+                        and clear_folder == "P" and bname in lut.no_del_list:
                     pass
                 else:
                     try:
-                        os.remove(fullpath)
+                        os.remove(fpath)
                     except OSError:
                         print("Error while deleting file")
 
             log('Clear directories', log_status)
             print("DONE !")
         else:
-            for fullpath, filename, basename, ext in list_dir(clearlocalpath):
+            for fpath, fname, bname, ext in list_dir(clearlocalpath):
                 try:
-                    os.remove(fullpath)
+                    os.remove(fpath)
                 except OSError:
                     print("Error while deleting file")
     else:
@@ -338,31 +353,32 @@ def organize():
     if get_pass():
         if org_folder == 'A':
             log_status.append('Anaktiseis')
-            for fullpath, filename, basename, ext in list_dir(paths.anakt_in):
+            for fpath, fname, bname, ext in list_dir(paths.anakt_in):
                 for ota in lut.ota_list:
-                    if ota in basename[9:14]:
-                        outpath = os.path.join(paths.anakt_out, ota, filename)
-                        c_copy(fullpath, outpath)
+                    if ota in bname[9:14]:
+                        outpath = os.path.join(paths.anakt_out, ota, fname)
+                        c_copy(fpath, outpath)
         elif org_folder == 'S':
             log_status.append('Saromena')
-            for fullpath, filename, basename, ext in list_dir(paths.saromena_in):
+            for fpath, fname, bname, ext in list_dir(paths.saromena_in):
                 for ota in lut.ota_list:
-                    if basename[0] == 'D' and ota in basename[1:6]:
-                        outpath = os.path.join(paths.saromena_out, ota, filename)
-                        c_copy(fullpath, outpath)
-                    elif ota in basename[:5]:
-                        outpath = os.path.join(paths.saromena_out, ota, filename)
-                        c_copy(fullpath, outpath)
+                    if bname[0] == 'D' and ota in bname[1:6]:
+                        outpath = os.path.join(paths.saromena_out, ota, fname)
+                        c_copy(fpath, outpath)
+                    elif ota in bname[:5]:
+                        outpath = os.path.join(paths.saromena_out, ota, fname)
+                        c_copy(fpath, outpath)
         elif org_folder == 'M':
             log_status.append("MDB's")
-            for fullpath, filename, basename, ext in list_dir(paths.mdb_in):
+            for fpath, fname, bname, ext in list_dir(paths.mdb_in):
                 for ota in lut.ota_list:
-                    if ota in basename and 'VSTEAS_REL' in basename:
-                        outpath = os.path.join(paths.mdb_vsteas, ota, 'SHAPE', 'VSTEAS_REL', filename)
-                        c_copy(fullpath, outpath)
-                    elif ota in basename:
-                        outpath = os.path.join(paths.mdb_out, ota, filename)
-                        c_copy(fullpath, outpath)
+                    if ota in bname and 'VSTEAS_REL' in bname:
+                        outpath = os.path.join(paths.mdb_vsteas, ota,
+                                               'SHAPE', 'VSTEAS_REL', fname)
+                        c_copy(fpath, outpath)
+                    elif ota in bname:
+                        outpath = os.path.join(paths.mdb_out, ota, fname)
+                        c_copy(fpath, outpath)
 
         log("Organize files", log_status)
     else:
@@ -382,8 +398,8 @@ def counter(path_to_count=paths.paradosidata):
 
     cnt_shapes = Counter(shapes.names)
     # cnt_mdb = Counter([i[6:] for i in mdb.names])
-    cnt_mdb = Counter([i[6:] if not i == 'POWNERS.mdb' else i for i in mdb.names])
-    cnt_xml = Counter(xml.names)
+    c_mdb = Counter([i[6:] if not i == 'POWNERS.mdb' else i for i in mdb.names])
+    c_xml = Counter(xml.names)
 
     ota_counter = {os.path.splitext(k)[0]: [] for k in cnt_shapes.keys()}
     missing_counter = {os.path.splitext(k)[0]: [] for k in cnt_shapes.keys()}
@@ -412,16 +428,16 @@ def counter(path_to_count=paths.paradosidata):
     print("\nMBD's")
     print('------------------')
 
-    for i in sorted(cnt_mdb):
+    for i in sorted(c_mdb):
         name, ext = os.path.splitext(i)
-        print('{:<18} - {}'.format(name, cnt_mdb[i]))
+        print('{:<18} - {}'.format(name, c_mdb[i]))
 
     print("\nMETADATA")
     print('------------------')
 
-    for i in sorted(cnt_xml):
+    for i in sorted(c_xml):
         name, ext = os.path.splitext(i)
-        print('{:<18} - {}'.format(name, cnt_xml[i]))
+        print('{:<18} - {}'.format(name, c_xml[i]))
 
     print('')
 
@@ -445,17 +461,21 @@ def get_scanned():
     files = 0
 
     for ota in lut.ota_list:
-        with open(cp([meleti, outputdata, 'Scanned_List', '{}_Scanned_Files'.format(ota)]), 'w') as f:
+        with open(cp([meleti, outputdata,
+                      'Scanned_List',
+                      '{}_Scanned_Files'.format(ota)]), 'w') as f:
+
             progress_counter += 1
             repo = cp([ota], origin=drive_letter)
-            for dirpath, dirnames, filenames in os.walk(repo):
-                for filename in filenames:
-                    if filename.endswith('.tif') or filename.endswith('.TIF'):
+            for dirpath, dirnames, fnames in os.walk(repo):
+                for fname in fnames:
+                    if fname.endswith('.tif') or fname.endswith('.TIF'):
                         files += 1
-                        f.write('{}\n'.format(os.path.join(dirpath, filename)))
+                        f.write('{}\n'.format(os.path.join(dirpath, fname)))
         progress(progress_counter, len(lut.ota_list))
 
-    pm('\n\n{} scanned documents extracted from {}:/\n\n'.format(files, drive_letter))
+    pm('\n\n{} scanned documents extracted from {}:/\n\n'.format(files,
+                                                                 drive_letter))
 
 
 if get_pass():
@@ -464,10 +484,10 @@ if get_pass():
         action_type = user_in('action_type')
 
         if action_type == "1LPAA4PS5":
-            mod_date = (raw_input("\nDate for Metadata (xx/xx/xxxx) : \n").upper())
+            mod_date = (raw_input("\nMetadata Date (xx/xx/xxxx) : \n").upper())
 
-        print('_________________________________________________________________________________________________')
-        print('*************************************************************************************************')
+        print('_______________________________________________________________')
+        print('***************************************************************')
 
         if action_type == "1":
             shapefiles()
@@ -495,8 +515,8 @@ if get_pass():
         else:
             extract('Local', ktl['temp'][user])
 
-        print('_________________________________________________________________________________________________')
-        print('*************************************************************************************************')
+        print('_______________________________________________________________')
+        print('***************************************************************')
 else:
     print("\nAccess denied\n")
     action_type = "None"

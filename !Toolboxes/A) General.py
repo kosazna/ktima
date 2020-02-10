@@ -58,7 +58,7 @@ class ChangeMode(object):
             parameterType="Required",
             direction="Input")
 
-        mode.value = core.lut.mode
+        mode.value = core.kt.mode
         mode.filter.list = ['KTIMA', 'STANDALONE']
         otas.filter.list = []
         default.value = "false"

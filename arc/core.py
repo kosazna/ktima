@@ -26,10 +26,10 @@ def ca(*args):
 
 
 def clarify(feature):
-    available_otas = set(org[kt.mode].available(feature, ota_num=True))
+    mxd_otas = org[kt.mode].mxd_fl[feature]['list']
     user_otas = set(kt.otas)
 
-    end_otas = list(user_otas.intersection(available_otas))
+    end_otas = list(user_otas.intersection(mxd_otas))
     end_list = [r'{}\{}_{}'.format(feature.lower(),
                                    feature,
                                    ota) for ota in end_otas]
@@ -59,9 +59,8 @@ class Geoprocessing:
                     f_name = "merge_" + _shape
 
                     try:
-                        arcpy.Merge_management(
-                            list(org[self.mode].mxd_fl[_shape]['list']),
-                            self.gdb(f_name))
+                        arcpy.Merge_management(clarify(_shape),
+                                               self.gdb(f_name))
 
                         pm("\nMerged {}\n".format(_shape))
 
@@ -83,12 +82,9 @@ class Geoprocessing:
 
                 f_name = "merge_" + _shape
 
-                tomerge = list()
-
-                for ota in kt.otas:
-                    tomerge.append(r'{}\{}_{}'.format(shapefile.lower(),
-                                                      shapefile, ota))
-
+                tomerge = [r'{}\{}_{}'.format(_shape.lower(),
+                                              _shape,
+                                              ota) for ota in kt.otas]
                 try:
                     arcpy.Merge_management(tomerge, self.gdb(f_name))
                     status[self.mode].update('SHAPE', shapefile, True)
