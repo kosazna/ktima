@@ -34,7 +34,8 @@ class Shapes(object):
         self.description = "Check shapefiles for overlaps and wrong KAEK"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         dekadika = arcpy.Parameter(
             displayName="Dekadika elegxou",
             name="dekadika",
@@ -42,43 +43,17 @@ class Shapes(object):
             parameterType="Required",
             direction="Input")
 
-        # standalone = arcpy.Parameter(
-        #     displayName="Standalone check",
-        #     name="Standalone Merge",
-        #     datatype="Boolean",
-        #     parameterType="Required",
-        #     direction="Input")
-        #
-        # otas_to_merge = arcpy.Parameter(
-        #     displayName="OTA",
-        #     name="OTA",
-        #     datatype="String",
-        #     parameterType="Optional",
-        #     direction="Input",
-        #     multiValue=True)
-
-        # if core.mxdName == core.mxdGeneralName or core.mxdName == core.mxdKtimaName:
-        #     otas_values = copy.copy(core.lut.ota_list)
-        #     otas_to_merge.filter.list = []
-        #
-        # standalone.value = "false"
-
         params = [dekadika]
         return params
 
-    def updateParameters(self, params):
-        # if params[1].value:
-        #     otas_values = copy.copy(core.lut.ota_list)
-        #     params[2].filter.list = otas_values
+    @staticmethod
+    def updateParameters(params):
 
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
-
-        # otas_to_merge = params[2].valueAsText
-        # otas = otas_to_merge.split(";")
-        # standalone_merge = bool(params[1].value)
 
         core.check[core.kt.mode].shapes(params[0].value)
 
@@ -94,7 +69,8 @@ class Geometry(object):
         self.description = "Check PST and/or FBOUND geometry"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         shape = arcpy.Parameter(
             displayName="Shapefiles",
             name="shapetype",
@@ -109,10 +85,12 @@ class Geometry(object):
 
         return params
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         shape = params[0].valueAsText
@@ -135,10 +113,11 @@ class Roads(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
         self.label = "ROADS"
-        self.description = "Check ROADS for intersections. By deafult the script checks the old ROADS in InputData"
+        self.description = "Check ROADS for intersections."
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         roads = arcpy.Parameter(
             displayName="Check new ROADS",
             name="roads",
@@ -151,10 +130,12 @@ class Roads(object):
         params = [roads]
         return params
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
         new_roads = bool(params[0].value)
 
@@ -177,13 +158,16 @@ class Dbound(object):
         self.description = "Check DBOUND for missing values"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         return
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, parameters, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.check[core.kt.mode].dbound()
@@ -200,13 +184,16 @@ class Bld(object):
         self.description = "Check BLD for missing values"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         return
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, parameters, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.check[core.kt.mode].bld()

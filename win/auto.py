@@ -49,7 +49,10 @@ def user_in(_func):
                                "(S)aromena\n\n",
                'clear_type': "\nDelete method : (A)ll  or  (S)tandard\n\n",
                'org_folder': "\nFiles : (A)naktiseis  or  (S)aromena  or  (M)DB's\n\n",
-               'get_scanned': "\nGive drive letter : [Enter for default ('W')]\n\n"}
+               'get_scanned': "\nGive drive letter : [Enter for default ('W')]\n\n",
+               'path_to_count': "\nCount files from:\n\n"
+                                "(L)ocalData\n"
+                                "(P)aradosiData\n\n"}
 
     sl = ['']
     ol = ['']
@@ -65,7 +68,8 @@ def user_in(_func):
                 'clear_folder': ['I', 'L', 'P', 'A', 'S', 'M'],
                 'clear_type': ['A', 'S'],
                 'org_folder': ['A', 'S', 'M'],
-                'get_scanned': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'}
+                'get_scanned': 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+                'path_to_count': ['L', 'P']}
 
     if _func == 'shapes' or _func == 'ota_code':
         user_action = raw_input(console[_func]).upper()
@@ -114,7 +118,6 @@ def shapefiles():
     user_ota_list = ota_code.split("-")
 
     shape_list = []
-    missing_list = set()
     log_status = []
 
     if get_folder == "S" and export_folder == "L":
@@ -153,11 +156,6 @@ def shapefiles():
                                                                 '.dbf']):
             if bname == e_shape:
                 shutil.copyfile(fpath, os.path.join(outpath, fname))
-            else:
-                missing_name = '_'.join([e_shape, e_ota])
-                missing_list.add(missing_name)
-
-        return
 
     progress_counter = 0
 
@@ -188,14 +186,6 @@ def shapefiles():
                 progress(progress_counter, len(lut.ota_list))
 
         log('Export Shapefiles', log_status)
-
-        print("\nMissing files : \n")
-
-        if not missing_list:
-            print("NONE\n\n")
-        else:
-            for i in sorted(missing_list):
-                print(i)
     else:
         pass
 
@@ -386,7 +376,14 @@ def organize():
     print("DONE !")
 
 
-def counter(path_to_count=paths.paradosidata):
+def counter():
+    path = user_in('path_to_count')
+
+    if path == 'L':
+        path_to_count = paths.localdata
+    else:
+        path_to_count = paths.paradosidata
+
     shapes = Files(path_to_count)
     mdb = Files(path_to_count)
     xml = Files(path_to_count)
@@ -485,8 +482,7 @@ if get_pass():
         if action_type == "1LPAA4PS5":
             mod_date = (raw_input("\nMetadata Date (xx/xx/xxxx) : \n").upper())
 
-        print('_______________________________________________________________')
-        print('***************************************************************')
+        print('###############################################################')
 
         if action_type == "1":
             shapefiles()
@@ -514,8 +510,7 @@ if get_pass():
         else:
             extract('Local', ktl['temp'][user])
 
-        print('_______________________________________________________________')
-        print('***************************************************************')
+        print('###############################################################')
 else:
     print("\nAccess denied\n")
     action_type = "None"

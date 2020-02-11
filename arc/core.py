@@ -93,14 +93,14 @@ class Geoprocessing:
                     pm("\n!!! {} source files missing !!!\n".format(_shape))
 
     def union(self, shapes, precision=lut.precision,
-              gaps=False, standalone=False, otas=None):
+              gaps=False):
 
         if gaps:
             _gaps = "GAPS"
         else:
             _gaps = "NO_GAPS"
 
-        if not standalone:
+        if not self.standalone:
             if shapes == "ALL":
                 for shapefile in lut.merging_list:
                     pm("Union for {}\n".format(shapefile))
@@ -118,7 +118,7 @@ class Geoprocessing:
                 for shape in shapes:
                     feature_name = "union_" + shape
                     arcpy.Union_analysis(
-                        list(org[self.mode].mxd_fl[shape]['list']),
+                        clarify(shape),
                         self.gdb(feature_name),
                         "NO_FID",
                         precision,
@@ -127,15 +127,9 @@ class Geoprocessing:
             for shape in shapes:
                 feature_name = "union_" + shape
 
-                to_union = list()
-
-                for ota in otas:
-                    if self.mode:
-                        to_union.append(r'{}_all\{}_{}'.format(shape.lower(),
-                                                               shape, ota))
-                    else:
-                        to_union.append(r'{}\{}_{}'.format(shape.lower(),
-                                                           shape, ota))
+                to_union = [r'{}\{}_{}'.format(shape.lower(),
+                                               shape,
+                                               ota) for ota in kt.otas]
 
                 arcpy.Union_analysis(to_union,
                                      self.gdb(feature_name),
@@ -325,15 +319,10 @@ class Check:
             pm("\nCheck accuracy : {}\n".format(precision_txt))
 
             # geoprocessing
-            if self.mode == ktima_m:
-                geoprocessing[self.mode].union(['PST', 'ASTENOT', 'ASTTOM'],
-                                               precision,
-                                               gaps=False)
-            else:
-                geoprocessing[self.mode].union(['PST', 'ASTENOT', 'ASTTOM'],
-                                               precision,
-                                               gaps=False,
-                                               standalone=True, otas=kt.otas)
+
+            geoprocessing[self.mode].union(['PST', 'ASTENOT', 'ASTTOM'],
+                                           precision,
+                                           gaps=False)
 
             turn_off()
             org[self.mode].add_layer([self.pst, self.astenot, self.asttom])

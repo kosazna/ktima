@@ -33,13 +33,16 @@ class Fbound(object):
         self.description = "Create new FBOUND's"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         return
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, parameters, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.create[core.kt.mode].fbound()
@@ -56,13 +59,16 @@ class Roads(object):
         self.description = "Create New ROADS's"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         return
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, parameters, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.create[core.kt.mode].roads()
@@ -79,13 +85,16 @@ class Diekdikisi(object):
         self.description = "Creare FBOUND claim"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         return
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, parameters, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.create[core.kt.mode].fboundclaim()
@@ -102,13 +111,16 @@ class PreFbound(object):
         self.description = "Create PRE_FBOUND's"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         return
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, parameters, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.create[core.kt.mode].pre_fbound()
