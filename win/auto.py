@@ -17,6 +17,7 @@ kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 naming_path = cp([meleti, inputdata, docs_i, 'KT_Naming_Schema.json'])
 
 info_data = load_json(kt_info_path)
+
 naming_data = load_json(naming_path)
 
 lut = NamesAndLists(info_data, naming_data)
