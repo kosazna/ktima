@@ -51,11 +51,19 @@ class ChangeMode(object):
             direction="Input",
             multiValue=True)
 
-        mode.value = 'KTIMA'
+        default = arcpy.Parameter(
+            displayName="Set as Default Mode",
+            name="default",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
+
+        mode.value = core.kt.mode
         mode.filter.list = ['KTIMA', 'STANDALONE']
         otas.filter.list = []
+        default.value = "false"
 
-        params = [mode, otas]
+        params = [mode, otas, default]
 
         return params
 
@@ -70,13 +78,16 @@ class ChangeMode(object):
         arcpy.env.addOutputsToMap = True
 
         mode = params[0].valueAsText
-
         _otas = params[1].valueAsText
+        default = bool(params[2].value)
 
         if _otas:
             otas = _otas.split(';')
         else:
             otas = core.lut.ota_list
+
+        if default:
+            core.kt.set_default_mode(mode.lower())
 
         core.kt.reset_mode(mode.lower(), core.strize(otas))
 

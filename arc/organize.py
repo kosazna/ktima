@@ -167,10 +167,13 @@ class Organizer:
             if self.mxd_fl[shape]['in_mxd']:
                 find_missing(shape, self.mxd_fl[shape]['list'], loc_fl[shape])
 
-    def available(self, feature):
+    def available(self, feature, ota_num=False):
         _mxd = self.mxd_fl[feature]['list']
-        _local = set(loc_fl[feature])
-        return list(_mxd.intersection(_local))
+        _local = loc_fl[feature]
+
+        common = sorted(list(_mxd.intersection(_local)))
+
+        return [ota[-5:] for ota in common] if ota_num else common
 
 
 def choose_roads(roads):

@@ -21,8 +21,20 @@ def ca(*args):
     if not checker:
         return True
     else:
-        pm('!! Task Aborted !!')
+        pm('\n\n\n!! Task Aborted !!\n\n\n')
         return False
+
+
+def clarify(feature):
+    mxd_otas = set(i[-5:] for i in org[kt.mode].mxd_fl[feature]['list'])
+    user_otas = set(kt.otas)
+
+    end_otas = list(user_otas.intersection(mxd_otas))
+    end_list = [r'{}\{}_{}'.format(feature.lower(),
+                                   feature,
+                                   ota) for ota in end_otas]
+
+    return end_list
 
 
 class Geoprocessing:
@@ -47,9 +59,8 @@ class Geoprocessing:
                     f_name = "merge_" + _shape
 
                     try:
-                        arcpy.Merge_management(
-                            list(org[self.mode].mxd_fl[_shape]['list']),
-                            self.gdb(f_name))
+                        arcpy.Merge_management(clarify(_shape),
+                                               self.gdb(f_name))
 
                         pm("\nMerged {}\n".format(_shape))
 
@@ -71,12 +82,9 @@ class Geoprocessing:
 
                 f_name = "merge_" + _shape
 
-                tomerge = list()
-
-                for ota in kt.otas:
-                    tomerge.append(r'{}\{}_{}'.format(shapefile.lower(),
-                                                      shapefile, ota))
-
+                tomerge = [r'{}\{}_{}'.format(_shape.lower(),
+                                              _shape,
+                                              ota) for ota in kt.otas]
                 try:
                     arcpy.Merge_management(tomerge, self.gdb(f_name))
                     status[self.mode].update('SHAPE', shapefile, True)
@@ -264,11 +272,14 @@ class General:
         if spatial:
             for lyr_astota in org[self.mode].available('ASTOTA'):
                 ota = str(lyr_astota[-5:])
-                arcpy.SelectLayerByLocation_management(fc, 'WITHIN', lyr_astota)
+                if ota in kt.otas:
+                    arcpy.SelectLayerByLocation_management(fc,
+                                                           'WITHIN',
+                                                           lyr_astota)
 
-                if get_count(fc) != 0:
-                    export(fc, ota)
-                    clear_selection(fc)
+                    if get_count(fc) != 0:
+                        export(fc, ota)
+                        clear_selection(fc)
         else:
             arcpy.AddField_management(fc, "_OTA_", "TEXT", field_length=5)
             arcpy.CalculateField_management(fc,
@@ -276,7 +287,7 @@ class General:
                                             '!{}![:5]'.format(field),
                                             "PYTHON_9.3")
 
-            for ota in lut.ota_list:
+            for ota in kt.ota_list:
                 arcpy.SelectLayerByAttribute_management(
                     fc,
                     "NEW_SELECTION",
@@ -296,7 +307,7 @@ class Check:
         self.asttom = self.gdb(lut.asttomM)
         self.pst = self.gdb(lut.pstM)
         self.fbound = self.gdb(lut.fboundM)
-        self.roads = self.gdb(lut.roadsM)
+        self.roads_shp = self.gdb(lut.roadsM)
         self.dbound = self.gdb(lut.dboundM)
         self.bld = self.gdb(lut.bldM)
 
@@ -536,8 +547,9 @@ class Check:
     def fbound_geometry(self):
         if status[self.mode].check('EXPORTED', "FBOUND"):
             try:
-                arcpy.CheckGeometry_management(list(org[self.mode].mxdFBOUND),
-                                               self.gdb(lut.fbound_geom))
+                arcpy.CheckGeometry_management(
+                    org[self.mode].available('FBOUND'),
+                    self.gdb(lut.fbound_geom))
 
                 count_geom = get_count(lut.fbound_geom)
                 problematic_set = set()
@@ -594,7 +606,7 @@ class Check:
         roads = choose_roads(_roads)
 
         if ca('PST', 'ASTENOT', roads):
-            org[self.mode].add_layer([self.pst, lut.roadsM, self.astenot])
+            org[self.mode].add_layer([self.pst, self.roads_shp, self.astenot])
 
             # Eksagwgh kai enosi eidikwn ektasewn
             arcpy.SelectLayerByAttribute_management(self.pst,
@@ -606,7 +618,7 @@ class Check:
                                       "PROP_TYPE")
 
             # Elegxos gia aksones ektos EK
-            arcpy.Intersect_analysis([lut.roadsM, lut.temp_ek],
+            arcpy.Intersect_analysis([self.roads_shp, lut.temp_ek],
                                      self.gdb(lut.intersections_roads),
                                      output_type="POINT")
             arcpy.DeleteField_management(lut.intersections_roads, "PROP_TYPE")
@@ -793,21 +805,22 @@ class Fields:
     def pst(self):
         # Diorthosi ton pedion ORI_TYPE, DEC_ID kai ADDRESS stous PST
         # me vasi tis prodiagrafes
-        for lyr_pst in org[self.mode].mxdPST:
-            pm("Processing {}".format(lyr_pst))
-            arcpy.SelectLayerByAttribute_management(lyr_pst,
-                                                    "NEW_SELECTION",
-                                                    " ORI_CODE = '' ")
-            arcpy.CalculateField_management(lyr_pst, "ORI_TYPE", '1',
-                                            "PYTHON_9.3")
-            arcpy.CalculateField_management(lyr_pst, "DEC_ID", "''",
-                                            "PYTHON_9.3")
-            arcpy.SelectLayerByAttribute_management(lyr_pst,
-                                                    "NEW_SELECTION",
-                                                    " ADDRESS = '' ")
-            arcpy.CalculateField_management(lyr_pst, "ADDRESS",
-                                            "'ΑΝΩΝΥΜΟΣ'",
-                                            "PYTHON_9.3")
+        for lyr_pst in org[self.mode].available('PST'):
+            if lyr_pst[-5:] in kt.otas:
+                pm("Processing {}".format(lyr_pst))
+                arcpy.SelectLayerByAttribute_management(lyr_pst,
+                                                        "NEW_SELECTION",
+                                                        " ORI_CODE = '' ")
+                arcpy.CalculateField_management(lyr_pst, "ORI_TYPE", '1',
+                                                "PYTHON_9.3")
+                arcpy.CalculateField_management(lyr_pst, "DEC_ID", "''",
+                                                "PYTHON_9.3")
+                arcpy.SelectLayerByAttribute_management(lyr_pst,
+                                                        "NEW_SELECTION",
+                                                        " ADDRESS = '' ")
+                arcpy.CalculateField_management(lyr_pst, "ADDRESS",
+                                                "'ΑΝΩΝΥΜΟΣ'",
+                                                "PYTHON_9.3")
 
         pm("\nDONE !\n")
 
@@ -816,9 +829,10 @@ class Fields:
     @mxd
     def asttom(self):
         # Diagrafi ACQ_SCALE apo tous ASTTOM
-        for lyr_asttom in org[self.mode].mxdASTTOM:
-            pm("Processing {}".format(lyr_asttom))
-            arcpy.DeleteField_management(lyr_asttom, "ACQ_SCALE", )
+        for lyr_asttom in org[self.mode].available('ASTTOM'):
+            if lyr_asttom[-5:] in kt.otas:
+                pm("Processing {}".format(lyr_asttom))
+                arcpy.DeleteField_management(lyr_asttom, "ACQ_SCALE", )
 
         pm("\nDONE !\n")
 
@@ -827,29 +841,33 @@ class Fields:
     @mxd
     def astenot(self):
         # Prosthiki onomasias sto pedio LOCALITY ton ASTENOT me vasi txt arxeio
+        available = org[self.mode].available('ASTENOT', ota_num=True)
+
         with open(paths.locality) as csvfile:
             localnames = csv.reader(csvfile)
 
             for row in localnames:
                 try:
                     ota = row[0][:5]
-                    lyr_astenot = "ASTENOT_{}".format(ota)
-                    pm("Processing {}".format(lyr_astenot))
-                    arcpy.SelectLayerByAttribute_management(
-                        lyr_astenot,
-                        "NEW_SELECTION",
-                        " CAD_ADMIN LIKE '%{}%' ".format(row[0]))
-                    arcpy.CalculateField_management(lyr_astenot,
-                                                    "LOCALITY",
-                                                    "'{}'".format(row[1]),
-                                                    "PYTHON_9.3")
-                    arcpy.SelectLayerByAttribute_management(lyr_astenot,
-                                                            "NEW_SELECTION",
-                                                            " LOCALITY = '' ")
-                    arcpy.CalculateField_management(lyr_astenot,
-                                                    "LOCALITY",
-                                                    "'{}'".format(row[2]),
-                                                    "PYTHON_9.3")
+                    if ota in available and ota in kt.otas:
+                        lyr_astenot = "ASTENOT_{}".format(ota)
+                        pm("Processing {}".format(lyr_astenot))
+                        arcpy.SelectLayerByAttribute_management(
+                            lyr_astenot,
+                            "NEW_SELECTION",
+                            " CAD_ADMIN LIKE '%{}%' ".format(row[0]))
+                        arcpy.CalculateField_management(lyr_astenot,
+                                                        "LOCALITY",
+                                                        "'{}'".format(row[1]),
+                                                        "PYTHON_9.3")
+                        arcpy.SelectLayerByAttribute_management(
+                            lyr_astenot,
+                            "NEW_SELECTION",
+                            " LOCALITY = '' ")
+                        arcpy.CalculateField_management(lyr_astenot,
+                                                        "LOCALITY",
+                                                        "'{}'".format(row[2]),
+                                                        "PYTHON_9.3")
                 except IndexError:
                     pm("Leipei onomatologia gia {}".format(ota))
 
@@ -957,9 +975,9 @@ class Create:
             log('Create FBOUND')
 
     def roads(self):
-        if status[self.mode].check("ROADS", "CPROBS") and not status[
-            kt.mode].check("EXPORTED",
-                           "ROADS"):
+        if status[self.mode].check("ROADS", "CPROBS") \
+                and not status[self.mode].check("EXPORTED", "ROADS"):
+
             arcpy.FeatureClassToFeatureClass_conversion(
                 self.gdb(lut.gdb_roads_all),
                 paths.rdoutpath, lut.roads_all)

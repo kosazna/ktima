@@ -114,14 +114,14 @@ class Paths:
         else:
             return os.path.join(self.mdb_general, fc)
 
-    # def gdbm(self, fc=None):
-    #     if fc is None:
-    #         return self.gdb_misc
-    #     else:
-    #         return os.path.join(self.gdb_misc, fc)
-    #
-    # def gdbc(self, fc=None):
-    #     if fc is None:
-    #         return self.gdb_check
-    #     else:
-    #         return os.path.join(self.gdb_check, fc)
+    def server_folder(self, ota, shp):
+        if self.company_name == 'NAMA':
+            return cp([ota, 'SHP'], origin=ktl['data'][user])
+        elif self.company_name == '2KP':
+            return cp([ota, 'SHP', shp], origin=ktl['data'][user])
+
+    def ktima_folder(self, ota_folder, fc, spatial_folder=localdata_o):
+        if self.mel_type == 1:
+            return cp([self.meleti, outputdata, spatial_folder, ota_folder, "SHAPE", fc])
+        else:
+            return cp([self.meleti, outputdata, spatial_folder, ota_folder, fc])
