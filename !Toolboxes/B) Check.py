@@ -8,7 +8,6 @@
 # ---------------------------------------------------#
 import arcpy
 from ktima.arc import *
-import copy
 
 
 class Toolbox(object):
@@ -34,8 +33,8 @@ class Shapes(object):
         self.description = "Check shapefiles for overlaps and wrong KAEK"
         self.canRunInBackground = False
 
-    @staticmethod
-    def getParameterInfo():
+
+    def getParameterInfo(self):
         dekadika = arcpy.Parameter(
             displayName="Dekadika elegxou",
             name="dekadika",
@@ -46,12 +45,12 @@ class Shapes(object):
         params = [dekadika]
         return params
 
-    @staticmethod
-    def updateParameters(params):
+
+    def updateParameters(self, params):
         return
 
-    @staticmethod
-    def execute(params, messages):
+
+    def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.check[core.kt.mode].shapes(params[0].value)
@@ -68,8 +67,8 @@ class Geometry(object):
         self.description = "Check PST and/or FBOUND geometry"
         self.canRunInBackground = False
 
-    @staticmethod
-    def getParameterInfo():
+
+    def getParameterInfo(self):
         shape = arcpy.Parameter(
             displayName="Shapefiles",
             name="shapetype",
@@ -84,12 +83,12 @@ class Geometry(object):
 
         return params
 
-    @staticmethod
-    def updateParameters(params):
+
+    def updateParameters(self, params):
         return
 
-    @staticmethod
-    def execute(params, messages):
+
+    def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
 
         shape = params[0].valueAsText
@@ -115,8 +114,8 @@ class Roads(object):
         self.description = "Check ROADS for intersections."
         self.canRunInBackground = False
 
-    @staticmethod
-    def getParameterInfo():
+
+    def getParameterInfo(self):
         roads = arcpy.Parameter(
             displayName="Check new ROADS",
             name="roads",
@@ -129,12 +128,12 @@ class Roads(object):
         params = [roads]
         return params
 
-    @staticmethod
-    def updateParameters(params):
+
+    def updateParameters(self, params):
         return
 
-    @staticmethod
-    def execute(params, messages):
+
+    def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
         new_roads = bool(params[0].value)
 
@@ -157,16 +156,16 @@ class Dbound(object):
         self.description = "Check DBOUND for missing values"
         self.canRunInBackground = False
 
-    @staticmethod
-    def getParameterInfo():
+
+    def getParameterInfo(self):
         return
 
-    @staticmethod
-    def updateParameters(params):
+
+    def updateParameters(self, params):
         return
 
-    @staticmethod
-    def execute(params, messages):
+
+    def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.check[core.kt.mode].dbound()
@@ -183,12 +182,10 @@ class Bld(object):
         self.description = "Check BLD for missing values"
         self.canRunInBackground = False
 
-    @staticmethod
-    def getParameterInfo():
+    def getParameterInfo(self):
         return
 
-    @staticmethod
-    def updateParameters(params):
+    def updateParameters(self, params):
         return
 
     def execute(self, params, messages):

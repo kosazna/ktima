@@ -33,8 +33,8 @@ class Geometry(object):
         self.description = "Check PST and/or FBOUND geometry"
         self.canRunInBackground = False
 
-    @staticmethod
-    def getParameterInfo():
+
+    def getParameterInfo(self):
         fields = arcpy.Parameter(
             displayName="Shapefiles",
             name="shapetype",
@@ -51,12 +51,12 @@ class Geometry(object):
         params = [fields]
         return params
 
-    @staticmethod
-    def updateParameters(params):
+
+    def updateParameters(self, params):
         return
 
-    @staticmethod
-    def execute(params, messages):
+
+    def execute(self, params, messages):
         arcpy.env.addOutputsToMap = False
 
         _fields = params[0].valueAsText
@@ -82,16 +82,16 @@ class Roads(object):
         self.description = "Fix roads so as not to intersect with nothing"
         self.canRunInBackground = False
 
-    @staticmethod
-    def getParameterInfo():
+
+    def getParameterInfo(self):
         return
 
-    @staticmethod
-    def updateParameters(params):
+
+    def updateParameters(self, params):
         return
 
-    @staticmethod
-    def execute(params, messages):
+
+    def execute(self, params, messages):
         arcpy.env.addOutputsToMap = False
 
         core.fix[core.kt.mode].roads()
@@ -108,8 +108,8 @@ class Fields(object):
         self.description = "Fix fields and filling missing values"
         self.canRunInBackground = False
 
-    @staticmethod
-    def getParameterInfo():
+
+    def getParameterInfo(self):
         fields = arcpy.Parameter(
             displayName="Shapefiles",
             name="shapetype",
@@ -123,12 +123,12 @@ class Fields(object):
         params = [fields]
         return params
 
-    @staticmethod
-    def updateParameters(params):
+
+    def updateParameters(self, params):
         return
 
-    @staticmethod
-    def execute(params, messages):
+
+    def execute(self, params, messages):
         arcpy.env.addOutputsToMap = False
 
         _fields = params[0].valueAsText
