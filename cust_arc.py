@@ -22,7 +22,8 @@ def clear_selection(fc):
 
 
 def list_fields(fc, data=""):
-    """ data : name, type, length, precision, scale, aliasName, baseName, defaultValue"""
+    """ data : name, type, length, precision, scale,
+     aliasName, baseName, defaultValue"""
 
     fields = {'name': [k.name for k in arcpy.ListFields(fc)],
               'type': [k.type for k in arcpy.ListFields(fc)],
@@ -40,7 +41,8 @@ def list_layers():
     _mxd = arcpy.mapping.MapDocument("CURRENT")
     _dataframes = arcpy.mapping.ListDataFrames(_mxd)
 
-    list_shapefiles = [str(_lyr.name) for _df in _dataframes for _lyr in arcpy.mapping.ListLayers(_mxd, "", _df)]
+    list_shapefiles = [str(_lyr.name) for _df in _dataframes for _lyr in
+                       arcpy.mapping.ListLayers(_mxd, "", _df)]
 
     return list_shapefiles
 

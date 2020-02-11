@@ -23,7 +23,8 @@ def extract(mode, folder):
             pass
     else:
         try:
-            outpath = cp([mdev, 'Diafora', 'ktima', 'logs', filename], origin=folder)
+            outpath = cp([mdev, 'Diafora', 'ktima', 'logs', filename],
+                         origin=folder)
             shutil.copyfile(inpath, outpath)
         except IOError:
             print('No such drive')
@@ -44,7 +45,11 @@ class Log:
 
         try:
             with open(self.company_log, 'a') as company_f:
-                company_f.write('\n{}   {:<20}{:<9}{:<25}{}'.format(_datetime, _user, self.meleti, msgf, commentsf))
+                company_f.write('\n{}   {:<20}{:<9}{:<25}{}'.format(_datetime,
+                                                                    _user,
+                                                                    self.meleti,
+                                                                    msgf,
+                                                                    commentsf))
                 server_loged = 'YES'
         except IOError:
             pm('\n\n! Logging !\n\n')
@@ -53,7 +58,10 @@ class Log:
         with open(self.general_log, 'a') as general_f:
             with open(self.kt_log, 'a') as local_f:
                 general_f.write('\n{}   {:<9}{:<20}{:<9}{:<25}{}'.format(_datetime, server_loged, _user, self.meleti, msgf, commentsf))
-                local_f.write('\n{}   {:<9}{:<25}{}'.format(_datetime, self.meleti, msgf, commentsf))
+                local_f.write('\n{}   {:<9}{:<25}{}'.format(_datetime,
+                                                            self.meleti,
+                                                            msgf,
+                                                            commentsf))
 
     def __call__(self, msg, log_list=None):
         time_now = datetime.datetime.now().replace(microsecond=0)

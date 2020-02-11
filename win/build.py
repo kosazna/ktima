@@ -19,9 +19,11 @@ if username == mdev.strip('! ') and password == build_pass:
 
 def buildtree():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
+        repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
+                  origin=ktl['temp'][user])
     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
+        repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
+                  origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
         return
@@ -31,14 +33,16 @@ def buildtree():
     try:
         shutil.copytree(repo, target)
     except WindowsError:
-        print('"{}" directory already exists  or  Source directory missing'.format(target))
+        print('"{}" already exists or Source directory missing'.format(target))
 
 
 def update_folder_structure():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
+        repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
+                  origin=ktl['temp'][user])
     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
+        repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
+                  origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
         return
@@ -53,9 +57,11 @@ def update_folder_structure():
 
 def update_file_structure():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
+        repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
+                  origin=ktl['temp'][user])
     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti], origin=ktl['temp'][user])
+        repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
+                  origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
         return
@@ -87,20 +93,28 @@ def start_logs():
     user_target = cp([users, user, 'KT_log.txt'])
 
     with open(kt_target, 'w') as f:
-        f.write('{:<22}{:<9}{:<25}{}'.format('DATETIME', 'MELETI', 'ACTION', 'COMMENTS'))
+        f.write('{:<22}{:<9}{:<25}{}'.format('DATETIME', 'MELETI',
+                                             'ACTION', 'COMMENTS'))
 
     if os.path.exists(user_target):
         print('User {} already logging'.format(user))
     else:
         with open(user_target, 'w') as f:
-            f.write('{:<22}{:<9}{:<20}{:<9}{:<25}{}'.format('DATETIME', 'SERVER', 'USER', 'MELETI', 'ACTION', 'COMMENTS'))
+            f.write('{:<22}{:<9}{:<20}{:<9}{:<25}{}'.format('DATETIME',
+                                                            'SERVER',
+                                                            'USER',
+                                                            'MELETI',
+                                                            'ACTION',
+                                                            'COMMENTS'))
 
 
 def updatetree():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
+        repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
+                  origin=ktl['temp'][user])
     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'], origin=ktl['temp'][user])
+        repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
+                  origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
         return
@@ -117,9 +131,13 @@ def updatetree():
 
 def update_ktima_info():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti, inputdata, docs_i, 'KT_Info.json'], origin=ktl['temp'][user])
+        repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure',
+                   meleti, inputdata, docs_i, 'KT_Info.json'],
+                  origin=ktl['temp'][user])
     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti, inputdata, docs_i, 'KT_Info.json'], origin=ktl['temp'][user])
+        repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
+                   meleti, inputdata, docs_i, 'KT_Info.json'],
+                  origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
         return
@@ -131,9 +149,11 @@ def update_ktima_info():
 
 def update_temp_paths():
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'], origin=ktl['temp'][user])
+        repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'],
+                  origin=ktl['temp'][user])
     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        repo = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'paths.json'], origin=ktl['temp'][user])
+        repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'paths.json'],
+                  origin=ktl['temp'][user])
     else:
         print('"company_name" not defined in paths.json')
         return
