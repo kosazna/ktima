@@ -48,7 +48,6 @@ class Shapes(object):
 
     @staticmethod
     def updateParameters(params):
-
         return
 
     @staticmethod
@@ -192,8 +191,7 @@ class Bld(object):
     def updateParameters(params):
         return
 
-    @staticmethod
-    def execute(params, messages):
+    def execute(self, params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.check[core.kt.mode].bld()
