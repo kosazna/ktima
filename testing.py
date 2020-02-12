@@ -38,23 +38,3 @@ src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 
 count_lines()
-
-shapes_l = []
-misc_l = []
-probs_l = []
-
-for v in naming_data['merge'].values():
-    shapes_l.append(v)
-for _ in naming_data['union'].values():
-    shapes_l.append(_)
-
-for _ in naming_data['misc'].values():
-    if not isinstance(_, float):
-        misc_l.append(_)
-
-for _ in naming_data['probs'].values():
-    probs_l.append(_)
-
-print(shapes_l)
-print(misc_l)
-print(probs_l)
