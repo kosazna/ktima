@@ -53,7 +53,7 @@ else:
     pm("\nAccess denied\n")
     print("\nAccess denied\n")
 
-arcpy.env.workspace = cp([meleti, gdbs, 'ktima.gdb'])
+# arcpy.env.workspace = cp([meleti, gdbs, 'ktima.gdb'])
 
 kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 naming_path = cp([meleti, inputdata, docs_i, 'KT_Naming_Schema.json'])
@@ -68,6 +68,11 @@ paths = Paths(meleti, lut.mel_type, lut.company_name)
 log = Log(meleti)
 
 kt = Kt(meleti, lut.mode, lut.ota_list)
+
+if kt.mode == ktima_m:
+    arcpy.env.workspace = paths.gdb_company
+else:
+    arcpy.env.workspace = paths.gdb_standalone
 
 status = {ktima_m: Status(meleti, ktima_m, lut.ota_list),
           standalone_m: Status(meleti, standalone_m, kt.otas)}

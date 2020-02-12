@@ -71,6 +71,7 @@ class Paths:
         self.checks_out = cp([mdev, '! --CHECKS-- !', meleti],
                              origin=ktl['temp'][user])
 
+
     def server(self, ota, shp):
         if self.company_name == 'NAMA':
             return cp([ota, 'SHP', shp + '.shp'], origin=ktl['data'][user])

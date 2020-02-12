@@ -212,41 +212,56 @@ class ExportToServer(object):
 
     @staticmethod
     def getParameterInfo():
-        company = arcpy.Parameter(
-            displayName="Shapefile from {}".format(core.paths.company_gdb_name),
-            name="shapetype",
+        geodatabase = arcpy.Parameter(
+            displayName="Geodatabase",
+            name="geodatabase",
             datatype="String",
             parameterType="Required",
+            direction="Input")
+
+        shapes = arcpy.Parameter(
+            displayName="{}.gdb".format(core.paths.standalone_gdb_name),
+            name="shapefiles",
+            datatype="String",
+            parameterType="Optional",
             direction="Input",
             multiValue=True)
 
-        standalone = arcpy.Parameter(
-            displayName="Shapefile from {}".format(
-                core.paths.standalone_gdb_name),
-            name="shapetype",
-            datatype="String",
-            parameterType="Required",
-            direction="Input",
-            multiValue=True)
+        geodatabase.value = core.kt.mode
+        geodatabase.filter.list = ['ktima', 'standalone']
 
-        company.filter.list = core.list_gdb(core.paths.gdb_company)
-        standalone.filter.list = core.list_gdb(core.paths.gdb_standalone)
+        if core.kt.mode == core.ktima_m:
+            _path = core.paths.gdb_company
+        else:
+            _path = core.paths.gdb_standalone
 
-        params = [company, standalone]
+        shapes.filter.list = core.list_gdb(_path)
+
+        params = [geodatabase, shapes]
+
         return params
 
     @staticmethod
     def updateParameters(params):
+        if params[0].valueAsText == 'ktima':
+            _path = core.paths.gdb_company
+            params[1].filter.list = core.list_gdb(_path)
+        else:
+            _path = core.paths.gdb_standalone
+            params[1].filter.list = core.list_gdb(_path)
+
         return
 
     @staticmethod
     def execute(params, messages):
         arcpy.env.addOutputsToMap = False
 
-        _shapes = params[0].valueAsText
+        geodatabse = params[0].valueAsText
+        _shapes = params[1].valueAsText
+
         shapes = _shapes.split(";")
 
-        core.geoprocessing[core.kt.mode].export_to_server(shapes)
+        core.geoprocessing[geodatabse].export_to_server(shapes, geodatabse)
 
         return
 

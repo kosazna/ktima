@@ -137,16 +137,27 @@ class Geoprocessing:
                                      precision,
                                      _gaps)
 
-    def export_to_server(self, copy_files):
-        _path = os.path.join(paths.checks_out, time.strftime("%Y-%m-%d_%H%M"))
+    def export_to_server(self, copy_files, plus_name):
+        pm('\n\n')
+
+        _path = os.path.join(paths.checks_out,
+                             time.strftime("%Y-%m-%d_%H%M") + '_' + plus_name)
 
         if not os.path.exists(_path):
             os.mkdir(_path)
 
         for shp in copy_files:
-            arcpy.CopyFeatures_management(self.gdb(shp),
-                                          os.path.join(_path,
-                                                       '{}.shp'.format(shp)))
+            try:
+                arcpy.FeatureClassToFeatureClass_conversion(self.gdb(shp),
+                                                            _path,
+                                                            shp)
+
+                pm('Exported {} from {}.gdb'.format(shp, plus_name))
+
+            except RuntimeError:
+                pm('Dataset {} does not exist'.format(shp))
+
+        pm('\nDone !\n')
 
 
 class Queries:

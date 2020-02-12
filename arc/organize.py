@@ -218,7 +218,7 @@ def mxd(func):
     def wrapper(*args, **kwargs):
         if mxdName == mxdKtimaName and func.__name__ != 'merge':
             org[kt.mode].add_layer(req_map[func.__name__], lyr=True)
-            # add_layer() from 'merge' is executed from the toolbox
+            # add_layer() for 'merge' is executed from the toolbox
         org[kt.mode].mxdfiles()
         org[kt.mode].validate(req_map[func.__name__])
         result = func(*args, **kwargs)
