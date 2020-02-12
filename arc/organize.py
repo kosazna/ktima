@@ -148,7 +148,7 @@ class Organizer:
                 except KeyError:
                     pass
 
-    def validate(self):
+    def validate(self, validation_fc):
         def find_missing(shp_name, mxdlist, locallist):
             loc_miss = mxdlist.difference(locallist)
             mxd_miss = locallist.difference(mxdlist)
@@ -163,7 +163,7 @@ class Organizer:
             elif lm:
                 pm("LocalData missing - {}: {}".format(shp_name, lm))
 
-        for shape in self.mxd_fl:
+        for shape in validation_fc:
             if self.mxd_fl[shape]['in_mxd']:
                 find_missing(shape, self.mxd_fl[shape]['list'], loc_fl[shape])
 
@@ -219,13 +219,9 @@ def mxd(func):
         if mxdName == mxdKtimaName and func.__name__ != 'merge':
             org[kt.mode].add_layer(req_map[func.__name__], lyr=True)
             # add_layer() from 'merge' is executed from the toolbox
-            org[kt.mode].mxdfiles()
-            org[kt.mode].validate()
-            result = func(*args, **kwargs)
-        else:
-            org[kt.mode].mxdfiles()
-            org[kt.mode].validate()
-            result = func(*args, **kwargs)
+        org[kt.mode].mxdfiles()
+        org[kt.mode].validate(req_map[func.__name__])
+        result = func(*args, **kwargs)
 
         return result
 
