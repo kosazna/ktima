@@ -50,7 +50,8 @@ class Compare:
         self.dir_2_count = self.dir_2.file_counter
         self.path_1_miss = tuple(set(self.dir_2.names) - set(self.dir_1.names))
         self.path_2_miss = tuple(set(self.dir_1.names) - set(self.dir_2.names))
-        self.mapper_all, self.mapper_common, self.mapper_diff = Compare.all_files_mapping(self.map_1, self.map_2)
+        self.all, self.common, self.diff = Compare.all_files_mapping(self.map_1,
+                                                                     self.map_2)
 
     def show_missing(self):
         print('{} - missing:'.format(self.path_1))
@@ -89,10 +90,12 @@ class Compare:
         return map_all, map_common, map_diff
 
     def extract_diff(self):
-        if self.mapper_diff:
+        if self.diff:
             target = self.path_1.split('\\')[1:-1] + ['Difference']
-            path_1_miss = target + ['Missing_from_path_1_({})'.format(self.path_1.split('\\')[-1])]
-            path_2_miss = target + ['Missing_from_path_2_({})'.format(self.path_2.split('\\')[-1])]
+            path_1_miss = target + [
+                'Missing_from_path_1_({})'.format(self.path_1.split('\\')[-1])]
+            path_2_miss = target + [
+                'Missing_from_path_2_({})'.format(self.path_2.split('\\')[-1])]
             p1p = cp(path_1_miss)
             p2p = cp(path_2_miss)
 
@@ -102,13 +105,15 @@ class Compare:
             if not os.path.exists(p2p):
                 os.makedirs(p2p)
 
-            for i in self.mapper_diff:
-                if self.mapper_diff[i][0]:
-                    _dst = os.path.join(p2p, os.path.split(self.mapper_diff[i][0])[1])
-                    c_copy(self.mapper_diff[i][0], _dst)
-                elif self.mapper_diff[i][1]:
-                    _dst = os.path.join(p1p, os.path.split(self.mapper_diff[i][1])[1])
-                    c_copy(self.mapper_diff[i][1], _dst)
+            for i in self.diff:
+                if self.diff[i][0]:
+                    _dst = os.path.join(p2p,
+                                        os.path.split(self.diff[i][0])[1])
+                    c_copy(self.diff[i][0], _dst)
+                elif self.diff[i][1]:
+                    _dst = os.path.join(p1p,
+                                        os.path.split(self.diff[i][1])[1])
+                    c_copy(self.diff[i][1], _dst)
 
             print('\n{} - was created for files missing'.format(p1p))
             print('\n{} - was created for files missing '.format(p2p))
@@ -117,17 +122,23 @@ class Compare:
 
     def show(self, what='all'):
         if what == 'all':
-            for i in self.mapper_all:
-                print(' {:<20}  {:<75}  {:<75}'.format(i, self.mapper_all[i][0], self.mapper_all[i][1]))
-                print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+            for i in self.all:
+                print('{:<20}  {:<75}  {:<75}'.format(i,
+                                                      self.all[i][0],
+                                                      self.all[i][1]))
+                print('-------------------------------------------------------')
         elif what == 'common':
-            for i in self.mapper_common:
-                print(' {:<20}  {:<75}  {:<75}'.format(i, self.mapper_common[i][0], self.mapper_common[i][1]))
-                print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+            for i in self.common:
+                print('{:<20}  {:<75}  {:<75}'.format(i,
+                                                      self.common[i][0],
+                                                      self.common[i][1]))
+                print('-------------------------------------------------------')
         elif what == 'diff':
-            for i in self.mapper_diff:
-                print(' {:<20}  {:<75}  {:<75}'.format(i, self.mapper_diff[i][0], self.mapper_diff[i][1]))
-                print('-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------')
+            for i in self.diff:
+                print('{:<20}  {:<75}  {:<75}'.format(i,
+                                                      self.diff[i][0],
+                                                      self.diff[i][1]))
+                print('-------------------------------------------------------')
 
 
 class Files:
@@ -170,7 +181,8 @@ class Files:
 
         if match_wildcard:
             for _match in match_wildcard:
-                for fullpath, filename, basename, ext in Files.iter_dir(self.path):
+                for fullpath, filename, basename, ext in Files.iter_dir(
+                        self.path):
                     if ext == _match:
                         key = os.path.split(fullpath)[0]
 
@@ -202,7 +214,8 @@ class Files:
     def show_names(self, split=False):
         print('-----  {} Files  -----'.format(self.file_counter))
         for i, j in enumerate(sorted(self.names)):
-            print('{:>5})  {}'.format(i + 1, os.path.splitext(j)[0] if split else j))
+            print('{:>5})  {}'.format(i + 1,
+                                      os.path.splitext(j)[0] if split else j))
         print('-----  {} Files  -----'.format(self.file_counter))
 
     def show_paths(self):
@@ -225,7 +238,8 @@ class Files:
                     f.write('{}\n'.format(i))
             else:
                 for i in self.names:
-                    f.write('{}\n'.format(os.path.splitext(i)[0] if split else i))
+                    f.write(
+                        '{}\n'.format(os.path.splitext(i)[0] if split else i))
 
     def gather(self, new_path):
         if not os.path.exists(new_path):

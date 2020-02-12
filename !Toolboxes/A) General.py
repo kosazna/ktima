@@ -35,7 +35,8 @@ class ChangeMode(object):
         self.description = "Changing check mode".format(core.meleti)
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         mode = arcpy.Parameter(
             displayName="Mode",
             name="Mode",
@@ -67,14 +68,16 @@ class ChangeMode(object):
 
         return params
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         if params[0].valueAsText == 'STANDALONE':
             otas_values = copy.copy(core.lut.ota_list)
             params[1].filter.list = otas_values
         else:
             params[1].filter.list = []
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         mode = params[0].valueAsText
@@ -102,10 +105,16 @@ class Info(object):
             core.meleti)
         self.canRunInBackground = False
 
-    def updateParameters(self, params):
+    @staticmethod
+    def getParameterInfo():
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def updateParameters(params):
+        return
+
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
         core.status[core.kt.mode].show()
@@ -120,7 +129,8 @@ class OtaExport(object):
         self.description = "Export Shapefiles to LocalData"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         shape = arcpy.Parameter(
             displayName="Shapefile",
             name="Shape",
@@ -164,14 +174,16 @@ class OtaExport(object):
         params = [shape, spatial, fields, export, database]
         return params
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         if params[0].valueAsText:
             params[2].filter.list = core.list_fields(params[0].valueAsText,
                                                      'name')
 
         return params
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = False
 
         shape = params[0].valueAsText
@@ -198,7 +210,8 @@ class ExportToServer(object):
         self.description = "Export shapefiles to kthma_temp"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         company = arcpy.Parameter(
             displayName="Shapefile from {}".format(core.paths.company_gdb_name),
             name="shapetype",
@@ -222,10 +235,12 @@ class ExportToServer(object):
         params = [company, standalone]
         return params
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = False
 
         _shapes = params[0].valueAsText
@@ -245,7 +260,8 @@ class Identical(object):
         self.description = "Identical"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         what = arcpy.Parameter(
             displayName="Shapefile",
             name="shapetype",
@@ -278,12 +294,14 @@ class Identical(object):
         params = [what, in_what, export]
         return params
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         new_list = core.list_layers()
         params[0].filter.list = new_list
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = False
 
         shapes = params[0].valueAsText
@@ -308,7 +326,8 @@ class Isolate(object):
             core.meleti)
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         shape = arcpy.Parameter(
             displayName="Shapefile",
             name="shapetype",
@@ -319,10 +338,12 @@ class Isolate(object):
         params = [shape]
         return params
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
         shapetype = params[0].valueAsText
 
@@ -340,7 +361,8 @@ class Merge(object):
         self.description = "ROADS merge is done in old ROADS by default"
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         shape = arcpy.Parameter(
             displayName="Shapefiles",
             name="shapetype",
@@ -363,52 +385,31 @@ class Merge(object):
             parameterType="Required",
             direction="Input")
 
-        # standalone = arcpy.Parameter(
-        #     displayName="Standalone Merge",
-        #     name="Standalone Merge",
-        #     datatype="Boolean",
-        #     parameterType="Required",
-        #     direction="Input")
-        #
-        # otas_to_merge = arcpy.Parameter(
-        #     displayName="OTA",
-        #     name="OTA",
-        #     datatype="String",
-        #     parameterType="Optional",
-        #     direction="Input",
-        #     multiValue=True)
-
         merging_list = copy.copy(core.lut.merging_list)
 
         shape.filter.list = merging_list
-        # otas_to_merge.filter.list = []
 
         force.value = "false"
         roads.value = "false"
-        # standalone.value = "false"
 
         params = [shape, force, roads]
         return params
 
-    def updateParameters(self, params):
-
-        # if params[3].value:
-        #     otas_values = copy.copy(core.lut.ota_list)
-        #     params[4].filter.list = otas_values
+    @staticmethod
+    def updateParameters(params):
 
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = False
         shapetype = params[0].valueAsText
         # otas_to_merge = params[4].valueAsText
 
         shapetypes = shapetype.split(";")
-        # otas = otas_to_merge.split(";")
 
         force_merge = bool(params[1].value)
         new_roads = bool(params[2].value)
-        # standalone_merge = bool(params[3].value)
 
         if new_roads:
             roads = 'new'
@@ -421,22 +422,11 @@ class Merge(object):
             except ValueError:
                 pass
 
-            # if core.mxdName == core.mxdKtimaName and not standalone_merge:
-            #     core.add_layer(shapes, lyr=True)
-            #     core.geoprocessing.merge(shapetypes, force_merge, roads)
-            # elif standalone_merge:
-            #     core.add_layer(shapes, lyr=True)
-            #     core.geoprocessing.merge(shapetypes, force_merge, roads,
-            #                              standalone_merge, otas)
-            # else:
-            #     core.pm('!! Merge is performed only in -- {} -- !!'.format(
-            #         core.mxdKtimaName))
+        core.org[core.kt.mode].add_layer(shapes, lyr=True)
 
-            core.org[core.kt.mode].add_layer(shapes, lyr=True)
-
-            core.geoprocessing[core.kt.mode].merge(shapetypes,
-                                                   force_merge,
-                                                   roads)
+        core.geoprocessing[core.kt.mode].merge(shapetypes,
+                                               force_merge,
+                                               roads)
 
         return
 
@@ -450,7 +440,8 @@ class Queries(object):
         self.description = ""
         self.canRunInBackground = False
 
-    def getParameterInfo(self):
+    @staticmethod
+    def getParameterInfo():
         shape = arcpy.Parameter(
             displayName="Query",
             name="shapetype",
@@ -463,10 +454,12 @@ class Queries(object):
         params = [shape]
         return params
 
-    def updateParameters(self, params):
+    @staticmethod
+    def updateParameters(params):
         return
 
-    def execute(self, params, messages):
+    @staticmethod
+    def execute(params, messages):
         arcpy.env.addOutputsToMap = True
         shapetype = params[0].valueAsText
 

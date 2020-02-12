@@ -157,7 +157,7 @@ class Organizer:
             mm = sorted([i[-5:] for i in mxd_miss])
 
             if not mm and not lm:
-                pm("OK - {}".format(shp_name))
+                pm("{} - missing : None".format(shp_name))
             elif mm:
                 pm("MXD missing - {}: {}".format(shp_name, mm))
             elif lm:
@@ -192,8 +192,9 @@ def turn_off():
 
     for df in dataframes:
         for _lyr in arcpy.mapping.ListLayers(mxd, "", df):
-            if _lyr.name in chk:
-                _lyr.visible = False
+            for ch in chk:
+                if ch in _lyr.name:
+                    _lyr.visible = False
 
     arcpy.RefreshTOC()
     arcpy.RefreshActiveView()

@@ -19,17 +19,19 @@ def update_from_server(folder=ktl['temp'][user]):
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
         src = cp([mdev, 'Diafora', 'ktima', 'scripts'], origin=folder)
     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        src = cp([temp_2kp, mdev, 'Diafora', 'ktima', 'scripts'], origin=folder)
+        src = cp([temp2kp, mdev, 'Diafora', 'ktima', 'scripts'], origin=folder)
     else:
         print('"company_name" not defined in paths.json')
         return
 
     dst_c = ['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']
-    dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1', 'Tools', 'KT-Tools']
+    dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1',
+             'Tools', 'KT-Tools']
 
     pointer = len(src.split('\\'))
 
-    for fullpath, filename, basename, ext in list_dir(src, match=['.pyc', '.pyt']):
+    for fullpath, filename, basename, ext in list_dir(src, match=['.pyc',
+                                                                  '.pyt']):
         if ext == '.pyc':
             out = dst_c + fullpath.split('\\')[pointer:]
             outpath = cp(out)
@@ -56,8 +58,10 @@ def main(_func, _action):
                 c_copy(outpath, fullpath)
 
     def tools():
-        src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima', '!Toolboxes'])
-        dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1', 'Tools', 'KT-Tools']
+        src = cp(['Python27', 'ArcGIS10.1', 'Lib',
+                  'site-packages', 'ktima', '!Toolboxes'])
+        dst_t = ['Program Files (x86)', 'ArcGIS',
+                 'Desktop10.1', 'Tools', 'KT-Tools']
 
         for fullpath, filename, basename, ext in list_dir(src):
             outpath = os.path.join(cp(dst_t), '{}.pyt'.format(basename))

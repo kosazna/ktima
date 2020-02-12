@@ -35,15 +35,4 @@ lut = NamesAndLists(info_data, naming_data)
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 
-inpath = paths.ktima_folder('22003', 'ASTENOT')
-outpath = paths.ktima_folder('22006', 'ASTENOT')
-
-for fpath, fname, bname, ext in list_dir(inpath, match=['.shp',
-                                                        '.shx',
-                                                        '.dbf']):
-    if fpath:
-        print('kostas')
-    else:
-        print('azna')
-
 count_lines()
