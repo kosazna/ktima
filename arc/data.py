@@ -67,7 +67,10 @@ lut = NamesAndLists(info_data, naming_data)
 paths = Paths(meleti, lut.mel_type, lut.company_name)
 log = Log(meleti)
 
-kt = Kt(meleti, lut.mode, lut.ota_list)
+if lut.mode == ktima_m:
+    kt = Kt(meleti, lut.mode, lut.ota_list)
+else:
+    kt = Kt(meleti, lut.mode, lut.mel_ota_list)
 
 if kt.mode == ktima_m:
     arcpy.env.workspace = paths.gdb_company
@@ -113,3 +116,13 @@ def mdf(fc, importance='', out='general', ota=None, _name=None):
 
     if out == 'general':
         pm(r'--> {}\{}'.format(outpath, name))
+
+
+def get_otas(companies):
+    end_list = []
+
+    if companies:
+        for comp in companies:
+            end_list += lut.koinopraksia[comp]
+
+    return end_list

@@ -44,6 +44,14 @@ class ChangeMode(object):
             parameterType="Required",
             direction="Input")
 
+        company = arcpy.Parameter(
+            displayName="Company",
+            name="company",
+            datatype="String",
+            parameterType="Optional",
+            direction="Input",
+            multiValue=True)
+
         otas = arcpy.Parameter(
             displayName="OTA",
             name="OTA",
@@ -60,20 +68,34 @@ class ChangeMode(object):
             direction="Input")
 
         mode.value = core.kt.mode
-        mode.filter.list = ['KTIMA', 'STANDALONE']
-        otas.filter.list = []
+        mode.filter.list = ['ktima', 'standalone']
+
+        if core.kt.mode == core.ktima_m:
+            otas.filter.list = []
+            company.filter.list = []
+        else:
+            otas.filter.list = core.lut.mel_ota_list
+            company.filter.list = core.lut.etairies
+
         default.value = "false"
 
-        params = [mode, otas, default]
+        params = [mode, company, otas, default]
 
         return params
 
     @staticmethod
     def updateParameters(params):
-        if params[0].valueAsText == 'STANDALONE':
-            otas_values = copy.copy(core.lut.ota_list)
-            params[1].filter.list = otas_values
+        if params[0].valueAsText == 'standalone':
+            otas_values = copy.copy(core.lut.mel_ota_list)
+            params[2].filter.list = otas_values
+            params[1].filter.list = core.lut.etairies
+
+            companies = params[1].valueAsText
+
+            if companies:
+                params[2].values = core.get_otas(companies.split(';'))
         else:
+            params[2].filter.list = []
             params[1].filter.list = []
 
     @staticmethod
@@ -81,8 +103,8 @@ class ChangeMode(object):
         arcpy.env.addOutputsToMap = True
 
         mode = params[0].valueAsText
-        _otas = params[1].valueAsText
-        default = bool(params[2].value)
+        _otas = params[2].valueAsText
+        default = bool(params[3].value)
 
         if _otas:
             otas = _otas.split(';')
@@ -90,9 +112,9 @@ class ChangeMode(object):
             otas = core.lut.ota_list
 
         if default:
-            core.kt.set_default_mode(mode.lower())
+            core.kt.set_default_mode(mode)
 
-        core.kt.reset_mode(mode.lower(), core.strize(otas))
+        core.kt.reset_mode(mode, core.strize(otas))
 
 
 ###############################################################################

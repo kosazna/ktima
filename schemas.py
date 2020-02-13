@@ -44,22 +44,26 @@ ktl = load_json(cp([users, user, 'paths.json']))
 
 class NamesAndLists:
     def __init__(self, info, naming):
-        self.company_name = info.get("company_name", 'NOT_FOUND')
+        self.company_name = info.get("company_name", 'NAMA')
         self.meleti = info.get("meleti", 'NOT_FOUND')
-        self.mel_type = info.get("mel_type", 'NOT_FOUND')
+        self.mel_type = info.get("mel_type", 1)
         self.precision = info.get("precision", 0.000001)
         self.mode = info.get("mode", ktima_m)
 
-        self.ota_list = info.get("ota_list", 'NOT_FOUND')
-        self.status_list = info.get("status_list", 'NOT_FOUND')
-        self.merging_list = info.get("merging_list", 'NOT_FOUND')
+        self.koinopraksia = info.get("koinopraksia", {})
+        self.etairies = [et for et in self.koinopraksia.keys()]
+
+        self.ota_list = info.get("ota_list", [])
+        self.mel_ota_list = info.get("mel_ota_list", [])
+        self.status_list = info.get("status_list", [])
+        self.merging_list = info.get("merging_list", [])
         self.local_data_to_index_list = info.get("local_data_to_index",
-                                                 'NOT_FOUND')
-        self.geometry_list = info.get("geometry_list", 'NOT_FOUND')
-        self.server_list = info.get("server_list", 'NOT_FOUND')
-        self.local_list = info.get("local_list", 'NOT_FOUND')
-        self.no_del_list = info.get("no_del_list", 'NOT_FOUND')
-        self.count_list = info.get("count_list", 'NOT_FOUND')
+                                                 [])
+        self.geometry_list = info.get("geometry_list", [])
+        self.server_list = info.get("server_list", [])
+        self.local_list = info.get("local_list", [])
+        self.no_del_list = info.get("no_del_list", [])
+        self.count_list = info.get("count_list", [])
 
         self.astenotM = naming["merge"]["astenot"]
         self.astikM = naming["merge"]["astik"]
