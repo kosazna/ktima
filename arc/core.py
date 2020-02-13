@@ -164,37 +164,34 @@ class Queries:
     def __init__(self, mode):
         self.mode = mode
         self.gdb = gdb[mode]
-        self.astik = self.gdb(lut.astikM)
-        self.dbound_fc = self.gdb(lut.dboundM)
-        self.pst_fc = self.gdb(lut.pstM)
 
     def kaek_in_dbound(self):
-        arcpy.Intersect_analysis([self.gdb(self.pst_fc),
-                                  self.gdb(self.dbound_fc)],
+        arcpy.Intersect_analysis([self.gdb(lut.pstM),
+                                  self.gdb(lut.dboundM)],
                                  self.gdb(lut.kaek_in_dbound),
                                  output_type="INPUT")
         pm('\nDONE !  -->  {}\n'.format(lut.kaek_in_dbound))
 
     def kaek_in_astik(self):
-        arcpy.Intersect_analysis([self.gdb(self.pst_fc), self.gdb(self.astik)],
+        arcpy.Intersect_analysis([self.gdb(lut.pstM), self.gdb(lut.astikM)],
                                  self.gdb(lut.kaek_in_astik),
                                  output_type="INPUT")
         pm('\nDONE !  -->  {}\n'.format(lut.kaek_in_astik))
 
     def rd(self):
-        org[self.mode].add_layer([self.pst_fc])
-        arcpy.SelectLayerByAttribute_management(self.pst_fc,
+        org[self.mode].add_layer([lut.pstM])
+        arcpy.SelectLayerByAttribute_management(lut.pstM,
                                                 "NEW_SELECTION",
                                                 " PROP_TYPE = '0701' ")
-        arcpy.CopyFeatures_management(self.pst_fc, self.gdb(lut.rd))
+        arcpy.CopyFeatures_management(lut.pstM, self.gdb(lut.rd))
         pm('\nDONE !  -->  {}\n'.format(lut.rd))
 
     def pr(self):
-        org[self.mode].add_layer([self.pst_fc])
-        arcpy.SelectLayerByAttribute_management(self.pst_fc,
+        org[self.mode].add_layer([lut.pstM])
+        arcpy.SelectLayerByAttribute_management(lut.pstM,
                                                 "NEW_SELECTION",
                                                 " PROP_TYPE = '0702' ")
-        arcpy.CopyFeatures_management(self.pst_fc, self.gdb(lut.pr))
+        arcpy.CopyFeatures_management(lut.pstM, self.gdb(lut.pr))
         pm('\nDONE !  -->  {}\n'.format(lut.pr))
 
     def find_identical(self, what, in_what, export=False):
