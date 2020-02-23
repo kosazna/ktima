@@ -44,7 +44,7 @@ def update_from_server(folder=ktl['temp'][user]):
 def main(_func, _action):
     def all_files(__action):
         src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
-        dst = ['Google Drive', 'Work', 'ktima', 'ktima_6']
+        dst = ['Google Drive', 'Work', 'ktima', 'ktima_7']
 
         pointer = len(src.split('\\'))
 
