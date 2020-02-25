@@ -393,7 +393,6 @@ def counter():
     xml.ls(match='.xml')
 
     cnt_shapes = Counter(shapes.names)
-    # cnt_mdb = Counter([i[6:] for i in mdb.names])
     c_mdb = Counter([i[6:] if not i == 'POWNERS.mdb' else i for i in mdb.names])
     c_xml = Counter(xml.names)
 

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from paths import *
+import pprint
 
 
 def count_lines():
@@ -37,4 +38,5 @@ lut = NamesAndLists(info_data, naming_data)
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 
-count_lines()
+f = Files(r'D:\SAS_Data')
+

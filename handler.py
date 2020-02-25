@@ -245,11 +245,11 @@ class Files:
         if not os.path.exists(new_path):
             os.makedirs(new_path)
 
-        for fullpath, filename in zip(self.paths, self.names):
-            c_copy(fullpath, os.path.join(new_path, filename))
-
-    # def __getattr__(self, item):
-    #     return self.mapper_nd[item]
+        for path in self.mapper.keys():
+            for mapper_file in self.mapper[path]:
+                inpath = os.path.join(path, mapper_file)
+                outpath = os.path.join(new_path, mapper_file)
+                c_copy(inpath, outpath)
 
     def __getitem__(self, item):
         return self.mapper_nd[item]
