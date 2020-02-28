@@ -107,7 +107,7 @@ class Organizer:
                     try:
                         lyr_name = "{}.lyr".format(feature)
 
-                        path = cp([meleti, lyr_i, lyr_name])
+                        path = cp([MELETI, lyr_i, lyr_name])
 
                         layer_to_add = arcpy.mapping.Layer(path)
                         arcpy.mapping.AddLayer(dataframes,
@@ -176,8 +176,8 @@ class Organizer:
         return [ota[-5:] for ota in common] if ota_num else common
 
 
-def choose_roads(roads):
-    if roads == 'old':
+def choose_roads(roads_type):
+    if roads_type == 'old':
         rd_shape = "iROADS"
     else:
         rd_shape = "ROADS"

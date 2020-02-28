@@ -10,8 +10,16 @@ import csv
 from organize import *
 
 
-# Check - Approve
-def ca(*args):
+def ktima_status(*args):
+    """
+    Checks whether or not shapefiles are merged so that
+    operations can performed more quickly.
+
+    :param args: *str*
+        Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
+    :return: *boolean*
+        True if shapefiles are merged, False otherwise
+    """
     checker = 0
     for shp in args:
         if not status[kt.mode].check('SHAPE', shp):
@@ -25,7 +33,16 @@ def ca(*args):
         return False
 
 
-def clarify(feature):
+def available(feature):
+    """
+    Determines which for which otas shapefiles can be merged
+    based on their availability and user command
+
+    :param feature: *str*
+        Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
+    :return: *list*
+        List of otas
+    """
     mxd_otas = set(i[-5:] for i in org[kt.mode].mxd_fl[feature]['list'])
     user_otas = set(kt.otas)
 
@@ -45,6 +62,19 @@ class Geoprocessing:
 
     @mxd
     def merge(self, shapes, force_merge=False, _roads='old'):
+        """
+        ArcGIS automation to merge shapefiles
+
+        :param shapes: *str*
+            Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
+        :param force_merge: *boolean*, optional
+            Whether or not shapefiles will be merged even if they
+            are already merged (default: False)
+        :param _roads: *str*, optional
+            Which roads will be used for merging. Parameter is passed
+            to choose_roads function (default: 'old')
+        :return: nothing
+        """
         log_list = []
 
         if not self.standalone:
@@ -59,7 +89,7 @@ class Geoprocessing:
                     f_name = "merge_" + _shape
 
                     try:
-                        arcpy.Merge_management(clarify(_shape),
+                        arcpy.Merge_management(available(_shape),
                                                self.gdb(f_name))
 
                         pm("\nMerged {}\n".format(_shape))
@@ -94,6 +124,19 @@ class Geoprocessing:
 
     def union(self, shapes, precision=lut.precision,
               gaps=False):
+        """
+        ArcGIS automation for performing Union in shapefiles
+
+        :param shapes: *str*
+            Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
+        :param precision: *float*, optional
+            Float number passed to "Union" in ArcGIS
+            (default is defined in a json file)
+        :param gaps: *boolean*, optional
+            Whether or not "Union" will be performed with gaps
+            (default is False)
+        :return: Nothing
+        """
 
         if gaps:
             _gaps = "GAPS"
@@ -118,7 +161,7 @@ class Geoprocessing:
                 for shape in shapes:
                     feature_name = "union_" + shape
                     arcpy.Union_analysis(
-                        clarify(shape),
+                        available(shape),
                         self.gdb(feature_name),
                         "NO_FID",
                         precision,
@@ -138,6 +181,15 @@ class Geoprocessing:
                                      _gaps)
 
     def export_to_server(self, copy_files, plus_name):
+        """
+        Export generated shapefiles to company server
+
+        :param copy_files: *str*
+            Shapefile to export
+        :param plus_name: *str*
+            suffix added to folder. Usually it is the kt.mode
+        :return: Nothing
+        """
         pm('\n\n')
 
         _path = os.path.join(paths.checks_out,
@@ -240,7 +292,7 @@ class General:
         self.gdb = gdb[mode]
 
     def isolate(self, fc):
-        if ca('ASTOTA'):
+        if ktima_status('ASTOTA'):
             org[self.mode].add_layer([lut.astotaM])
 
             arcpy.Dissolve_management(lut.astotaM, self.gdb(lut.oria_etairias))
@@ -265,7 +317,7 @@ class General:
                     fc_name = "{}_{}".format(_fc, _ota)
                     arcpy.CopyFeatures_management(fc, paths.mdb(fc_name))
                 elif formal:
-                    mdf(fc, out='formal', ota=ota, _name=name)
+                    mdf(fc, out='formal', ota=ota, name=name)
                 else:
                     mdf(_fc, importance='!!', out='ota', ota=_ota)
             else:
@@ -308,7 +360,7 @@ class Check:
 
     @mxd
     def shapes(self, x):
-        if ca('PST', 'ASTTOM', 'ASTENOT'):
+        if ktima_status('PST', 'ASTTOM', 'ASTENOT'):
 
             precision = float(10 ** -x)
             precision_txt = '{:.{}f} m'.format(precision, x)
@@ -473,7 +525,7 @@ class Check:
                                      count_pst_astenot)
 
     def pst_geometry(self):
-        if ca('PST'):
+        if ktima_status('PST'):
             org[self.mode].add_layer([lut.pstM])
             turn_off()
 
@@ -537,7 +589,7 @@ class Check:
     def fbound_geometry(self):
         if status[self.mode].check('EXPORTED', "FBOUND"):
             try:
-                arcpy.CheckGeometry_management(clarify('FBOUND'),
+                arcpy.CheckGeometry_management(available('FBOUND'),
                                                self.gdb(lut.fbound_geom))
 
                 count_geom = get_count(lut.fbound_geom)
@@ -594,7 +646,7 @@ class Check:
     def roads(self, _roads='old'):
         roads = choose_roads(_roads)
 
-        if ca('PST', 'ASTENOT', roads):
+        if ktima_status('PST', 'ASTENOT', roads):
             org[self.mode].add_layer([lut.pstM, lut.roadsM, lut.astenotM])
 
             # Eksagwgh kai enosi eidikwn ektasewn
@@ -654,7 +706,7 @@ class Check:
             status[self.mode].update("ROADS", "CPROBS", bool(count_inter_all))
 
     def dbound(self):
-        if ca('DBOUND'):
+        if ktima_status('DBOUND'):
             # Elegxos gia DBOUND pou mporei na toys leipei eite to
             # DEC_ID eite to DEC_DATE
             org[self.mode].add_layer([lut.dboundM])
@@ -683,7 +735,7 @@ class Check:
             status[self.mode].update("DBOUND", "CD", time_now)
 
     def bld(self):
-        if ca('BLD'):
+        if ktima_status('BLD'):
             # Elegxos gia BLD pou mporei na exoun thn timh '0' eite
             # sto BLD_T_C eite sto BLD_NUM
             org[self.mode].add_layer([lut.bldM])
@@ -873,7 +925,7 @@ class Create:
         self.gdb = gdb[mode]
 
     def fbound(self):
-        if ca('ASTOTA'):
+        if ktima_status('ASTOTA'):
             # Dhmiourgia tou sunolikou FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis([self.gdb(lut.astotaM),
                                       paths.dasinpath],
@@ -1076,7 +1128,7 @@ class Create:
             pm("\nDONE !\n")
 
     def fboundclaim(self):
-        if ca('PST', 'FBOUND'):
+        if ktima_status('PST', 'FBOUND'):
             # Dhmiourgia tou pinaka tis diekdikisis tou dasous
             arcpy.Intersect_analysis(
                 [self.gdb(lut.pstM), self.gdb(lut.fboundM)],
@@ -1146,7 +1198,7 @@ class Create:
             pm("\nDONE !\n")
 
     def pre_fbound(self):
-        if ca('ASTOTA'):
+        if ktima_status('ASTOTA'):
             # Dhmiourgia tou sunolikoy PRE_FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis(
                 [self.gdb(lut.astotaM), paths.predasinpath],

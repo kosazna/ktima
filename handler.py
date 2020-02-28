@@ -69,17 +69,17 @@ class Compare:
             print(i)
 
     @staticmethod
-    def all_files_mapping(_1, _2):
+    def all_files_mapping(mapping_1, mapping_2):
         map_all = {}
         map_common = {}
         map_diff = {}
 
-        for i in _1:
-            map_all[i] = [_1[i], _2.get(i, None)]
+        for i in mapping_1:
+            map_all[i] = [mapping_1[i], mapping_2.get(i, None)]
 
-        for i in _2:
+        for i in mapping_2:
             if i not in map_all:
-                map_all[i] = [_1.get(i, None), _2[i]]
+                map_all[i] = [mapping_1.get(i, None), mapping_2[i]]
 
         for i in map_all:
             if map_all[i][0] and map_all[i][1]:
@@ -152,8 +152,8 @@ class Files:
         self.file_counter = 0
 
     @classmethod
-    def from_list(cls, _list):
-        new_path = cp(_list)
+    def from_list(cls, path_items):
+        new_path = cp(path_items)
         return cls(new_path)
 
     @staticmethod
@@ -241,14 +241,14 @@ class Files:
                     f.write(
                         '{}\n'.format(os.path.splitext(i)[0] if split else i))
 
-    def gather(self, new_path):
-        if not os.path.exists(new_path):
-            os.makedirs(new_path)
+    def gather(self, dst):
+        if not os.path.exists(dst):
+            os.makedirs(dst)
 
         for path in self.mapper.keys():
             for mapper_file in self.mapper[path]:
                 inpath = os.path.join(path, mapper_file)
-                outpath = os.path.join(new_path, mapper_file)
+                outpath = os.path.join(dst, mapper_file)
                 c_copy(inpath, outpath)
 
     def __getitem__(self, item):

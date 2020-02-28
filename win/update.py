@@ -15,11 +15,11 @@ toolboxes = ["A) General",
              "D) Create"]
 
 
-def update_from_server(folder=ktl['temp'][user]):
+def update_from_server(drive=ktl['temp'][user]):
     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
-        src = cp([mdev, 'Diafora', 'ktima', 'scripts'], origin=folder)
+        src = cp([mdev, 'Diafora', 'ktima', 'scripts'], origin=drive)
     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
-        src = cp([temp2kp, mdev, 'Diafora', 'ktima', 'scripts'], origin=folder)
+        src = cp([temp2kp, mdev, 'Diafora', 'ktima', 'scripts'], origin=drive)
     else:
         print('"company_name" not defined in paths.json')
         return
@@ -41,8 +41,8 @@ def update_from_server(folder=ktl['temp'][user]):
             c_copy(fullpath, outpath)
 
 
-def main(_func, _action):
-    def all_files(__action):
+def main(command, gd_action):
+    def all_files(_action):
         src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
         dst = ['Google Drive', 'Work', 'ktima', 'ktima_7']
 
@@ -52,7 +52,7 @@ def main(_func, _action):
             out = dst + fullpath.split('\\')[pointer:]
             outpath = cp(out, origin=gd[user])
 
-            if __action == 'push':
+            if _action == 'push':
                 c_copy(fullpath, outpath)
             else:
                 c_copy(outpath, fullpath)
@@ -67,8 +67,8 @@ def main(_func, _action):
             outpath = os.path.join(cp(dst_t), '{}.pyt'.format(basename))
             c_copy(fullpath, outpath)
 
-    if _func == "all_files":
-        all_files(_action)
+    if command == "all_files":
+        all_files(gd_action)
     else:
         tools()
 

@@ -16,15 +16,15 @@ mxdName = os.path.basename(mxdPath)
 
 mxdKtimaName = "Ktima.mxd"
 
-meleti = "None"
-mel_type = "None"
+MELETI = "None"
+# MEL_TYPE = "None"
 
 
 class Kt:
-    def __init__(self, meleti_, mode, otas):
+    def __init__(self, meleti, mode, otas):
         self.mode = mode
         self.otas = otas
-        self.meleti = meleti_
+        self.meleti = meleti
 
     def reset_mode(self, mode, otas):
         self.mode = mode
@@ -46,7 +46,7 @@ class Kt:
 
 if get_pass():
     if mxdName == mxdKtimaName:
-        meleti = mxdPath.split('\\')[1]
+        MELETI = mxdPath.split('\\')[1]
     else:
         pass
 else:
@@ -55,8 +55,8 @@ else:
 
 # arcpy.env.workspace = cp([meleti, gdbs, 'ktima.gdb'])
 
-kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
-naming_path = cp([meleti, inputdata, docs_i, 'KT_Naming_Schema.json'])
+kt_info_path = cp([MELETI, inputdata, docs_i, 'KT_Info.json'])
+naming_path = cp([MELETI, inputdata, docs_i, 'KT_Naming_Schema.json'])
 
 info_data = load_json(kt_info_path)
 naming_data = load_json(naming_path)
@@ -64,28 +64,28 @@ naming_data = load_json(naming_path)
 # Instantiating Classes
 
 lut = NamesAndLists(info_data, naming_data)
-paths = Paths(meleti, lut.mel_type, lut.company_name)
-log = Log(meleti)
+paths = Paths(MELETI, lut.mel_type, lut.company_name)
+log = Log(MELETI)
 
 if lut.mode == ktima_m:
-    kt = Kt(meleti, lut.mode, lut.ota_list)
+    kt = Kt(MELETI, lut.mode, lut.ota_list)
 else:
-    kt = Kt(meleti, lut.mode, lut.mel_ota_list)
+    kt = Kt(MELETI, lut.mode, lut.mel_ota_list)
 
 if kt.mode == ktima_m:
     arcpy.env.workspace = paths.gdb_company
 else:
     arcpy.env.workspace = paths.gdb_standalone
 
-status = {ktima_m: Status(meleti, ktima_m, lut.ota_list),
-          standalone_m: Status(meleti, standalone_m, kt.otas)}
+status = {ktima_m: Status(MELETI, ktima_m, lut.ota_list),
+          standalone_m: Status(MELETI, standalone_m, kt.otas)}
 
 gdb = {ktima_m: paths.gdbc,
        standalone_m: paths.gdbs}
 
 
-def df_now(step="list_layers"):
-    if step == 'list_layers':
+def df_now(command="list_layers"):
+    if command == 'list_layers':
         _dataframes = arcpy.mapping.ListDataFrames(mxd)
     else:
         _dataframes = arcpy.mapping.ListDataFrames(mxd)[0]
@@ -93,7 +93,7 @@ def df_now(step="list_layers"):
     return _dataframes
 
 
-def mdf(fc, importance='', out='general', ota=None, _name=None):
+def mdf(fc, importance='', out='general', ota=None, name=None):
     """Make directories and files"""
     if out == 'general':
         outpath = paths.mdf(fc, importance, out)
@@ -102,8 +102,8 @@ def mdf(fc, importance='', out='general', ota=None, _name=None):
         outpath = paths.mdf(fc, importance, out)
         name = '{}_{}'.format(fc, ota)
     elif out == 'formal':
-        name = _name
-        outpath = paths.ktima(ota, _name)
+        name = name
+        outpath = paths.ktima(ota, name)
     else:
         outpath = out
         name = fc

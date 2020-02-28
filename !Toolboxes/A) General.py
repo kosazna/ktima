@@ -31,8 +31,8 @@ class Toolbox(object):
 class ChangeMode(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "! Change Mode !".format(core.meleti)
-        self.description = "Changing check mode".format(core.meleti)
+        self.label = "! Change Mode !".format(core.MELETI)
+        self.description = "Changing check mode".format(core.MELETI)
         self.canRunInBackground = False
 
     @staticmethod
@@ -122,9 +122,9 @@ class ChangeMode(object):
 class Info(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "! Info ({})".format(core.meleti)
+        self.label = "! Info ({})".format(core.MELETI)
         self.description = "Show Shapefile status and problems of {}".format(
-            core.meleti)
+            core.MELETI)
         self.canRunInBackground = False
 
     @staticmethod
@@ -360,7 +360,7 @@ class Isolate(object):
         """Define the tool (tool name is the name of the class)."""
         self.label = "Isolate"
         self.description = "Isolate features to the specific area of {}".format(
-            core.meleti)
+            core.MELETI)
         self.canRunInBackground = False
 
     @staticmethod
