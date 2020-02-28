@@ -20,6 +20,7 @@ def ktima_status(*args):
     :return: *boolean*
         True if shapefiles are merged, False otherwise
     """
+
     checker = 0
     for shp in args:
         if not status[kt.mode].check('SHAPE', shp):
@@ -43,6 +44,7 @@ def available(feature):
     :return: *list*
         List of otas
     """
+
     mxd_otas = set(i[-5:] for i in org[kt.mode].mxd_fl[feature]['list'])
     user_otas = set(kt.otas)
 
@@ -75,6 +77,7 @@ class Geoprocessing:
             to choose_roads function (default: 'old')
         :return: nothing
         """
+
         log_list = []
 
         if not self.standalone:
@@ -190,13 +193,14 @@ class Geoprocessing:
             suffix added to folder. Usually it is the kt.mode
         :return: Nothing
         """
-        pm('\n\n')
 
         _path = os.path.join(paths.checks_out,
                              time.strftime("%Y-%m-%d_%H%M") + '_' + plus_name)
 
         if not os.path.exists(_path):
             os.mkdir(_path)
+
+        pm('\n\n')
 
         for shp in copy_files:
             try:
