@@ -22,21 +22,20 @@ def show_files(path, match=None):
 
 ##################################################
 
-meleti = 'KT2-11'
-company_name = 'NAMA'
-mel_type = 1
-
-paths = Paths(meleti, mel_type, company_name)
-info_data = load_json(cp([meleti, inputdata, docs_i,
-                          'KT_Info.json']))
-naming_data = load_json(cp([meleti, inputdata, docs_i,
-                            'KT_Naming_Schema.json']))
-lut = NamesAndLists(info_data, naming_data)
+# meleti = 'KT2-11'
+# company_name = 'NAMA'
+# mel_type = 1
+# 
+# paths = Paths(meleti, mel_type, company_name)
+# info_data = load_json(cp([meleti, inputdata, docs_i,
+#                           'KT_Info.json']))
+# naming_data = load_json(cp([meleti, inputdata, docs_i,
+#                             'KT_Naming_Schema.json']))
+# lut = NamesAndLists(info_data, naming_data)
 
 ##################################################
 
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[user])
 
-f = Files(r'D:\SAS_Data')
-
+count_lines()
