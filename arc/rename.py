@@ -24,7 +24,7 @@ def files(x):
         How many parent folders back is the ota number.
     :return: Nothing
     """
-    
+
     for i in dataframes:
         for lyr in arcpy.mapping.ListLayers(mxd, "", i):
             lyr.name = lyr.name + '_' + lyr.workspacePath.split('\\')[-x]

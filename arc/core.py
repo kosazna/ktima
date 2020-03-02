@@ -234,6 +234,9 @@ class Queries:
         arcpy.CopyFeatures_management(lui.pstM, self.gdb(lui.pr))
         pm('\nDONE !  -->  {}\n'.format(lui.pr))
 
+    def advanced_query(self, q_type='KAEK', q_content='ASTIK'):
+        pass
+
     def find_identical(self, what, in_what, export=False):
         """
         Find identical parcels between two shspefiles and prints statistics
@@ -1426,7 +1429,7 @@ class Create:
 
         :return: Nothing
         """
-        
+
         if ktima_status('ASTOTA'):
             # Dhmiourgia tou sunolikoy PRE_FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis(
