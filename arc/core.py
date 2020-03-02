@@ -6,6 +6,9 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This module contains all the core functionality of ktima project.
+
 import csv
 from organize import *
 
