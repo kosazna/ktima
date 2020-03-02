@@ -13,6 +13,12 @@ from ktima.uasm import *
 
 
 def p_pass():
+    """
+    Creates permanent pass for given user
+
+    :return: Nothing
+    """
+
     _user = raw_input('\nUser :\n')
     if _user == "":
         _user = USER
@@ -27,6 +33,12 @@ def p_pass():
 
 
 def t_pass():
+    """
+    Creates temporary pass for given user.
+
+    :return: Nothing
+    """
+
     _user = raw_input('\nUser :\n')
     if _user == "":
         _user = USER
