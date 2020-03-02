@@ -20,7 +20,7 @@ info_data = load_json(kt_info_path)
 
 naming_data = load_json(naming_path)
 
-lut = NamesAndLists(info_data, naming_data)
+lut = LookUpInfo(info_data, naming_data)
 paths = Paths(meleti, lut.mel_type, lut.company_name)
 status = Status(meleti, ktima_m, lut.ota_list)
 log = Log(meleti)
@@ -388,9 +388,9 @@ def counter():
     mdb = Files(path_to_count)
     xml = Files(path_to_count)
 
-    shapes.ls(match='.shp')
-    mdb.ls(match='.mdb')
-    xml.ls(match='.xml')
+    shapes.explorer(match='.shp')
+    mdb.explorer(match='.mdb')
+    xml.explorer(match='.xml')
 
     cnt_shapes = Counter(shapes.names)
     c_mdb = Counter([i[6:] if not i == 'POWNERS.mdb' else i for i in mdb.names])

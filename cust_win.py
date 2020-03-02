@@ -6,6 +6,9 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This module has custom functions for the entire ktima project
+
 import os
 import json
 import time
@@ -14,6 +17,15 @@ import shutil
 
 
 def time_it(func):
+    """
+    **Decorator**
+    Calculates execution time of a function.
+    Prints execution time.
+
+    :param func: **Function to be measured**
+    :return: Nothing
+    """
+
     def wrapper(*args, **kwargs):
         start = time.time()
         result = func(*args, **kwargs)
@@ -28,6 +40,13 @@ def time_it(func):
 
 
 def timestamp():
+    """
+    Gives current date and time in "xx/xx/xxxx - xx:xx:xx" format.
+
+    :return: **str**
+        Current date and time.
+    """
+
     c_date = time.strftime("%d/%m/%Y")
     c_time = time.strftime("%H:%M:%S")
     datetime = c_date + " - " + c_time
@@ -36,6 +55,17 @@ def timestamp():
 
 
 def cp(p_list=(), origin='C'):
+    """
+    Creates path from a list given the drive letter.
+
+    :param p_list: **list** or **tuple** or **set**
+        Items of path.
+    :param origin: **str**, optional
+        Drive letter (default: 'C').
+    :return: **str**
+        Full path for a given p_list else 'C:\\' if p_list is not provided.
+    """
+
     _path = '{}:\\'.format(origin)
     path = ""
     for i in range(0, len(p_list)):
@@ -45,6 +75,15 @@ def cp(p_list=(), origin='C'):
 
 
 def load_json(path):
+    """
+    Loads json file to a dictionary.
+
+    :param path: **str**
+        Path of json file.
+    :return: **dict**
+        Python dictionary of the json file.
+    """
+
     try:
         with open(path, "r") as status_f:
             data = json.load(status_f)
@@ -52,23 +91,51 @@ def load_json(path):
     except IOError:
         print('\n!! NO SUCH FILE : {}\n'.format(path))
 
-    return
-
 
 def write_json(path, data):
+    """
+    Writes python dictionary to a json file (indent=2).
+
+    :param path: **str**
+        Path to write the json file.
+    :param data: **dict**
+        Python dictionary.
+    :return: Nothing
+    """
+
     with open(path, "w") as p_file:
         json.dump(data, p_file, indent=2)
 
 
-def c_copy(s, d):
+def c_copy(src, dst):
+    """
+    Copies file for one destination to another.
+
+    :param src: **str**
+        Source file path.
+    :param dst: **str**
+        Destination file path.
+    :return: Nothing
+    """
+
     try:
-        shutil.copyfile(s, d)
+        shutil.copyfile(src, dst)
         print('!! OK !!')
     except IOError:
         print('!! File Not Found or Target Directory missing!!')
 
 
 def progress(count, total):
+    """
+    Prints prograss bar to cmd.
+
+    :param count: **int**
+        Current count for progress bar.
+    :param total: **int**
+        Total count of progress bar.
+    :return:
+    """
+
     suffix = '{}/{}'.format(count, total)
     bar_len = 80
     filled_len = int(round(bar_len * count / float(total)))
@@ -81,4 +148,13 @@ def progress(count, total):
 
 
 def strize(iterable):
+    """
+    Converts any type of string (unicode etc.) to utf-8 string.
+
+    :param iterable: **list**
+        list of strings.
+    :return: **list**
+        List of strings utf-8 encoded.
+    """
+
     return [str(i) for i in iterable]

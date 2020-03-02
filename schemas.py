@@ -6,18 +6,26 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This modules contains all neccessary information for the project.
+# User and path dictionary is defined here
+
 import getpass
 from cust_win import *
 
+
+# MODES
 ktima_m = 'ktima'
 standalone_m = 'standalone'
 
+# GOOGLE DRIVE MAPPING LETTERS
 gd = {'aznavouridis.k': 'D',
       'user1': 'C',
       'kazna': 'D'}
 
 build_pass = 'ktima()azna'
 
+# NAMING FOLDER SCHEMA
 inputdata = "!InputData"
 outputdata = "!OutputData"
 gdbs = "Geodatabases"
@@ -38,12 +46,25 @@ anakt = 'Anaktiseis'
 saromena = 'Saromena'
 temp2kp = '!--2KP_TEMP--'
 
+# USER AND DRIVE LETTER MAPPING FOR EACH USER
 user = getpass.getuser()
 ktl = load_json(cp([users, user, 'paths.json']))
 
 
-class NamesAndLists:
+class LookUpInfo:
+    """
+    This class contains all information needed for the core functions.
+    It takes as parameters two dictionaries and creates attributes
+    of strings and lists
+    """
+
     def __init__(self, info, naming):
+        """
+        :param info: **dict**
+            Dictionary containing all information of the project.
+        :param naming: **dict**
+            Dictionary containing naming schemas of the project.
+        """
         self.company_name = info.get("company_name", 'NAMA')
         self.meleti = info.get("meleti", 'NOT_FOUND')
         self.mel_type = info.get("mel_type", 1)

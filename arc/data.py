@@ -63,7 +63,7 @@ naming_data = load_json(naming_path)
 
 # Instantiating Classes
 
-lut = NamesAndLists(info_data, naming_data)
+lut = LookUpInfo(info_data, naming_data)
 paths = Paths(MELETI, lut.mel_type, lut.company_name)
 log = Log(MELETI)
 
@@ -94,7 +94,6 @@ def df_now(command="list_layers"):
 
 
 def mdf(fc, importance='', out='general', ota=None, name=None):
-    """Make directories and files"""
     if out == 'general':
         outpath = paths.mdf(fc, importance, out)
         name = fc

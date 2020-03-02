@@ -6,10 +6,24 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# File handling module for creating list of files on a directory
+# or comparing files between two directories
+
 from schemas import *
 
 
 def base_ext(path):
+    """
+    Splits from a filename the extension. Works even if a file has
+    multiple extensions.
+
+    :param path: **str**
+        Path of the filename.
+    :return: **str**, **str**, **str**
+        Filename, basename, extension.
+    """
+
     filename = os.path.split(path)[1]
     filename_parts = filename.split('.')
     quantity = len(filename_parts)
@@ -27,8 +41,22 @@ def base_ext(path):
 
 
 def list_dir(path, match=None):
+    """
+    Yields for the given directory and for every file its
+    fullpath, filename, basename and extension.
+
+    :param path: **str**
+        Path of the filename.
+    :param match: **str**, **list**
+        Filter for extension in '.py' format.
+        It can be a string with 1 extension or a list with multiple extensions.
+        (default: None) -> yields all files.
+    :return: **str**, **str**, **str**, **str**,
+        Fullpath, filename, basename, extension
+    """
+
     files = Files(path)
-    files.ls(match=match)
+    files.explorer(match=match)
 
     for fullpath in files.paths:
         filename, basename, ext = base_ext(fullpath)
@@ -37,13 +65,51 @@ def list_dir(path, match=None):
 
 
 class Compare:
+    """
+    Given two paths will make a list of the files.
+    For the files which are not common in both paths can copy them in
+    a new directory
+
+    Attributes
+    ----------
+    - path_1: First path
+    - path_2: Second path
+    - map_1: Dictionary mapping every file of path_1 ({basename: fullpath})
+    - map_2: Dictionary mapping every file of path_2 ({basename: fullpath})
+    - dir_1_count: number of files in path_1
+    - dir_2_count: number of files in path_2
+    - path_1_miss: Files from path_2 that are missing from path_1
+    - path_2_miss: Files from path_1 that are missing from path_2
+    - all: Dict of all files (basename: [path_1_fullpath, path_2_fullpath]})
+    - common: Dictionary of common files
+    - diff: Dictionary of files that are not in both paths
+
+    Methods
+    -------
+    - show_missing
+    - extract_diff
+    - show
+
+    """
+
     def __init__(self, path_1, path_2, match=None):
+        """
+        :param path_1: **str**
+            First path.
+        :param path_2: **str**
+            Second path.
+        :param match: **str**, **list**
+            Filter for extension in '.py' format.
+            It can be a string with 1 extension or
+            a list with multiple extensions.
+            (default: None) -> yields all files.
+        """
         self.path_1 = path_1
         self.path_2 = path_2
         self.dir_1 = Files(self.path_1)
         self.dir_2 = Files(self.path_2)
-        self.dir_1.ls(match=match)
-        self.dir_2.ls(match=match)
+        self.dir_1.explorer(match=match)
+        self.dir_2.explorer(match=match)
         self.map_1 = self.dir_1.mapper_nd
         self.map_2 = self.dir_2.mapper_nd
         self.dir_1_count = self.dir_1.file_counter
@@ -54,6 +120,12 @@ class Compare:
                                                                      self.map_2)
 
     def show_missing(self):
+        """
+        Prints missing files that are not common in both paths.
+
+        :return: Nothing
+        """
+
         print('{} - missing:'.format(self.path_1))
         print('---------------------------')
         for i in sorted(self.path_1_miss):
@@ -70,6 +142,17 @@ class Compare:
 
     @staticmethod
     def all_files_mapping(mapping_1, mapping_2):
+        """
+        Creates dictionaries with mapping af all, common and not common files.
+
+        :param mapping_1: **dict**
+            File mapping of path_1
+        :param mapping_2: **dict**
+            File mapping of path_2
+        :return: **dict**, **dict**, **dict**
+            Returns dictionaries with the mapping of the files
+        """
+
         map_all = {}
         map_common = {}
         map_diff = {}
@@ -90,6 +173,14 @@ class Compare:
         return map_all, map_common, map_diff
 
     def extract_diff(self):
+        """
+        Files that are not common between the provided paths will be copied
+        in the parent directory of the first path under the name
+        "root_dir_of_path_1\\Difference".
+
+        :return: Nothing
+        """
+
         if self.diff:
             target = self.path_1.split('\\')[1:-1] + ['Difference']
             path_1_miss = target + [
@@ -121,6 +212,19 @@ class Compare:
             print('Directories are identical. No extraction was performed')
 
     def show(self, what='all'):
+        """
+        Prints formatted columns of the filename and the fullpath of each
+        provided directory.
+
+        :param what: **str**
+            - 'all': Prints all files.
+            - 'common': prints common files.
+            - 'diff': prints files that are not common in both paths
+
+            (default: 'all')
+        :return:Nothing
+        """
+
         if what == 'all':
             for i in self.all:
                 print('{:<20}  {:<75}  {:<75}'.format(i,
@@ -142,7 +246,35 @@ class Compare:
 
 
 class Files:
+    """
+    Given a path will make a list of the files.
+
+    Attributes
+    ----------
+    - path: Path
+    - names: list of all filenams
+    - paths: list of all filepaths
+    - mapper: Dictionary mapping every file ({directory: [filenames]})
+    - mapper_nd: Dictionary mapping every file ({basename: fullpath})
+    - c_mapper: Dictionary counting every file ({directory: number of files})
+    - file_counter: counter for all files in the given path
+
+    Methods
+    -------
+    - explorer
+    - show_names
+    - show_paths
+    - show_tree
+    - extract
+    - gather
+
+    """
+
     def __init__(self, path):
+        """
+        :param path: **str**
+            Path.
+        """
         self.path = path
         self.names = []
         self.paths = []
@@ -153,6 +285,14 @@ class Files:
 
     @classmethod
     def from_list(cls, path_items):
+        """
+        Creates Files object from a list of elements of the path.
+
+        :param path_items: **list**
+            Elements of the path.
+        :return: Files object
+        """
+
         new_path = cp(path_items)
         return cls(new_path)
 
@@ -176,7 +316,18 @@ class Files:
 
         return match_wildcard
 
-    def ls(self, match=None):
+    def explorer(self, match=None):
+        """
+        Explores the self.path and catalogs every file.
+
+        :param match: **str**, **list**
+            Filter for extension in '.py' format.
+            It can be a string with 1 extension or
+            a list with multiple extensions.
+            (default: None) -> yields all files.
+        :return: Nothing
+        """
+
         match_wildcard = Files.matcher(match)
 
         if match_wildcard:
@@ -212,6 +363,16 @@ class Files:
         self.mapper_nd = dict(zip(self.names, self.paths))
 
     def show_names(self, split=False):
+        """
+        Prints the filenames for the given directory.
+
+        :param split: **boolean**, optional
+            If True only the basename will be printed.
+            If False only the filename will be printed (basename.extension).
+            (default: False)
+        :return: Nothing
+        """
+
         print('-----  {} Files  -----'.format(self.file_counter))
         for i, j in enumerate(sorted(self.names)):
             print('{:>5})  {}'.format(i + 1,
@@ -219,12 +380,24 @@ class Files:
         print('-----  {} Files  -----'.format(self.file_counter))
 
     def show_paths(self):
+        """
+        Prints the fullpath of the files.
+
+        :return: Nothing
+        """
+
         print('-----  {} Files  -----'.format(self.file_counter))
         for i, j in enumerate(sorted(self.paths)):
             print('{:>5})  {}'.format(i + 1, j))
         print('-----  {} Files  -----'.format(self.file_counter))
 
     def show_tree(self):
+        """
+        Prints the entire directory tree.
+
+        :return: Nothing
+        """
+
         for i in sorted(self.mapper):
             print('{}  --  {} files'.format(i, self.c_mapper[i]))
             for j in self.mapper[i]:
@@ -232,6 +405,19 @@ class Files:
             print('\n')
 
     def extract(self, what='filepaths', split=False):
+        """
+        Creates a txt file with either all the filepaths or the filenames.
+
+        :param what: **str**, optional
+            - 'filepaths' (default)
+            - 'filenames'
+        :param split: **boolean**, optional
+            If True only the basename will be printed.
+            If False only the filename will be printed (basename.extension).
+            (default: False)
+        :return: Nothing
+        """
+
         with open(os.path.join(self.path, 'File_List.txt'), 'w') as f:
             if what == 'filepaths':
                 for i in self.paths:
@@ -242,6 +428,14 @@ class Files:
                         '{}\n'.format(os.path.splitext(i)[0] if split else i))
 
     def gather(self, dst):
+        """
+        Copies all the files from the given directory to a new destination
+        without their parent folders.
+
+        :param dst: **str**
+            Destination path.
+        :return:
+        """
         if not os.path.exists(dst):
             os.makedirs(dst)
 

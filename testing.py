@@ -6,7 +6,7 @@ import pprint
 def count_lines():
     files = Files(
         cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']))
-    files.ls(match='.py')
+    files.explorer(match='.py')
     c = 0
     for i in files.paths:
         count = len(open(i).readlines())

@@ -22,8 +22,18 @@ def clear_selection(fc):
 
 
 def list_fields(fc, data=""):
-    """ data : name, type, length, precision, scale,
-     aliasName, baseName, defaultValue"""
+    """
+    Shows the fields and their additional information of a feature class.
+
+    :param fc: **str**
+        Feature class or shapefile.
+    :param data: **str**
+        'name', 'type', 'length', 'precision', 'scale',
+        'aliasName', 'baseName', 'defaultValue'
+    :return: **list** or **dict**
+        Returns a list if param "data" is specified.
+        Returns a dict if param "data" is "" (default).
+    """
 
     fields = {'name': [k.name for k in arcpy.ListFields(fc)],
               'type': [k.type for k in arcpy.ListFields(fc)],

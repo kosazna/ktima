@@ -251,6 +251,19 @@ class Queries:
         pm('\nDONE !  -->  {}\n'.format(lut.pr))
 
     def find_identical(self, what, in_what, export=False):
+        """
+        Find identical parcels between two shspefiles and prints statistics
+
+        :param what: **str**, **list**
+            Shapefile or feature layer
+        :param in_what: **str**
+            Shapefile or feature layer
+        :param export: **boolean**
+            Whether or not a shapefile with the common parcels will be exported
+            (default: False)
+        :return: Nothing
+        """
+
         if isinstance(what, list):
             _what = what
         else:
@@ -296,6 +309,14 @@ class General:
         self.gdb = gdb[mode]
 
     def isolate(self, fc):
+        """
+        Isolate Features in the area of interest
+
+        :param fc: **str**
+            Feature class or shapefile
+        :return: Nothing
+        """
+
         if ktima_status('ASTOTA'):
             org[self.mode].add_layer([lut.astotaM])
 
