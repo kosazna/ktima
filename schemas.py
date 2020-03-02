@@ -22,6 +22,10 @@ STANDALONE_MODE = 'standalone'
 KTIMA_GDB = 'ktima.gdb'
 STANDALONE_GDB = 'standalone.gdb'
 
+# COMPANIES
+c_NA = 'NAMA'
+c_2P = '2KP'
+
 # GOOGLE DRIVE MAPPING LETTERS
 gd = {'aznavouridis.k': 'D',
       'user1': 'C',
@@ -69,14 +73,14 @@ class LookUpInfo:
         :param naming: **dict**
             Dictionary containing naming schemas of the project.
         """
-        self.company_name = info.get("company_name", 'NAMA')
-        self.meleti = info.get("meleti", 'NOT_FOUND')
+        self.company_name = info.get("company_name", c_NA)
+        self.meleti = info.get("meleti", 'KTx-xx')
         self.mel_type = info.get("mel_type", 1)
         self.precision = info.get("precision", 0.000001)
         self.mode = info.get("mode", KTIMA_MODE)
 
-        self.koinopraksia = info.get("koinopraksia", {})
-        self.etairies = [et for et in self.koinopraksia.keys()]
+        self.pool = info.get("koinopraksia", {})
+        self.comps = [et for et in self.pool.keys()]
 
         self.ota_list = info.get("ota_list", [])
         self.mel_ota_list = info.get("mel_ota_list", [])

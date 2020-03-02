@@ -122,6 +122,6 @@ def get_otas(companies):
 
     if companies:
         for comp in companies:
-            end_list += lut.koinopraksia[comp]
+            end_list += lut.pool[comp]
 
     return end_list

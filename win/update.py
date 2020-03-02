@@ -16,9 +16,9 @@ toolboxes = ["A) General",
 
 
 def update_from_server(drive=ktl['temp'][user]):
-    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+    if ktl.get('company_name', 'NOT_FOUND') == c_NA:
         src = cp([mdev, 'Diafora', 'ktima', 'scripts'], origin=drive)
-    elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
+    elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
         src = cp([temp2kp, mdev, 'Diafora', 'ktima', 'scripts'], origin=drive)
     else:
         print('"company_name" not defined in paths.json')

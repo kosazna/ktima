@@ -75,7 +75,7 @@ class ChangeMode(object):
             company.filter.list = []
         else:
             otas.filter.list = core.lut.mel_ota_list
-            company.filter.list = core.lut.etairies
+            company.filter.list = core.lut.comps
 
         default.value = "false"
 
@@ -88,7 +88,7 @@ class ChangeMode(object):
         if params[0].valueAsText == 'standalone':
             otas_values = copy.copy(core.lut.mel_ota_list)
             params[2].filter.list = otas_values
-            params[1].filter.list = core.lut.etairies
+            params[1].filter.list = core.lut.comps
 
             companies = params[1].valueAsText
 

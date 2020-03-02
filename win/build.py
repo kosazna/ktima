@@ -13,10 +13,10 @@ password = getpass.getpass("\nPassword:\n")
 
 
 # def buildtree():
-#     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+#     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
 #                   origin=ktl['temp'][user])
-#     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
+#     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
 #                   origin=ktl['temp'][user])
 #     else:
@@ -32,10 +32,10 @@ password = getpass.getpass("\nPassword:\n")
 #
 #
 # def update_folder_structure():
-#     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+#     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
 #                   origin=ktl['temp'][user])
-#     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
+#     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
 #                   origin=ktl['temp'][user])
 #     else:
@@ -51,10 +51,10 @@ password = getpass.getpass("\nPassword:\n")
 #
 #
 # def update_file_structure():
-#     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+#     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
 #                   origin=ktl['temp'][user])
-#     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
+#     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
 #                   origin=ktl['temp'][user])
 #     else:
@@ -104,10 +104,10 @@ password = getpass.getpass("\nPassword:\n")
 #
 #
 # def updatetree():
-#     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+#     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
 #                   origin=ktl['temp'][user])
-#     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
+#     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
 #                   origin=ktl['temp'][user])
 #     else:
@@ -125,11 +125,11 @@ password = getpass.getpass("\nPassword:\n")
 #
 #
 # def update_ktima_info():
-#     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+#     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure',
 #                    meleti, inputdata, docs_i, 'KT_Info.json'],
 #                   origin=ktl['temp'][user])
-#     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
+#     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
 #                    meleti, inputdata, docs_i, 'KT_Info.json'],
 #                   origin=ktl['temp'][user])
@@ -143,10 +143,10 @@ password = getpass.getpass("\nPassword:\n")
 #
 #
 # def update_temp_paths():
-#     if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+#     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'],
 #                   origin=ktl['temp'][user])
-#     elif ktl.get('company_name', 'NOT_FOUND') == '2KP':
+#     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'paths.json'],
 #                   origin=ktl['temp'][user])
 #     else:
@@ -173,10 +173,10 @@ class Builder:
         self.kt_info_path = cp([new_meleti, inputdata, docs_i, 'KT_Info.json'])
 
     def buildtree(self):
-        if self.company == 'NAMA':
+        if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
                       origin=ktl['temp'][user])
-        elif self.company == '2KP':
+        elif self.company == c_2P:
             repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
                       origin=ktl['temp'][user])
         else:
@@ -192,10 +192,10 @@ class Builder:
                 target))
 
     def update_folder_structure(self):
-        if self.company == 'NAMA':
+        if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', self.meleti],
                       origin=ktl['temp'][user])
-        elif self.company == '2KP':
+        elif self.company == c_2P:
             repo = cp(
                 [temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
                  self.meleti],
@@ -212,10 +212,10 @@ class Builder:
                 os.makedirs(outpath)
 
     def update_file_structure(self):
-        if self.company == 'NAMA':
+        if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', self.meleti],
                       origin=ktl['temp'][user])
-        elif self.company == '2KP':
+        elif self.company == c_2P:
             repo = cp(
                 [temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
                  self.meleti],
@@ -264,10 +264,10 @@ class Builder:
                                                                 'COMMENTS'))
 
     def updatetree(self):
-        if self.company == 'NAMA':
+        if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
                       origin=ktl['temp'][user])
-        elif self.company == '2KP':
+        elif self.company == c_2P:
             repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
                       origin=ktl['temp'][user])
         else:
@@ -284,11 +284,11 @@ class Builder:
                 print('{} - Created'.format(_dir))
 
     def update_ktima_info(self):
-        if self.company == 'NAMA':
+        if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure',
                        self.meleti, inputdata, docs_i, 'KT_Info.json'],
                       origin=ktl['temp'][user])
-        elif self.company == '2KP':
+        elif self.company == c_2P:
             repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
                        self.meleti, inputdata, docs_i, 'KT_Info.json'],
                       origin=ktl['temp'][user])
@@ -301,10 +301,10 @@ class Builder:
         c_copy(repo, target)
 
     def update_temp_paths(self):
-        if self.company == 'NAMA':
+        if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'],
                       origin=ktl['temp'][user])
-        elif self.company == '2KP':
+        elif self.company == c_2P:
             repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'paths.json'],
                       origin=ktl['temp'][user])
         else:
