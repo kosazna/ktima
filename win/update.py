@@ -6,6 +6,10 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This module has all the functions for updating the project on google
+# drive and update the users scripts from the server
+
 from ktima.handler import *
 
 
@@ -16,6 +20,15 @@ toolboxes = ["A) General",
 
 
 def update_from_server(drive=ktl['temp'][user]):
+    """
+    Updates all the user scripts from the company server.
+
+    :param drive: **str**, optional
+        Drive letter of the server.
+        (default: is defined on the paths.json file for each user)
+    :return: Nothing
+    """
+
     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
         src = cp([mdev, 'Diafora', 'ktima', 'scripts'], origin=drive)
     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
@@ -42,6 +55,20 @@ def update_from_server(drive=ktl['temp'][user]):
 
 
 def main(command, gd_action):
+    """
+    Main function of update module.
+    It either pushes or pulls scripts for the google drive.
+    It also updates python toolboxes in ArcGIS
+
+    :param command: **str**,
+        - 'all_files': update files from or to google drive.
+        - 'tools': update python toolboxes
+    :param gd_action: **str**
+        - 'push': updates scripts on google drive from the cwd.
+        - 'pull': fetches update from the google drive into the cwd.
+    :return: Nothing
+    """
+
     def all_files(_action):
         src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
         dst = ['Google Drive', 'Work', 'ktima', 'ktima_7']
