@@ -283,7 +283,7 @@ class ExportToServer(object):
 
         shapes = _shapes.split(";")
 
-        core.geoprocessing[geodatabse].export_to_server(shapes, geodatabse)
+        core.general[geodatabse].export_to_server(shapes, geodatabse)
 
         return
 

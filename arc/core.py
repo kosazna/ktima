@@ -15,9 +15,9 @@ def ktima_status(*args):
     Checks whether or not shapefiles are merged so that
     operations can performed more quickly.
 
-    :param args: *str*
+    :param args: **str**
         Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
-    :return: *boolean*
+    :return: **boolean**
         True if shapefiles are merged, False otherwise
     """
 
@@ -39,9 +39,9 @@ def available(feature):
     Determines which for which otas shapefiles can be merged
     based on their availability and USER command
 
-    :param feature: *str*
+    :param feature: **str**
         Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
-    :return: *list*
+    :return: **list**
         List of otas
     """
 
@@ -57,6 +57,22 @@ def available(feature):
 
 
 class Geoprocessing:
+    """
+    Geoprecessing class has all the functions for preprocessing large datasets
+    in order to be ready for further testing
+
+    Attributes
+    ----------
+    - mode: mode for the session (ktima or standalone)
+    - gdb: geotabase function given from dictionary
+    - standalone: boolean for whether or not it's a standalone session
+
+    Methods
+    -------
+    - merge
+    - union
+    """
+
     def __init__(self, mode, standalone=False):
         self.mode = mode
         self.gdb = gdb[mode]
@@ -67,12 +83,12 @@ class Geoprocessing:
         """
         ArcGIS automation to merge shapefiles
 
-        :param shapes: *str*
+        :param shapes: **str**
             Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
-        :param force_merge: *boolean*, optional
+        :param force_merge: **boolean**, optional
             Whether or not shapefiles will be merged even if they
             are already merged (default: False)
-        :param _roads: *str*, optional
+        :param _roads: **str**, optional
             Which roads will be used for merging. Parameter is passed
             to choose_roads function (default: 'old')
         :return: nothing
@@ -130,12 +146,12 @@ class Geoprocessing:
         """
         ArcGIS automation for performing Union in shapefiles
 
-        :param shapes: *str*
+        :param shapes: **str**
             Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
-        :param precision: *float*, optional
+        :param precision: **float**, optional
             Float number passed to "Union" in ArcGIS
             (default is defined in a json file)
-        :param gaps: *boolean*, optional
+        :param gaps: **boolean**, optional
             Whether or not "Union" will be performed with gaps
             (default is False)
         :return: Nothing
@@ -182,38 +198,6 @@ class Geoprocessing:
                                      "NO_FID",
                                      precision,
                                      _gaps)
-
-    def export_to_server(self, copy_files, plus_name):
-        """
-        Export generated shapefiles to company server
-
-        :param copy_files: *str*
-            Shapefile to export
-        :param plus_name: *str*
-            suffix added to folder. Usually it is the kt.mode
-        :return: Nothing
-        """
-
-        _path = os.path.join(paths.checks_out,
-                             time.strftime("%Y-%m-%d_%H%M") + '_' + plus_name)
-
-        if not os.path.exists(_path):
-            os.mkdir(_path)
-
-        pm('\n\n')
-
-        for shp in copy_files:
-            try:
-                arcpy.FeatureClassToFeatureClass_conversion(self.gdb(shp),
-                                                            _path,
-                                                            shp)
-
-                pm('Exported {} from {}.gdb'.format(shp, plus_name))
-
-            except RuntimeError:
-                pm('Dataset {} does not exist'.format(shp))
-
-        pm('\nDone !\n')
 
 
 class Queries:
@@ -304,6 +288,16 @@ class Queries:
 
 
 class General:
+    """
+    General Tasks
+
+    Methods
+    -------
+    - isolate
+    - export_per_ota
+    - export_to_server
+    """
+
     def __init__(self, mode):
         self.mode = mode
         self.gdb = gdb[mode]
@@ -334,6 +328,38 @@ class General:
     def export_per_ota(self, fc, spatial, field='KAEK',
                        export_shp=True, database=False, formal=False,
                        name=None):
+        """
+        Given a shapefile it will export the features that intersect with
+        a specific ota as a new shapefile.
+
+        :param fc: **str**
+            Shapefile or feature class.
+        :param spatial: **bollean**
+            If True the selection will be based on spatial location
+            If False the selection will be bases on an attribute. Field
+            parameter is required when set to False.
+        :param field: **str**, optional
+            Field of the shapefile attribute table that the selection will
+            be based on (default: 'KAEK')
+        :param export_shp: **bollean**, optional
+            If True, shapefiles for each ota
+             will be exported in this folder (OutputData\\Shapefile\\!!OTA).
+            If False, feature classes will be exported for each ota in gdb.
+            (default: True)
+        :param database: **bollean**, optional
+            If True, mdbs will be also exported in archive.mdb
+            If False, no mdbs will be made.
+            (default: False)
+        :param formal: **bollean**, optional
+            If True formal export will be executed based on formal mdf function
+             parameter.
+            If False, shapefiles for each ota
+             will be exported in this folder (OutputData\\Shapefile\\!!OTA).
+             (default: False)
+        :param name: **str**, optional
+            Name for the shapefile that will be exported. (default: None)
+        :return: Nothing
+        """
 
         def export(_fc, _ota):
             if export_shp:
@@ -377,24 +403,77 @@ class General:
                     export(fc, ota)
                     clear_selection(fc)
 
+    def export_to_server(self, copy_files, plus_name):
+        """
+        Export generated shapefiles to company server
+
+        :param copy_files: **str**
+            Shapefile to export
+        :param plus_name: **str**
+            suffix added to folder. Usually it is the kt.mode
+        :return: Nothing
+        """
+
+        _path = os.path.join(paths.checks_out,
+                             time.strftime("%Y-%m-%d_%H%M") + '_' + plus_name)
+
+        if not os.path.exists(_path):
+            os.mkdir(_path)
+
+        pm('\n\n')
+
+        for shp in copy_files:
+            try:
+                arcpy.FeatureClassToFeatureClass_conversion(self.gdb(shp),
+                                                            _path,
+                                                            shp)
+
+                pm('Exported {} from {}.gdb'.format(shp, plus_name))
+
+            except RuntimeError:
+                pm('Dataset {} does not exist'.format(shp))
+
+        pm('\nDone !\n')
+
 
 class Check:
+    """
+    Check class has all the basic check functions for the shapefiles.
+
+    Methods
+    -------
+    - shapes
+    - pst_geometry
+    - fbound_geometry
+    - roads
+    - bld
+    - dbound
+    """
+
     def __init__(self, mode):
         self.mode = mode
         self.gdb = gdb[mode]
 
     @mxd
-    def shapes(self, x):
+    def shapes(self, accuracy):
+        """
+        Checks for overlaps and wrong numbering.
+
+        :param accuracy: **int**
+            Precision which will be used in 'union'.
+        :return: Nothing
+        """
+
         if ktima_status('PST', 'ASTTOM', 'ASTENOT'):
 
-            precision = float(10 ** -x)
-            precision_txt = '{:.{}f} m'.format(precision, x)
+            precision = float(10 ** -accuracy)
+            precision_txt = '{:.{}f} m'.format(precision, accuracy)
 
             pm("\nCheck accuracy : {}\n".format(precision_txt))
 
             pm("\nProcessing...")
 
-            # geoprocessing
+            # GEOPROCESSING
 
             geoprocessing[self.mode].union(['PST', 'ASTENOT', 'ASTTOM'],
                                            precision,
@@ -403,7 +482,7 @@ class Check:
             turn_off()
             org[self.mode].add_layer([lui.pstM, lui.astenotM, lui.asttomM])
 
-            # ENOTHTES
+            # ENOTITES
             arcpy.AddField_management(lui.astenotM, "ENOT", "TEXT",
                                       field_length=50)
             arcpy.CalculateField_management(lui.astenotM, "ENOT",
@@ -550,6 +629,12 @@ class Check:
                                      count_pst_astenot)
 
     def pst_geometry(self):
+        """
+        Checks for self intersection in PST_merge.
+
+        :return: Nothing
+        """
+
         if ktima_status('PST'):
             org[self.mode].add_layer([lui.pstM])
             turn_off()
@@ -612,6 +697,12 @@ class Check:
 
     @mxd
     def fbound_geometry(self):
+        """
+        Checks for self intersections in FBOUNDS
+
+        :return: Nothing
+        """
+
         if status[self.mode].check('EXPORTED', "FBOUND"):
             try:
                 arcpy.CheckGeometry_management(available('FBOUND'),
@@ -669,6 +760,15 @@ class Check:
                 "\n\n\n!!! Den exeis vgalei kainouria FBOUND !!!\n\n\n")
 
     def roads(self, _roads='old'):
+        """
+        Checks intersections on ROADS shapefiles.
+
+        :param _roads: **str**, optional
+            Type of roads. If 'old' InputData roads will be used. If 'new'
+            localdata roads will be used.
+        :return: Nothing
+        """
+
         roads = choose_roads(_roads)
 
         if ktima_status('PST', 'ASTENOT', roads):
@@ -731,6 +831,12 @@ class Check:
             status[self.mode].update("ROADS", "CPROBS", bool(count_inter_all))
 
     def dbound(self):
+        """
+        Checks DBOUND shapefiles for missing data in attribute table.
+
+        :return:
+        """
+
         if ktima_status('DBOUND'):
             # Elegxos gia DBOUND pou mporei na toys leipei eite to
             # DEC_ID eite to DEC_DATE
@@ -760,6 +866,12 @@ class Check:
             status[self.mode].update("DBOUND", "CD", time_now)
 
     def bld(self):
+        """
+        Checks BLD shapefiles for missing data in attribute table.
+
+        :return: Nothing
+        """
+
         if ktima_status('BLD'):
             # Elegxos gia BLD pou mporei na exoun thn timh '0' eite
             # sto BLD_T_C eite sto BLD_NUM
@@ -792,11 +904,27 @@ class Check:
 
 
 class Fix:
+    """
+    Class Fix has all the functions for fixing problems in shapefiles.
+
+    Methods
+    -------
+    - pst_geometry
+    - fbound_geometry
+    - roads
+    """
+
     def __init__(self, mode):
         self.mode = mode
         self.gdb = gdb[mode]
 
     def pst_geometry(self):
+        """
+        Fixes PST geometry.
+
+        :return: Nothing
+        """
+
         if status[self.mode].check('SHAPES_GEOMETRY', "PROBS"):
             # Epilogi olon ton shapefile enos provlimatikou OTA kai
             # epidiorthosi tis geometrias tous
@@ -822,6 +950,12 @@ class Fix:
         log('Fix Geometry', repaired)
 
     def fbound_geometry(self):
+        """
+        Fixes FBOUND geometry.
+
+        :return: Nothing
+        """
+
         if status[self.mode].check('FBOUND_GEOMETRY', "PROBS"):
             # Epidiorthosi ton FBOUND
             _data = load_json(paths.status_path)
@@ -847,6 +981,12 @@ class Fix:
         log('Fix FBOUND Geometry', repaired)
 
     def roads(self):
+        """
+        Fixes ROADS.
+
+        :return: Nothing
+        """
+
         if status[self.mode].check("ROADS", "CPROBS"):
             # Kopsimo ton aksonon 10 cm prin to orio tis enotitas
             arcpy.Buffer_analysis(self.gdb(lui.temp_ek),
@@ -865,12 +1005,28 @@ class Fix:
 
 
 class Fields:
+    """
+    Class Fields has functions for filling and fixing attributes tables.
+
+    Methods
+    -------
+    - pst
+    - astenot
+    -asttom
+    """
+
     def __init__(self, mode):
         self.mode = mode
         self.gdb = gdb[mode]
 
     @mxd
     def pst(self):
+        """
+        Fixing PST fields for ORI_TYPE, DEC_ID, ADDRESS.
+
+        :return: Nothing
+        """
+
         # Diorthosi ton pedion ORI_TYPE, DEC_ID kai ADDRESS stous PST
         # me vasi tis prodiagrafes
         for lyr_pst in org[self.mode].available('PST'):
@@ -896,6 +1052,12 @@ class Fields:
 
     @mxd
     def asttom(self):
+        """
+        Deletes ACQ_SCALE field from ASTTOM.
+
+        :return: Nothing
+        """
+
         # Diagrafi ACQ_SCALE apo tous ASTTOM
         for lyr_asttom in org[self.mode].available('ASTTOM'):
             if lyr_asttom[-5:] in kt.otas:
@@ -908,6 +1070,12 @@ class Fields:
 
     @mxd
     def astenot(self):
+        """
+        Supplements LOCALITY fiels in ASTENOT.
+
+        :return: Nothing
+        """
+
         # Prosthiki onomasias sto pedio LOCALITY ton ASTENOT me vasi txt arxeio
         available_otas = org[self.mode].available('ASTENOT', ota_num=True)
 
@@ -945,11 +1113,29 @@ class Fields:
 
 
 class Create:
+    """
+    Class Create has functions for creating shapefiles.
+
+    Methods
+    -------
+    - fbound
+    - roads
+    - fboundclaim
+    - pre_fbound
+
+    """
+
     def __init__(self, mode):
         self.mode = mode
         self.gdb = gdb[mode]
 
     def fbound(self):
+        """
+        Creates FBOUND shapefiles
+
+        :return: Nothing
+        """
+
         if ktima_status('ASTOTA'):
             # Dhmiourgia tou sunolikou FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis([self.gdb(lui.astotaM),
@@ -1040,6 +1226,12 @@ class Create:
             log('Create FBOUND')
 
     def roads(self):
+        """
+        Creates ROADS shapefiles.
+
+        :return: Nothing
+        """
+
         if status[self.mode].check("ROADS", "CPROBS") \
                 and not status[self.mode].check("EXPORTED", "ROADS"):
 
@@ -1153,6 +1345,12 @@ class Create:
             pm("\nDONE !\n")
 
     def fboundclaim(self):
+        """
+        Creates FOREST CLAIMS shapefiles and mdb.
+
+        :return: Nothing
+        """
+
         if ktima_status('PST', 'FBOUND'):
             # Dhmiourgia tou pinaka tis diekdikisis tou dasous
             arcpy.Intersect_analysis(
@@ -1223,6 +1421,12 @@ class Create:
             pm("\nDONE !\n")
 
     def pre_fbound(self):
+        """
+        Creates PRE_FBOUND shapefiles.
+
+        :return: Nothing
+        """
+        
         if ktima_status('ASTOTA'):
             # Dhmiourgia tou sunolikoy PRE_FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis(

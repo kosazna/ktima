@@ -120,11 +120,18 @@ class Organizer:
 
     def add_layer(self, features, lyr=False):
         """
+        Function add feature class from a geodatabase or lyr package
+        from LYR_Packages folder.
 
-        :param features:
-        :param lyr:
-        :return:
+        :param features: **list**
+            List of shapefiles to be added.
+        :param lyr: **boolean**, optional
+            If True layer is added from LYR_Packages.
+            If False layer is added from geodatabase
+            (default: False)
+        :return: Nothing
         """
+
         if get_pass():
             dataframes = df_now('add_layers')
 
@@ -162,6 +169,13 @@ class Organizer:
             pass
 
     def mxdfiles(self):
+        """
+        Scans the lyr packages loaded in the TOC and makes a list for
+        eac category.
+
+        :return: Nothing
+        """
+
         dataframes = df_now()
 
         for df in dataframes:
@@ -177,6 +191,14 @@ class Organizer:
                     pass
 
     def validate(self, validation_fc):
+        """
+        Finds and prints missing files.
+
+        :param validation_fc: **list**
+            Shapefile categories of Greek Cadastre to validate against.
+        :return: Nothing
+        """
+
         def find_missing(shp_name, mxdlist, locallist):
             loc_miss = mxdlist.difference(locallist)
             mxd_miss = locallist.difference(mxdlist)
@@ -196,6 +218,17 @@ class Organizer:
                 find_missing(shape, self.mxd_fl[shape]['list'], loc_fl[shape])
 
     def available(self, feature, ota_num=False):
+        """
+        Determines for which otas shapefiles are available.
+
+        :param feature: **str**
+            Spatial data category of Greek Cadastre.
+        :param ota_num: **str**
+            Ota number.
+        :return: **list**
+            Returns a list of otas with available shapefiles
+        """
+
         _mxd = self.mxd_fl[feature]['list']
         _local = loc_fl[feature]
 
@@ -205,6 +238,16 @@ class Organizer:
 
 
 def choose_roads(roads_type):
+    """
+    Chooses roads for processing.
+
+    :param roads_type: **str**
+        - 'old': old roads in InpusData
+        - 'new': new roads from localdata
+    :return: **str**
+        'iROADS' if 'old' else 'ROADS' if 'new'
+    """
+
     if roads_type == 'old':
         rd_shape = "iROADS"
     else:
@@ -214,6 +257,12 @@ def choose_roads(roads_type):
 
 
 def turn_off():
+    """
+    Turns off layers in ArcGIS.
+
+    :return: Nothing
+    """
+
     dataframes = df_now()
 
     chk = ['merge_', 'union_', '_sum', '_in', 'FBOUND']
@@ -229,6 +278,13 @@ def turn_off():
 
 
 def localfiles():
+    """
+    Makes a list with the shapefiles of each spatial data category
+    of Greek Cadastre.
+
+    :return: Nothing
+    """
+
     for ota in lui.ota_list:
         for shape in lui.local_data_to_index_list:
             local_lyr = paths.ktima(ota, shape, ext=True)
