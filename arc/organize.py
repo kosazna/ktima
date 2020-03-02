@@ -6,8 +6,13 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This modules performs all subprocesses for the core processes.
+# It also makes dictionaries with the available shapefiles
+
 from data import *
 
+# REQUIREMENTS FOR EACH FUNCTION FOR USE IN THE MXD DECORATOR
 req_map = {'merge': lui.merging_list,
            'shapes': ['ASTENOT', 'ASTTOM', 'PST'],
            'export_per_ota': ['ASTOTA'],
@@ -31,6 +36,7 @@ locROADS = set()
 locFBOUND = set()
 locPRE_FBOUND = set()
 
+# MAPPING LOCALDATA SETS
 loc_fl = {"ASTENOT": locASTENOT,
           "ASTIK": locASTIK,
           "ASTOTA": locASTOTA,
@@ -48,6 +54,22 @@ loc_fl = {"ASTENOT": locASTENOT,
 
 
 class Organizer:
+    """
+    Organizer class provides the necessary functions for the core functions
+
+    Attributes
+    ----------
+    - mode: mode for the current working session
+    - gdb: geotabase function given from dictionary
+
+    Methods
+    -------
+    - add_layer
+    - mxdfiles
+    - validate
+    - available
+    """
+
     def __init__(self, mode):
         self.mode = mode
         self.gdb = gdb[mode]
@@ -97,6 +119,12 @@ class Organizer:
                                   "in_mxd": False}}
 
     def add_layer(self, features, lyr=False):
+        """
+
+        :param features:
+        :param lyr:
+        :return:
+        """
         if get_pass():
             dataframes = df_now('add_layers')
 

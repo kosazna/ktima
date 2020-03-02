@@ -34,12 +34,12 @@ log = Log(MELETI)
 
 def validate_input(_func):
     """
-    Custom function for user input.
-    Given a _func a custom message will be displayed for the user.
+    Custom function for USER input.
+    Given a _func a custom message will be displayed for the USER.
 
-    After user selects one action function checks against all possible
-    compinations. If user input is in the approved actions the execution
-    proceeds. While his registered action is not within the approved list user
+    After USER selects one action function checks against all possible
+    compinations. If USER input is in the approved actions the execution
+    proceeds. While his registered action is not within the approved list USER
     is prompted to give an action again.
 
     :param _func: **str**
@@ -447,9 +447,9 @@ def counter():
     mdb = Files(path_to_count)
     xml = Files(path_to_count)
 
-    shapes.explorer(match='.shp')
-    mdb.explorer(match='.mdb')
-    xml.explorer(match='.xml')
+    shapes.explore(match='.shp')
+    mdb.explore(match='.mdb')
+    xml.explore(match='.xml')
 
     cnt_shapes = Counter(shapes.names)
     c_mdb = Counter([i[6:] if not i == 'POWNERS.mdb' else i for i in mdb.names])
@@ -565,14 +565,14 @@ if get_pass():
         elif action_type == "8":
             get_scanned()
         elif action_type == '9':
-            extract('Temp', ktl['temp'][user])
+            extract('Temp', ktl['temp'][USER])
             update_from_server()
         elif action_type == "1LPAA4PS5":
             shapefiles()
             clear()
             metadata()
         else:
-            extract('Local', ktl['temp'][user])
+            extract('Local', ktl['temp'][USER])
 
         print('###############################################################')
 else:

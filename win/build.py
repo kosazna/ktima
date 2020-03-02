@@ -15,10 +15,10 @@ password = getpass.getpass("\nPassword:\n")
 # def buildtree():
 #     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     else:
 #         print('"company_name" not defined in paths.json')
 #         return
@@ -34,10 +34,10 @@ password = getpass.getpass("\nPassword:\n")
 # def update_folder_structure():
 #     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     else:
 #         print('"company_name" not defined in paths.json')
 #         return
@@ -53,10 +53,10 @@ password = getpass.getpass("\nPassword:\n")
 # def update_file_structure():
 #     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure', meleti],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     else:
 #         print('"company_name" not defined in paths.json')
 #         return
@@ -85,14 +85,14 @@ password = getpass.getpass("\nPassword:\n")
 #
 # def start_logs():
 #     kt_target = cp([meleti, '!{}_log.txt'.format(meleti)])
-#     user_target = cp([users, user, 'KT_log.txt'])
+#     user_target = cp([users, USER, 'KT_log.txt'])
 #
 #     with open(kt_target, 'w') as f:
 #         f.write('{:<22}{:<9}{:<25}{}'.format('DATETIME', 'MELETI',
 #                                              'ACTION', 'COMMENTS'))
 #
 #     if os.path.exists(user_target):
-#         print('User {} already logging'.format(user))
+#         print('User {} already logging'.format(USER))
 #     else:
 #         with open(user_target, 'w') as f:
 #             f.write('{:<22}{:<9}{:<20}{:<9}{:<25}{}'.format('DATETIME',
@@ -106,10 +106,10 @@ password = getpass.getpass("\nPassword:\n")
 # def updatetree():
 #     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     else:
 #         print('"company_name" not defined in paths.json')
 #         return
@@ -128,11 +128,11 @@ password = getpass.getpass("\nPassword:\n")
 #     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure',
 #                    meleti, inputdata, docs_i, 'KT_Info.json'],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
 #                    meleti, inputdata, docs_i, 'KT_Info.json'],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     else:
 #         print('"company_name" not defined in paths.json')
 #         return
@@ -145,15 +145,15 @@ password = getpass.getpass("\nPassword:\n")
 # def update_temp_paths():
 #     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
 #         repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
 #         repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'paths.json'],
-#                   origin=ktl['temp'][user])
+#                   origin=ktl['temp'][USER])
 #     else:
 #         print('"company_name" not defined in paths.json')
 #         return
 #
-#     target = cp([users, user, 'paths.json'])
+#     target = cp([users, USER, 'paths.json'])
 #
 #     c_copy(repo, target)
 #
@@ -220,10 +220,10 @@ class Builder:
 
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         elif self.company == c_2P:
             repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -245,12 +245,12 @@ class Builder:
 
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', self.meleti],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         elif self.company == c_2P:
             repo = cp(
                 [temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
                  self.meleti],
-                origin=ktl['temp'][user])
+                origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -270,12 +270,12 @@ class Builder:
         """
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', self.meleti],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         elif self.company == c_2P:
             repo = cp(
                 [temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
                  self.meleti],
-                origin=ktl['temp'][user])
+                origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -308,20 +308,20 @@ class Builder:
 
     def start_logs(self):
         """
-        Starts logs for each project and each user.
+        Starts logs for each project and each USER.
 
         :return: Nothing
         """
 
         kt_target = cp([self.meleti, '!{}_log.txt'.format(self.meleti)])
-        user_target = cp([users, user, 'KT_log.txt'])
+        user_target = cp([users, USER, 'KT_log.txt'])
 
         with open(kt_target, 'w') as f:
             f.write('{:<22}{:<9}{:<25}{}'.format('DATETIME', 'MELETI',
                                                  'ACTION', 'COMMENTS'))
 
         if os.path.exists(user_target):
-            print('User {} already logging'.format(user))
+            print('User {} already logging'.format(USER))
         else:
             with open(user_target, 'w') as f:
                 f.write('{:<22}{:<9}{:<20}{:<9}{:<25}{}'.format('DATETIME',
@@ -340,10 +340,10 @@ class Builder:
 
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         elif self.company == c_2P:
             repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -366,11 +366,11 @@ class Builder:
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure',
                        self.meleti, inputdata, docs_i, 'KT_Info.json'],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         elif self.company == c_2P:
             repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
                        self.meleti, inputdata, docs_i, 'KT_Info.json'],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -381,22 +381,22 @@ class Builder:
 
     def update_temp_paths(self):
         """
-        Updates paths.json file for the user.
+        Updates paths.json file for the USER.
 
         :return: Nothing
         """
 
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         elif self.company == c_2P:
             repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'paths.json'],
-                      origin=ktl['temp'][user])
+                      origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
 
-        target = cp([users, user, 'paths.json'])
+        target = cp([users, USER, 'paths.json'])
 
         c_copy(repo, target)
 
@@ -413,12 +413,12 @@ class Builder:
 
 def validate_input(_func):
     """
-    Custom function for user input.
-    Given a _func a custom message will be displayed for the user.
+    Custom function for USER input.
+    Given a _func a custom message will be displayed for the USER.
 
-    After user selects one action function checks against all possible
-    compinations. If user input is in the approved actions the execution
-    proceeds. While his registered action is not within the approved list user
+    After USER selects one action function checks against all possible
+    compinations. If USER input is in the approved actions the execution
+    proceeds. While his registered action is not within the approved list USER
     is prompted to give an action again.
 
     :param _func: **str**

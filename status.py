@@ -18,9 +18,9 @@ class Status:
 
     Attributes
     ----------
-    - mode: ktima mode which the user is working (ktima or standalone)
+    - mode: ktima mode which the USER is working (ktima or standalone)
     - meleti: meleti of the project
-    - otas: otas the user has selected. Mode-dependent
+    - otas: otas the USER has selected. Mode-dependent
     - status_path: path for the KT_Status.json file
 
     Methods
@@ -37,7 +37,7 @@ class Status:
         :param mode: **str**
             Ktima mode.
         :param otas: **list**
-            List of otas the user is working with.
+            List of otas the USER is working with.
         """
 
         self.mode = mode
@@ -87,7 +87,7 @@ class Status:
         Prints predefined message of the current status
         :return: Nothing
         """
-        
+
         data = load_json(self.status_path)
 
         pm("\nMeleti: {}  --  {}".format(self.meleti, self.mode.upper()))

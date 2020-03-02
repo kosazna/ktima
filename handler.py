@@ -56,7 +56,7 @@ def list_dir(path, match=None):
     """
 
     files = Files(path)
-    files.explorer(match=match)
+    files.explore(match=match)
 
     for fullpath in files.paths:
         filename, basename, ext = base_ext(fullpath)
@@ -108,8 +108,8 @@ class Compare:
         self.path_2 = path_2
         self.dir_1 = Files(self.path_1)
         self.dir_2 = Files(self.path_2)
-        self.dir_1.explorer(match=match)
-        self.dir_2.explorer(match=match)
+        self.dir_1.explore(match=match)
+        self.dir_2.explore(match=match)
         self.map_1 = self.dir_1.mapper_nd
         self.map_2 = self.dir_2.mapper_nd
         self.dir_1_count = self.dir_1.file_counter
@@ -316,7 +316,7 @@ class Files:
 
         return match_wildcard
 
-    def explorer(self, match=None):
+    def explore(self, match=None):
         """
         Explores the self.path and catalogs every file.
 

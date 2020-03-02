@@ -37,7 +37,7 @@ def ktima_status(*args):
 def available(feature):
     """
     Determines which for which otas shapefiles can be merged
-    based on their availability and user command
+    based on their availability and USER command
 
     :param feature: *str*
         Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
@@ -909,7 +909,7 @@ class Fields:
     @mxd
     def astenot(self):
         # Prosthiki onomasias sto pedio LOCALITY ton ASTENOT me vasi txt arxeio
-        available = org[self.mode].available('ASTENOT', ota_num=True)
+        available_otas = org[self.mode].available('ASTENOT', ota_num=True)
 
         with open(paths.locality) as csvfile:
             localnames = csv.reader(csvfile)
@@ -917,7 +917,7 @@ class Fields:
             for row in localnames:
                 try:
                     ota = row[0][:5]
-                    if ota in available and ota in kt.otas:
+                    if ota in available_otas and ota in kt.otas:
                         lyr_astenot = "ASTENOT_{}".format(ota)
                         pm("Processing {}".format(lyr_astenot))
                         arcpy.SelectLayerByAttribute_management(
@@ -1275,7 +1275,8 @@ class Create:
 
 
 geoprocessing = {KTIMA_MODE: Geoprocessing(KTIMA_MODE),
-                 STANDALONE_MODE: Geoprocessing(STANDALONE_MODE, standalone=True)}
+                 STANDALONE_MODE: Geoprocessing(STANDALONE_MODE,
+                                                standalone=True)}
 find = {KTIMA_MODE: Queries(KTIMA_MODE),
         STANDALONE_MODE: Queries(STANDALONE_MODE)}
 general = {KTIMA_MODE: General(KTIMA_MODE),

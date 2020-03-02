@@ -83,7 +83,7 @@ class Paths:
         self.localdata = cp([meleti, outputdata, localdata_o])
         self.paradosidata = cp([meleti, outputdata, paradosidata_o])
         self.checks_out = cp([mdev, '! --CHECKS-- !', meleti],
-                             origin=ktl['temp'][user])
+                             origin=ktl['temp'][USER])
 
         # BASIC DOCS
         self.locality = cp([meleti, inputdata, docs_i, 'LOCALITY.txt'])
@@ -143,9 +143,9 @@ class Paths:
         """
 
         if self.company_name == c_NA:
-            return cp([ota, 'SHP', shp + '.shp'], origin=ktl['data'][user])
+            return cp([ota, 'SHP', shp + '.shp'], origin=ktl['data'][USER])
         elif self.company_name == c_2P:
-            return cp([ota, 'SHP', shp, shp + '.shp'], origin=ktl['data'][user])
+            return cp([ota, 'SHP', shp, shp + '.shp'], origin=ktl['data'][USER])
 
     def ktima(self, ota, shp, ext=False, spatial_folder=localdata_o):
         """
@@ -282,9 +282,9 @@ class Paths:
             Path of the shapefile folder.
         """
         if self.company_name == c_NA:
-            return cp([ota, 'SHP'], origin=ktl['data'][user])
+            return cp([ota, 'SHP'], origin=ktl['data'][USER])
         elif self.company_name == c_2P:
-            return cp([ota, 'SHP', shp], origin=ktl['data'][user])
+            return cp([ota, 'SHP', shp], origin=ktl['data'][USER])
 
     def ktima_folder(self, ota, shp, spatial_folder=localdata_o):
         """

@@ -26,7 +26,7 @@ def compile_ktima():
     no_compile = ['testing', 'pass', 'mkbinary']
 
     # SOURCE CODE PATH
-    src = cp([users, user, 'Desktop', 'compiled code'])
+    src = cp([users, USER, 'Desktop', 'compiled code'])
 
     for fullpath, filename, basename, ext in list_dir(src, match='.py'):
         if basename not in toolboxes and basename not in no_compile:

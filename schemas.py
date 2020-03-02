@@ -55,8 +55,8 @@ saromena = 'Saromena'
 temp2kp = '!--2KP_TEMP--'
 
 # USER AND DRIVE LETTER MAPPING FOR EACH USER
-user = getpass.getuser()
-ktl = load_json(cp([users, user, 'paths.json']))
+USER = getpass.getuser()
+ktl = load_json(cp([users, USER, 'paths.json']))
 
 
 class LookUpInfo:

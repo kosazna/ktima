@@ -17,22 +17,22 @@ import datetime
 
 def extract(mode, folder):
     """
-    Copies the user KT_log.txt in the server or in the user desktop.
+    Copies the USER KT_log.txt in the server or in the USER desktop.
 
     :param mode: **str**
-        - 'local': copies the log file to user desktop
+        - 'local': copies the log file to USER desktop
         - 'temp': copies the log file to the server
     :param folder: **str**
-        Server drive letter of current user.
+        Server drive letter of current USER.
     :return: Nothing
     """
 
-    inpath = cp([users, user, 'KT_log.txt'])
-    filename = '{}_logs.txt'.format(user)
+    inpath = cp([users, USER, 'KT_log.txt'])
+    filename = '{}_logs.txt'.format(USER)
 
     if mode == "Local":
         try:
-            outpath = cp([users, user, 'Desktop', filename])
+            outpath = cp([users, USER, 'Desktop', filename])
             shutil.copyfile(inpath, outpath)
         except IOError:
             pass
@@ -47,14 +47,14 @@ def extract(mode, folder):
 
 class Log:
     """
-    Log exists so that each user action can for the project is logged.
+    Log exists so that each USER action can for the project is logged.
 
     Attributes
     ----------
     - meleti: meleti of the project.
     - kt_log: procect logger
     - company_log: server logger
-    - general_log: user logger
+    - general_log: USER logger
 
     Methods
     -------
@@ -65,8 +65,8 @@ class Log:
     def __init__(self, meleti):
         self.meleti = meleti
         self.kt_log = cp([self.meleti, '!{}_log.txt'.format(self.meleti)])
-        self.company_log = cp(['KTHMA_log.txt'], origin=ktl['data'][user])
-        self.general_log = cp([users, user, 'KT_log.txt'])
+        self.company_log = cp(['KTHMA_log.txt'], origin=ktl['data'][USER])
+        self.general_log = cp([users, USER, 'KT_log.txt'])
 
     def write_to_file(self, dt, msgf, commentsf):
         """
@@ -75,16 +75,16 @@ class Log:
         :param dt: **str**
             Datetime timestamp.
         :param msgf: **str**
-            Action of the user that is being registered.
+            Action of the USER that is being registered.
         :param commentsf: **str**
-            Comments for the user action.
+            Comments for the USER action.
         :return: Nothing
         """
 
         try:
-            _user = ktl['users'][user]
+            _user = ktl['users'][USER]
         except KeyError:
-            _user = user
+            _user = USER
 
         try:
             with open(self.company_log, 'a') as company_f:
@@ -116,9 +116,9 @@ class Log:
         on the content.
 
         :param msg: **str**
-            Action of the user that is being registered.
+            Action of the USER that is being registered.
         :param log_list: **list**
-            List containing neccesary info for user actions
+            List containing neccesary info for USER actions
         :return: Nothing
         """
 

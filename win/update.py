@@ -19,13 +19,13 @@ toolboxes = ["A) General",
              "D) Create"]
 
 
-def update_from_server(drive=ktl['temp'][user]):
+def update_from_server(drive=ktl['temp'][USER]):
     """
-    Updates all the user scripts from the company server.
+    Updates all the USER scripts from the company server.
 
     :param drive: **str**, optional
         Drive letter of the server.
-        (default: is defined on the paths.json file for each user)
+        (default: is defined on the paths.json file for each USER)
     :return: Nothing
     """
 
@@ -77,7 +77,7 @@ def main(command, gd_action):
 
         for fullpath, filename, basename, ext in list_dir(src, match='.py'):
             out = dst + fullpath.split('\\')[pointer:]
-            outpath = cp(out, origin=gd[user])
+            outpath = cp(out, origin=gd[USER])
 
             if _action == 'push':
                 c_copy(fullpath, outpath)

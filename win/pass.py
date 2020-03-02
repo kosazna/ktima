@@ -15,13 +15,13 @@ from ktima.uasm import *
 def p_pass():
     _user = raw_input('\nUser :\n')
     if _user == "":
-        _user = user
+        _user = USER
 
     _hk = hashlib.sha1(_user).hexdigest()
 
     data = {"{}".format(_user): "{}".format(_hk)}
 
-    write_json(r"{}:\Google Drive\Work\ktima\passes\{}.json".format(gd[user],
+    write_json(r"{}:\Google Drive\Work\ktima\passes\{}.json".format(gd[USER],
                                                                     _user),
                data)
 
@@ -29,7 +29,7 @@ def p_pass():
 def t_pass():
     _user = raw_input('\nUser :\n')
     if _user == "":
-        _user = user
+        _user = USER
 
     c_date = time.strftime("%d/%m/%Y")
 
