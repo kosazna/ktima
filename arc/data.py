@@ -67,21 +67,21 @@ lut = LookUpInfo(info_data, naming_data)
 paths = Paths(MELETI, lut.mel_type, lut.company_name)
 log = Log(MELETI)
 
-if lut.mode == ktima_m:
+if lut.mode == KTIMA_MODE:
     kt = Kt(MELETI, lut.mode, lut.ota_list)
 else:
     kt = Kt(MELETI, lut.mode, lut.mel_ota_list)
 
-if kt.mode == ktima_m:
-    arcpy.env.workspace = paths.gdb_company
+if kt.mode == KTIMA_MODE:
+    arcpy.env.workspace = paths.gdb_ktima
 else:
     arcpy.env.workspace = paths.gdb_standalone
 
-status = {ktima_m: Status(MELETI, ktima_m, lut.ota_list),
-          standalone_m: Status(MELETI, standalone_m, kt.otas)}
+status = {KTIMA_MODE: Status(MELETI, KTIMA_MODE, lut.ota_list),
+          STANDALONE_MODE: Status(MELETI, STANDALONE_MODE, kt.otas)}
 
-gdb = {ktima_m: paths.gdbc,
-       standalone_m: paths.gdbs}
+gdb = {KTIMA_MODE: paths.gdbc,
+       STANDALONE_MODE: paths.gdbs}
 
 
 def df_now(command="list_layers"):

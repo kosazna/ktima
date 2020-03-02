@@ -6,21 +6,77 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This module contains within the Paths class all the necessary paths for
+# the project
+
 from handler import *
 
 
 class Paths:
+    """
+    Paths has as attributes all the necessary file locations of the project
+    and all the methods needed to create paths for different tasks
+
+    Attributes
+    ----------
+    - mel_type :
+    - company_name:
+    - meleti:
+    - mdb_general:
+    - gdb_standalone:
+    - gdb_company:
+    - rdoutpath:
+    - rdinpath:
+    - fboundoutpath:
+    - fboundinpath:
+    - prefboundoutpath:
+    - prefboundinpath:
+    - claimoutpath:
+    - claiminpath:
+    - predasinpath:
+    - dasinpath:
+    - locality:
+    - fbounddoc:
+    - status_path:
+    - kt_info_path:
+    - mdb_in:
+    - mdb_out:
+    - mdb_vsteas:
+    - old_roads:
+    - new_roads:
+    - localdata:
+    - paradosidata:
+    - block_pnt_xml:
+    - geo_xml:
+    - roads_xml:
+    - anakt_in:
+    - anakt_out:
+    - saromena_in:
+    - saromena_out:
+    - ckecks_out:
+
+    Methods
+    -------
+    - server
+    - ktima
+    - meta
+    - mdf
+    - gdbc
+    - gdbs
+    - mdb
+    - server_folder
+    - ktima_folder
+    """
+
     def __init__(self, meleti, mel_type, company_name):
         self.mel_type = mel_type
         self.company_name = company_name
         self.meleti = meleti
 
-        self.company_gdb_name = 'ktima.gdb'
-        self.standalone_gdb_name = 'standalone.gdb'
-
         self.mdb_general = cp([meleti, gdbs, 'archive.mdb'])
-        self.gdb_standalone = cp([meleti, gdbs, self.standalone_gdb_name])
-        self.gdb_company = cp([meleti, gdbs, self.company_gdb_name])
+        self.gdb_standalone = cp([meleti, gdbs, STANDALONE_GDB])
+        self.gdb_ktima = cp([meleti, gdbs, KTIMA_GDB])
 
         self.rdoutpath = cp([meleti, inputdata, shapefiles_i])
         self.rdinpath = cp([meleti, inputdata, shapefiles_i, 'ROADS_ALL.shp'])
@@ -111,9 +167,9 @@ class Paths:
 
     def gdbc(self, fc=None):
         if fc is None:
-            return self.gdb_company
+            return self.gdb_ktima
         else:
-            return os.path.join(self.gdb_company, fc)
+            return os.path.join(self.gdb_ktima, fc)
 
     def gdbs(self, fc=None):
         if fc is None:

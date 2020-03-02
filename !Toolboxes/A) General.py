@@ -70,7 +70,7 @@ class ChangeMode(object):
         mode.value = core.kt.mode
         mode.filter.list = ['ktima', 'standalone']
 
-        if core.kt.mode == core.ktima_m:
+        if core.kt.mode == core.KTIMA_MODE:
             otas.filter.list = []
             company.filter.list = []
         else:
@@ -252,7 +252,7 @@ class ExportToServer(object):
         geodatabase.value = core.kt.mode
         geodatabase.filter.list = ['ktima', 'standalone']
 
-        if core.kt.mode == core.ktima_m:
+        if core.kt.mode == core.KTIMA_MODE:
             _path = core.paths.gdb_company
         else:
             _path = core.paths.gdb_standalone

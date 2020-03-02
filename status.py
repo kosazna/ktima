@@ -36,7 +36,7 @@ class Status:
 
         pm("\nMeleti: {}  --  {}".format(self.meleti, self.mode.upper()))
 
-        if self.mode == standalone_m:
+        if self.mode == STANDALONE_MODE:
             pm("\nOTA : {}".format(self.otas))
 
         pm("\nGeometry Status")

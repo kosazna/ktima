@@ -22,7 +22,7 @@ naming_data = load_json(naming_path)
 
 lut = LookUpInfo(info_data, naming_data)
 paths = Paths(meleti, lut.mel_type, lut.company_name)
-status = Status(meleti, ktima_m, lut.ota_list)
+status = Status(meleti, KTIMA_MODE, lut.ota_list)
 log = Log(meleti)
 
 

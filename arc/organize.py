@@ -230,5 +230,5 @@ def mxd(func):
 
 localfiles()
 
-org = {ktima_m: Organizer(ktima_m),
-       standalone_m: Organizer(standalone_m)}
+org = {KTIMA_MODE: Organizer(KTIMA_MODE),
+       STANDALONE_MODE: Organizer(STANDALONE_MODE)}

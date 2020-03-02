@@ -1274,17 +1274,17 @@ class Create:
             raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
 
-geoprocessing = {ktima_m: Geoprocessing(ktima_m),
-                 standalone_m: Geoprocessing(standalone_m, standalone=True)}
-find = {ktima_m: Queries(ktima_m),
-        standalone_m: Queries(standalone_m)}
-general = {ktima_m: General(ktima_m),
-           standalone_m: General(standalone_m)}
-check = {ktima_m: Check(ktima_m),
-         standalone_m: Check(standalone_m)}
-fix = {ktima_m: Fix(ktima_m),
-       standalone_m: Fix(standalone_m)}
-fields = {ktima_m: Fields(ktima_m),
-          standalone_m: Fields(standalone_m)}
-create = {ktima_m: Create(ktima_m),
-          standalone_m: Create(standalone_m)}
+geoprocessing = {KTIMA_MODE: Geoprocessing(KTIMA_MODE),
+                 STANDALONE_MODE: Geoprocessing(STANDALONE_MODE, standalone=True)}
+find = {KTIMA_MODE: Queries(KTIMA_MODE),
+        STANDALONE_MODE: Queries(STANDALONE_MODE)}
+general = {KTIMA_MODE: General(KTIMA_MODE),
+           STANDALONE_MODE: General(STANDALONE_MODE)}
+check = {KTIMA_MODE: Check(KTIMA_MODE),
+         STANDALONE_MODE: Check(STANDALONE_MODE)}
+fix = {KTIMA_MODE: Fix(KTIMA_MODE),
+       STANDALONE_MODE: Fix(STANDALONE_MODE)}
+fields = {KTIMA_MODE: Fields(KTIMA_MODE),
+          STANDALONE_MODE: Fields(STANDALONE_MODE)}
+create = {KTIMA_MODE: Create(KTIMA_MODE),
+          STANDALONE_MODE: Create(STANDALONE_MODE)}

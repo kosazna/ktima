@@ -15,8 +15,12 @@ from cust_win import *
 
 
 # MODES
-ktima_m = 'ktima'
-standalone_m = 'standalone'
+KTIMA_MODE = 'ktima'
+STANDALONE_MODE = 'standalone'
+
+# GEODATABASES
+KTIMA_GDB = 'ktima.gdb'
+STANDALONE_GDB = 'standalone.gdb'
 
 # GOOGLE DRIVE MAPPING LETTERS
 gd = {'aznavouridis.k': 'D',
@@ -69,7 +73,7 @@ class LookUpInfo:
         self.meleti = info.get("meleti", 'NOT_FOUND')
         self.mel_type = info.get("mel_type", 1)
         self.precision = info.get("precision", 0.000001)
-        self.mode = info.get("mode", ktima_m)
+        self.mode = info.get("mode", KTIMA_MODE)
 
         self.koinopraksia = info.get("koinopraksia", {})
         self.etairies = [et for et in self.koinopraksia.keys()]
