@@ -74,8 +74,8 @@ class ChangeMode(object):
             otas.filter.list = []
             company.filter.list = []
         else:
-            otas.filter.list = core.lut.mel_ota_list
-            company.filter.list = core.lut.comps
+            otas.filter.list = core.lui.mel_ota_list
+            company.filter.list = core.lui.comps
 
         default.value = "false"
 
@@ -86,9 +86,9 @@ class ChangeMode(object):
     @staticmethod
     def updateParameters(params):
         if params[0].valueAsText == 'standalone':
-            otas_values = copy.copy(core.lut.mel_ota_list)
+            otas_values = copy.copy(core.lui.mel_ota_list)
             params[2].filter.list = otas_values
-            params[1].filter.list = core.lut.comps
+            params[1].filter.list = core.lui.comps
 
             companies = params[1].valueAsText
 
@@ -109,7 +109,7 @@ class ChangeMode(object):
         if _otas:
             otas = _otas.split(';')
         else:
-            otas = core.lut.ota_list
+            otas = core.lui.ota_list
 
         if default:
             core.kt.set_default_mode(mode)
@@ -422,7 +422,7 @@ class Merge(object):
             parameterType="Required",
             direction="Input")
 
-        merging_list = copy.copy(core.lut.merging_list)
+        merging_list = copy.copy(core.lui.merging_list)
 
         shape.filter.list = merging_list
 

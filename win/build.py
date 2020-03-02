@@ -163,16 +163,61 @@ password = getpass.getpass("\nPassword:\n")
 
 
 class Builder:
-    def __init__(self, meleti, company=ktl.get('company_name', 'NOT_FOUND')):
+    """
+    Builder exists for creating project folder schema for each meleti
+    in any pc.
+
+    Attributes
+    ----------
+    - meleti: meleti of the project
+    - company: company (server paths depend on that)
+    - kt_info_path: all info regarding the project
+
+    Methods
+    -------
+    - mel_change
+    - buildtree
+    - update_folder_structure
+    - update_file_structure
+    - make_empty_dirs
+    - start_logs
+    - updatetree
+    - update_ktima_info
+    - update_temp_paths
+    - get_binary
+    """
+
+    def __init__(self, meleti, company=ktl.get('company_name', c_NA)):
+        """
+        :param meleti: **str**
+            Meleti.
+        :param company: **str**, optional
+            Company (default: defined in paths.json).
+        """
+
         self.meleti = meleti
         self.company = company
         self.kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
 
     def mel_change(self, new_meleti):
+        """
+        Changes meleti of the Builder object.
+
+        :param new_meleti: **str**
+            New meleti for the object.
+        :return: Nothing
+        """
+
         self.meleti = new_meleti
         self.kt_info_path = cp([new_meleti, inputdata, docs_i, 'KT_Info.json'])
 
     def buildtree(self):
+        """
+        Builds the basic folder structure which is common for all projects.
+
+        :return: Nothing
+        """
+
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
                       origin=ktl['temp'][user])
@@ -192,6 +237,12 @@ class Builder:
                 target))
 
     def update_folder_structure(self):
+        """
+        Updates the folder structure depending on the project.
+
+        :return: Nothing
+        """
+
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', self.meleti],
                       origin=ktl['temp'][user])
@@ -212,6 +263,11 @@ class Builder:
                 os.makedirs(outpath)
 
     def update_file_structure(self):
+        """
+        Update the files of each project depending on the project.
+
+        :return: Nothing
+        """
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', self.meleti],
                       origin=ktl['temp'][user])
@@ -233,6 +289,12 @@ class Builder:
                 c_copy(inpath, outpath)
 
     def make_empty_dirs(self):
+        """
+        Makes empty directories for the otas of each project.
+
+        :return: Nothing
+        """
+
         data = load_json(self.kt_info_path)
 
         mdb_out = cp([self.meleti, outputdata, paradosimdb_o])
@@ -245,6 +307,12 @@ class Builder:
                 os.mkdir(os.path.join(_dir, ota))
 
     def start_logs(self):
+        """
+        Starts logs for each project and each user.
+
+        :return: Nothing
+        """
+
         kt_target = cp([self.meleti, '!{}_log.txt'.format(self.meleti)])
         user_target = cp([users, user, 'KT_log.txt'])
 
@@ -264,6 +332,12 @@ class Builder:
                                                                 'COMMENTS'))
 
     def updatetree(self):
+        """
+        Update basic folder schema of all projects.
+
+        :return: Nothing
+        """
+
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
                       origin=ktl['temp'][user])
@@ -284,6 +358,11 @@ class Builder:
                 print('{} - Created'.format(_dir))
 
     def update_ktima_info(self):
+        """
+        Updates KT_Info.json file for each project.
+
+        :return: Nothing
+        """
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure',
                        self.meleti, inputdata, docs_i, 'KT_Info.json'],
@@ -301,6 +380,12 @@ class Builder:
         c_copy(repo, target)
 
     def update_temp_paths(self):
+        """
+        Updates paths.json file for the user.
+
+        :return: Nothing
+        """
+
         if self.company == c_NA:
             repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'],
                       origin=ktl['temp'][user])
@@ -317,10 +402,31 @@ class Builder:
 
     @staticmethod
     def get_binary():
+        """
+        Gets the '.pyc' files from the server.
+
+        :return: Nothing
+        """
+
         update_from_server()
 
 
-def user_in_build(_func):
+def validate_input(_func):
+    """
+    Custom function for user input.
+    Given a _func a custom message will be displayed for the user.
+
+    After user selects one action function checks against all possible
+    compinations. If user input is in the approved actions the execution
+    proceeds. While his registered action is not within the approved list user
+    is prompted to give an action again.
+
+    :param _func: **str**
+        Function which is called. This function name should me in both the
+        console dict and the approved dict else KeyError is raised.
+    :return: **str**
+        User action after validation
+    """
     console = {'meleti': "(1) KT1-05\n"
                          "(2) KT2-11\n"
                          "(3) KT5-14\n"
@@ -367,7 +473,7 @@ def user_in_build(_func):
 if username == mdev.strip('! ') and password == build_pass:
     print('\nMeleti: \n')
 
-    builder = Builder(user_in_build('meleti'))
+    builder = Builder(validate_input('meleti'))
 
     func_mapper = {'1': [builder.buildtree,
                          builder.update_folder_structure,
@@ -384,7 +490,7 @@ if username == mdev.strip('! ') and password == build_pass:
                          '3': builder.update_temp_paths}}
     while True:
         print('\nGive a command:\n')
-        action_type = user_in_build('action')
+        action_type = validate_input('action')
 
         print('##########################################################')
 
@@ -392,13 +498,13 @@ if username == mdev.strip('! ') and password == build_pass:
             for _func in func_mapper[action_type]:
                 _func()
         elif action_type == "2":
-            sub_action = user_in_build('custom_build')
+            sub_action = validate_input('custom_build')
             func_mapper[action_type][sub_action]()
         elif action_type == "3":
-            sub_action = user_in_build('update')
+            sub_action = validate_input('update')
             func_mapper[action_type][sub_action]()
         elif action_type == "4":
-            builder.mel_change(user_in_build('meleti'))
+            builder.mel_change(validate_input('meleti'))
         elif action_type == "5":
             builder.get_binary()
 

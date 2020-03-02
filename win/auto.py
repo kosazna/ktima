@@ -6,27 +6,49 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This modules has all the neccesary functions for all tasks
+# on the windows side of the project
+
 from ktima.status import *
 from update import update_from_server
 from collections import Counter
 
 
-meleti = str(sys.argv[1].split('\\')[1])
+MELETI = str(sys.argv[1].split('\\')[1])
 
-kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
-naming_path = cp([meleti, inputdata, docs_i, 'KT_Naming_Schema.json'])
+# PATHS FOR THE PROJECT INFO AND NAMING SCHEMA
+kt_info_path = cp([MELETI, inputdata, docs_i, 'KT_Info.json'])
+naming_path = cp([MELETI, inputdata, docs_i, 'KT_Naming_Schema.json'])
 
+# DICTIONARIES OF THE PROJECT INFO AND NAMING SCHEMA
 info_data = load_json(kt_info_path)
-
 naming_data = load_json(naming_path)
 
-lut = LookUpInfo(info_data, naming_data)
-paths = Paths(meleti, lut.mel_type, lut.company_name)
-status = Status(meleti, KTIMA_MODE, lut.ota_list)
-log = Log(meleti)
+# INSTANTIATING CLASSES
+lui = LookUpInfo(info_data, naming_data)
+paths = Paths(MELETI, lui.mel_type, lui.company_name)
+status = Status(MELETI, KTIMA_MODE, lui.ota_list)
+log = Log(MELETI)
 
 
-def user_in(_func):
+def validate_input(_func):
+    """
+    Custom function for user input.
+    Given a _func a custom message will be displayed for the user.
+
+    After user selects one action function checks against all possible
+    compinations. If user input is in the approved actions the execution
+    proceeds. While his registered action is not within the approved list user
+    is prompted to give an action again.
+
+    :param _func: **str**
+        Function which is called. This function name should me in both the
+        console dict and the approved dict else KeyError is raised.
+    :return: **str**
+        User action after validation
+    """
+
     console = {'action_type': "(1) Export Shapefiles\n"
                               "(2) Organize Files\n"
                               "(3) Create Metadata\n"
@@ -56,8 +78,8 @@ def user_in(_func):
 
     sl = ['']
     ol = ['']
-    [sl.append(i) for i in lut.local_list]
-    [ol.append(i) for i in lut.ota_list]
+    [sl.append(i) for i in lui.local_list]
+    [ol.append(i) for i in lui.ota_list]
 
     approved = {'action_type': ['', '1', '2', '3', '4', '5',
                                 '6', '7', '8', '9', '1LPAA4PS5'],
@@ -103,16 +125,23 @@ def user_in(_func):
 
 
 def shapefiles():
+    """
+    Gets shapefiles from server or localdata and pastes them
+    on localdata or paradosi data.
+
+    :return: Nothing
+    """
+
     if action_type == "1LPAA4PS5":
         get_folder = "L"
         export_folder = "P"
         shapes = ""
         ota_code = ""
     else:
-        get_folder = user_in('get_folder')
-        export_folder = user_in('export_folder')
-        shapes = user_in('shapes')
-        ota_code = user_in('ota_code')
+        get_folder = validate_input('get_folder')
+        export_folder = validate_input('export_folder')
+        shapes = validate_input('shapes')
+        ota_code = validate_input('ota_code')
 
     user_shapes = shapes.split("-")
     user_ota_list = ota_code.split("-")
@@ -121,51 +150,51 @@ def shapefiles():
     log_status = []
 
     if get_folder == "S" and export_folder == "L":
-        shape_list = lut.server_list
+        shape_list = lui.server_list
         log_status.append('Server')
         log_status.append('LocalData')
 
         if not shapes:
-            for shape in lut.status_list:
+            for shape in lui.status_list:
                 status.update('SHAPE', shape, False)
             status.update('EXPORTED', "FBOUND", False)
         else:
             for shape in user_shapes:
                 status.update('SHAPE', shape, False)
     elif get_folder == "L" and export_folder == "P":
-        shape_list = lut.local_list
+        shape_list = lui.local_list
         log_status.append('LocalData')
         log_status.append('ParadosiData')
 
     print("Initializing...\n")
 
-    def export(e_shape, e_ota):
+    def export(shp, ota_num):
         inpath = ""
         outpath = ""
 
         if get_folder == "S" and export_folder == "L":
-            inpath = paths.server_folder(e_ota, e_shape)
-            outpath = paths.ktima_folder(e_ota, e_shape)
+            inpath = paths.server_folder(ota_num, shp)
+            outpath = paths.ktima_folder(ota_num, shp)
         elif get_folder == "L" and export_folder == "P":
-            inpath = paths.ktima_folder(e_ota, e_shape)
-            outpath = paths.ktima_folder(e_ota, e_shape,
+            inpath = paths.ktima_folder(ota_num, shp)
+            outpath = paths.ktima_folder(ota_num, shp,
                                          spatial_folder=paradosidata_o)
 
         for fpath, fname, bname, ext in list_dir(inpath, match=['.shp',
                                                                 '.shx',
                                                                 '.dbf']):
-            if bname == e_shape:
+            if bname == shp:
                 shutil.copyfile(fpath, os.path.join(outpath, fname))
 
     progress_counter = 0
 
     if get_pass():
         if ota_code == "" and shapes == "":
-            for ota in lut.ota_list:
+            for ota in lui.ota_list:
                 progress_counter += 1
                 for shape in shape_list:
                     export(shape, ota)
-                progress(progress_counter, len(lut.ota_list))
+                progress(progress_counter, len(lui.ota_list))
         elif ota_code != "" and shapes != "":
             for ota in user_ota_list:
                 progress_counter += 1
@@ -179,11 +208,11 @@ def shapefiles():
                     export(shape, ota)
                 progress(progress_counter, len(user_ota_list))
         elif shapes != "":
-            for ota in lut.ota_list:
+            for ota in lui.ota_list:
                 progress_counter += 1
                 for shape in user_shapes:
                     export(shape, ota)
-                progress(progress_counter, len(lut.ota_list))
+                progress(progress_counter, len(lui.ota_list))
 
         log('Export Shapefiles', log_status)
     else:
@@ -191,6 +220,12 @@ def shapefiles():
 
 
 def roads():
+    """
+    Exports roads from LocalData to InputData.
+
+    :return: Nothing
+    """
+
     if get_pass():
         for fpath, fname, bname, ext in list_dir(paths.new_roads,
                                                  match=['.shp',
@@ -211,13 +246,19 @@ def roads():
 
 
 def clear():
+    """
+    Deletes files that are not neccesary for the project.
+
+    :return: Nothing
+    """
+
     if action_type == "1LPAA4PS5":
         clear_folder = "P"
         clear_type = "S"
     else:
-        clear_folder = user_in('clear_folder')
+        clear_folder = validate_input('clear_folder')
         if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
-            clear_type = user_in('clear_type')
+            clear_type = validate_input('clear_type')
         else:
             clear_type = 'None'
 
@@ -256,7 +297,7 @@ def clear():
             for fpath, fname, bname, ext in list_dir(clearlocalpath,
                                                      match=del_list):
                 if clear_type == "A" \
-                        and clear_folder == "P" and bname in lut.no_del_list:
+                        and clear_folder == "P" and bname in lui.no_del_list:
                     pass
                 else:
                     try:
@@ -277,6 +318,12 @@ def clear():
 
 
 def metadata():
+    """
+    Creates metadata given a date.
+
+    :return: Nothing
+    """
+
     if action_type == "1LPAA4PS5":
         date = mod_date
     else:
@@ -300,7 +347,7 @@ def metadata():
     except IOError:
         pass
 
-    if lut.mel_type == 1:
+    if lui.mel_type == 1:
         try:
             metas = {'BLOCK_PNT_METADATA': block_pnt_cont,
                      'ROADS_METADATA': roads_cont,
@@ -315,7 +362,7 @@ def metadata():
 
     if get_pass():
         progress_counter = 0
-        for ota in lut.ota_list:
+        for ota in lui.ota_list:
             progress_counter += 1
             for meta in metas:
                 path = paths.meta(ota, meta)
@@ -326,7 +373,7 @@ def metadata():
                 with open(path, 'w') as meta_f:
                     meta_f.write(content)
 
-            progress(progress_counter, len(lut.ota_list))
+            progress(progress_counter, len(lui.ota_list))
 
         log("Metadata")
 
@@ -336,21 +383,27 @@ def metadata():
 
 
 def organize():
-    org_folder = user_in('org_folder')
+    """
+    Organizes the files provided form the InputData to the OutputData.
+
+    :return: Nothing
+    """
+
+    org_folder = validate_input('org_folder')
     log_status = []
 
     if get_pass():
         if org_folder == 'A':
             log_status.append('Anaktiseis')
             for fpath, fname, bname, ext in list_dir(paths.anakt_in):
-                for ota in lut.ota_list:
+                for ota in lui.ota_list:
                     if ota in bname[9:14]:
                         outpath = os.path.join(paths.anakt_out, ota, fname)
                         c_copy(fpath, outpath)
         elif org_folder == 'S':
             log_status.append('Saromena')
             for fpath, fname, bname, ext in list_dir(paths.saromena_in):
-                for ota in lut.ota_list:
+                for ota in lui.ota_list:
                     if bname[0] == 'D' and ota in bname[1:6]:
                         outpath = os.path.join(paths.saromena_out, ota, fname)
                         c_copy(fpath, outpath)
@@ -360,7 +413,7 @@ def organize():
         elif org_folder == 'M':
             log_status.append("MDB's")
             for fpath, fname, bname, ext in list_dir(paths.mdb_in):
-                for ota in lut.ota_list:
+                for ota in lui.ota_list:
                     if ota in bname and 'VSTEAS_REL' in bname:
                         outpath = os.path.join(paths.mdb_vsteas, ota,
                                                'SHAPE', 'VSTEAS_REL', fname)
@@ -377,7 +430,13 @@ def organize():
 
 
 def counter():
-    path = user_in('path_to_count')
+    """
+    Counts the shapefiles for each OTA.
+
+    :return: Nothing
+    """
+
+    path = validate_input('path_to_count')
 
     if path == 'L':
         path_to_count = paths.localdata
@@ -401,12 +460,12 @@ def counter():
 
     for i in shapes.paths:
         path_list = i.split('\\')
-        if lut.mel_type == 1:
+        if lui.mel_type == 1:
             ota_counter[path_list[6]].append(int(path_list[4]))
         else:
             ota_counter[path_list[5]].append(int(path_list[4]))
 
-    otas = list(map(int, lut.ota_list))
+    otas = list(map(int, lui.ota_list))
 
     for i in otas:
         for shp in ota_counter:
@@ -447,7 +506,13 @@ def counter():
 
 
 def get_scanned():
-    drive_letter = user_in('get_scanned')
+    """
+    Creates a txt file with the fullpath of every file in the scanned folder.
+
+    :return: Nothing
+    """
+
+    drive_letter = validate_input('get_scanned')
 
     if drive_letter == '':
         drive_letter = 'W'
@@ -455,8 +520,8 @@ def get_scanned():
     progress_counter = 0
     files = 0
 
-    for ota in lut.ota_list:
-        with open(cp([meleti, outputdata,
+    for ota in lui.ota_list:
+        with open(cp([MELETI, outputdata,
                       'Scanned_List',
                       '{}_Scanned_Files'.format(ota)]), 'w') as f:
 
@@ -467,7 +532,7 @@ def get_scanned():
                     if fname.endswith('.tif') or fname.endswith('.TIF'):
                         files += 1
                         f.write('{}\n'.format(os.path.join(dirpath, fname)))
-        progress(progress_counter, len(lut.ota_list))
+        progress(progress_counter, len(lui.ota_list))
 
     pm('\n\n{} scanned documents extracted from {}:/\n\n'.format(files,
                                                                  drive_letter))
@@ -476,7 +541,7 @@ def get_scanned():
 if get_pass():
     while True:
         print('\nGive a command:\n')
-        action_type = user_in('action_type')
+        action_type = validate_input('action_type')
 
         if action_type == "1LPAA4PS5":
             mod_date = (raw_input("\nMetadata Date (xx/xx/xxxx) : \n").upper())

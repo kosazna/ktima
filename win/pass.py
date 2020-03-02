@@ -6,6 +6,9 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This module is for creating temporary or permanent passes for users
+
 from ktima.uasm import *
 
 

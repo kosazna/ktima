@@ -125,7 +125,7 @@ class Geoprocessing:
                 except RuntimeError:
                     pm("\n!!! {} source files missing !!!\n".format(_shape))
 
-    def union(self, shapes, precision=lut.precision,
+    def union(self, shapes, precision=lui.precision,
               gaps=False):
         """
         ArcGIS automation for performing Union in shapefiles
@@ -148,7 +148,7 @@ class Geoprocessing:
 
         if not self.standalone:
             if shapes == "ALL":
-                for shapefile in lut.merging_list:
+                for shapefile in lui.merging_list:
                     pm("Union for {}\n".format(shapefile))
 
                     feature_name = "union_" + shapefile
@@ -222,33 +222,33 @@ class Queries:
         self.gdb = gdb[mode]
 
     def kaek_in_dbound(self):
-        arcpy.Intersect_analysis([self.gdb(lut.pstM),
-                                  self.gdb(lut.dboundM)],
-                                 self.gdb(lut.kaek_in_dbound),
+        arcpy.Intersect_analysis([self.gdb(lui.pstM),
+                                  self.gdb(lui.dboundM)],
+                                 self.gdb(lui.kaek_in_dbound),
                                  output_type="INPUT")
-        pm('\nDONE !  -->  {}\n'.format(lut.kaek_in_dbound))
+        pm('\nDONE !  -->  {}\n'.format(lui.kaek_in_dbound))
 
     def kaek_in_astik(self):
-        arcpy.Intersect_analysis([self.gdb(lut.pstM), self.gdb(lut.astikM)],
-                                 self.gdb(lut.kaek_in_astik),
+        arcpy.Intersect_analysis([self.gdb(lui.pstM), self.gdb(lui.astikM)],
+                                 self.gdb(lui.kaek_in_astik),
                                  output_type="INPUT")
-        pm('\nDONE !  -->  {}\n'.format(lut.kaek_in_astik))
+        pm('\nDONE !  -->  {}\n'.format(lui.kaek_in_astik))
 
     def rd(self):
-        org[self.mode].add_layer([lut.pstM])
-        arcpy.SelectLayerByAttribute_management(lut.pstM,
+        org[self.mode].add_layer([lui.pstM])
+        arcpy.SelectLayerByAttribute_management(lui.pstM,
                                                 "NEW_SELECTION",
                                                 " PROP_TYPE = '0701' ")
-        arcpy.CopyFeatures_management(lut.pstM, self.gdb(lut.rd))
-        pm('\nDONE !  -->  {}\n'.format(lut.rd))
+        arcpy.CopyFeatures_management(lui.pstM, self.gdb(lui.rd))
+        pm('\nDONE !  -->  {}\n'.format(lui.rd))
 
     def pr(self):
-        org[self.mode].add_layer([lut.pstM])
-        arcpy.SelectLayerByAttribute_management(lut.pstM,
+        org[self.mode].add_layer([lui.pstM])
+        arcpy.SelectLayerByAttribute_management(lui.pstM,
                                                 "NEW_SELECTION",
                                                 " PROP_TYPE = '0702' ")
-        arcpy.CopyFeatures_management(lut.pstM, self.gdb(lut.pr))
-        pm('\nDONE !  -->  {}\n'.format(lut.pr))
+        arcpy.CopyFeatures_management(lui.pstM, self.gdb(lui.pr))
+        pm('\nDONE !  -->  {}\n'.format(lui.pr))
 
     def find_identical(self, what, in_what, export=False):
         """
@@ -318,16 +318,16 @@ class General:
         """
 
         if ktima_status('ASTOTA'):
-            org[self.mode].add_layer([lut.astotaM])
+            org[self.mode].add_layer([lui.astotaM])
 
-            arcpy.Dissolve_management(lut.astotaM, self.gdb(lut.oria_etairias))
+            arcpy.Dissolve_management(lui.astotaM, self.gdb(lui.oria_etairias))
 
-            fc_n = "{}_{}".format(lut.company_name, fc)
-            arcpy.Intersect_analysis([fc, lut.oria_etairias],
+            fc_n = "{}_{}".format(lui.company_name, fc)
+            arcpy.Intersect_analysis([fc, lui.oria_etairias],
                                      self.gdb(fc_n),
                                      output_type="INPUT")
 
-            mdf(lut.oria_etairias, importance='!!')
+            mdf(lui.oria_etairias, importance='!!')
             mdf(fc_n)
 
     @mxd
@@ -401,103 +401,103 @@ class Check:
                                            gaps=False)
 
             turn_off()
-            org[self.mode].add_layer([lut.pstM, lut.astenotM, lut.asttomM])
+            org[self.mode].add_layer([lui.pstM, lui.astenotM, lui.asttomM])
 
             # ENOTHTES
-            arcpy.AddField_management(lut.astenotM, "ENOT", "TEXT",
+            arcpy.AddField_management(lui.astenotM, "ENOT", "TEXT",
                                       field_length=50)
-            arcpy.CalculateField_management(lut.astenotM, "ENOT",
+            arcpy.CalculateField_management(lui.astenotM, "ENOT",
                                             '!CAD_ADMIN!',
                                             "PYTHON_9.3")
 
             # TOMEIS
-            arcpy.AddField_management(lut.asttomM, "TOM", "TEXT",
+            arcpy.AddField_management(lui.asttomM, "TOM", "TEXT",
                                       field_length=50)
-            arcpy.CalculateField_management(lut.asttomM, "TOM",
+            arcpy.CalculateField_management(lui.asttomM, "TOM",
                                             '!CAD_ADMIN!',
                                             "PYTHON_9.3")
 
-            arcpy.SpatialJoin_analysis(lut.pstM, lut.astenotM,
-                                       self.gdb(lut.pst_astenot),
+            arcpy.SpatialJoin_analysis(lui.pstM, lui.astenotM,
+                                       self.gdb(lui.pst_astenot),
                                        match_option='WITHIN')
-            arcpy.SpatialJoin_analysis(lut.astenotM, lut.asttomM,
-                                       self.gdb(lut.astenot_asttom),
+            arcpy.SpatialJoin_analysis(lui.astenotM, lui.asttomM,
+                                       self.gdb(lui.astenot_asttom),
                                        match_option='WITHIN')
 
             turn_off()
 
-            arcpy.AddField_management(lut.pst_astenot, "pstENOT", "TEXT",
+            arcpy.AddField_management(lui.pst_astenot, "pstENOT", "TEXT",
                                       field_length=50)
-            arcpy.AddField_management(lut.pst_astenot, "matches", "TEXT",
+            arcpy.AddField_management(lui.pst_astenot, "matches", "TEXT",
                                       field_length=50)
-            arcpy.CalculateField_management(lut.pst_astenot, "PSTenot",
+            arcpy.CalculateField_management(lui.pst_astenot, "PSTenot",
                                             '!KAEK![:9]',
                                             "PYTHON_9.3")
-            arcpy.CalculateField_management(lut.pst_astenot, "matches",
+            arcpy.CalculateField_management(lui.pst_astenot, "matches",
                                             'bool(!CAD_ADMIN!==!pstENOT!)',
                                             "PYTHON_9.3")
             arcpy.SelectLayerByAttribute_management(
-                lut.pst_astenot,
+                lui.pst_astenot,
                 "NEW_SELECTION",
                 " matches = '0' and pstENOT not like '%ΕΚ%' ")
-            arcpy.CopyFeatures_management(lut.pst_astenot,
-                                          self.gdb(lut.p_pst_astenot))
+            arcpy.CopyFeatures_management(lui.pst_astenot,
+                                          self.gdb(lui.p_pst_astenot))
 
-            arcpy.AddField_management(lut.astenot_asttom, "enotTOM", "TEXT",
+            arcpy.AddField_management(lui.astenot_asttom, "enotTOM", "TEXT",
                                       field_length=50)
-            arcpy.AddField_management(lut.astenot_asttom, "matches", "TEXT",
+            arcpy.AddField_management(lui.astenot_asttom, "matches", "TEXT",
                                       field_length=50)
-            arcpy.CalculateField_management(lut.astenot_asttom,
+            arcpy.CalculateField_management(lui.astenot_asttom,
                                             "enotTOM",
                                             '!ENOT![:7]',
                                             "PYTHON_9.3")
-            arcpy.CalculateField_management(lut.astenot_asttom,
+            arcpy.CalculateField_management(lui.astenot_asttom,
                                             "matches",
                                             'bool(!TOM!==!enotTOM!)',
                                             "PYTHON_9.3")
-            arcpy.SelectLayerByAttribute_management(lut.astenot_asttom,
+            arcpy.SelectLayerByAttribute_management(lui.astenot_asttom,
                                                     "NEW_SELECTION",
                                                     " matches = '0' ")
-            arcpy.CopyFeatures_management(lut.astenot_asttom,
-                                          self.gdb(lut.p_astenot_asttom))
+            arcpy.CopyFeatures_management(lui.astenot_asttom,
+                                          self.gdb(lui.p_astenot_asttom))
 
             # Problem count
-            count_pst_u = get_count(lut.pstU)
-            count_pst_m = get_count(lut.pstM)
+            count_pst_u = get_count(lui.pstU)
+            count_pst_m = get_count(lui.pstM)
             diff_pst = count_pst_u - count_pst_m
-            count_astenot_u = get_count(lut.astenotU)
-            count_astenot_m = get_count(lut.astenotM)
+            count_astenot_u = get_count(lui.astenotU)
+            count_astenot_m = get_count(lui.astenotM)
             diff_astenot = count_astenot_u - count_astenot_m
-            count_asttom_u = get_count(lut.asttomU)
-            count_asttom_m = get_count(lut.asttomM)
+            count_asttom_u = get_count(lui.asttomU)
+            count_asttom_m = get_count(lui.asttomM)
             diff_asttom = count_asttom_u - count_asttom_m
-            count_pst_astenot = get_count(lut.p_pst_astenot)
-            count_astenot_asttom = get_count(lut.p_astenot_asttom)
+            count_pst_astenot = get_count(lui.p_pst_astenot)
+            count_astenot_asttom = get_count(lui.p_astenot_asttom)
 
             if count_astenot_m != count_astenot_u:
                 arcpy.SelectLayerByAttribute_management(
-                    lut.astenotU,
+                    lui.astenotU,
                     "NEW_SELECTION",
                     ''' "OBJECTID" > {} '''.format(
                         count_astenot_m))
-                arcpy.CopyFeatures_management(lut.astenotU,
-                                              self.gdb(lut.p_overlaps_astenot))
+                arcpy.CopyFeatures_management(lui.astenotU,
+                                              self.gdb(lui.p_overlaps_astenot))
 
             if count_asttom_m != count_asttom_u:
                 arcpy.SelectLayerByAttribute_management(
-                    lut.asttomU,
+                    lui.asttomU,
                     "NEW_SELECTION",
                     ''' "OBJECTID" > {} '''.format(count_asttom_m))
-                arcpy.CopyFeatures_management(lut.asttomU,
-                                              self.gdb(lut.p_overlaps_asttom))
+                arcpy.CopyFeatures_management(lui.asttomU,
+                                              self.gdb(lui.p_overlaps_asttom))
 
             if count_pst_m != count_pst_u:
                 arcpy.SelectLayerByAttribute_management(
-                    lut.pstU,
+                    lui.pstU,
                     "NEW_SELECTION",
                     ''' "OBJECTID" > {} '''.format(count_pst_m))
-                arcpy.CopyFeatures_management(lut.pstU,
-                                              self.gdb(lut.p_overlaps_pst))
+                arcpy.CopyFeatures_management(lui.pstU,
+                                              self.gdb(lui.p_overlaps_pst))
 
             log_shapes = [precision_txt,
                           diff_pst,
@@ -551,12 +551,12 @@ class Check:
 
     def pst_geometry(self):
         if ktima_status('PST'):
-            org[self.mode].add_layer([lut.pstM])
+            org[self.mode].add_layer([lui.pstM])
             turn_off()
 
-            arcpy.CheckGeometry_management(lut.pstM, self.gdb(lut.pst_geom))
+            arcpy.CheckGeometry_management(lui.pstM, self.gdb(lui.pst_geom))
 
-            count_geom = get_count(lut.pst_geom)
+            count_geom = get_count(lui.pst_geom)
             problematic_set = set()
             problematic = []
 
@@ -567,19 +567,19 @@ class Check:
             else:
                 pm("\n{} SELF INTERSECTIONS.\n".format(count_geom))
                 pm("Processing...\n")
-                arcpy.AddJoin_management(lut.pstM, "OBJECTID", lut.pst_geom,
+                arcpy.AddJoin_management(lui.pstM, "OBJECTID", lui.pst_geom,
                                          "FEATURE_ID", "KEEP_COMMON")
-                arcpy.CopyFeatures_management(lut.pstM,
-                                              self.gdb(lut.p_geometry_kaek))
-                clear_selection(lut.pstM)
-                arcpy.AddField_management(lut.p_geometry_kaek, "OTA", "TEXT",
+                arcpy.CopyFeatures_management(lui.pstM,
+                                              self.gdb(lui.p_geometry_kaek))
+                clear_selection(lui.pstM)
+                arcpy.AddField_management(lui.p_geometry_kaek, "OTA", "TEXT",
                                           field_length=5)
-                arcpy.CalculateField_management(lut.p_geometry_kaek, "OTA",
+                arcpy.CalculateField_management(lui.p_geometry_kaek, "OTA",
                                                 '!merge_PST_KAEK![:5]',
                                                 "PYTHON_9.3")
-                arcpy.Dissolve_management(lut.p_geometry_kaek,
-                                          self.gdb(lut.p_geometry_ota), "OTA")
-                cursor = arcpy.UpdateCursor(lut.p_geometry_ota)
+                arcpy.Dissolve_management(lui.p_geometry_kaek,
+                                          self.gdb(lui.p_geometry_ota), "OTA")
+                cursor = arcpy.UpdateCursor(lui.p_geometry_ota)
 
                 for row in cursor:
                     ota = int(row.getValue("OTA"))
@@ -615,9 +615,9 @@ class Check:
         if status[self.mode].check('EXPORTED', "FBOUND"):
             try:
                 arcpy.CheckGeometry_management(available('FBOUND'),
-                                               self.gdb(lut.fbound_geom))
+                                               self.gdb(lui.fbound_geom))
 
-                count_geom = get_count(lut.fbound_geom)
+                count_geom = get_count(lui.fbound_geom)
                 problematic_set = set()
                 problematic = []
 
@@ -626,16 +626,16 @@ class Check:
                 if count_geom == 0:
                     pm("\nGEOMETRY OK - NO SELF INTERSECTIONS IN FBOUND.\n")
                 else:
-                    arcpy.AddField_management(lut.fbound_geom, "OTA", "TEXT",
+                    arcpy.AddField_management(lui.fbound_geom, "OTA", "TEXT",
                                               field_length=5)
-                    arcpy.CalculateField_management(lut.fbound_geom,
+                    arcpy.CalculateField_management(lui.fbound_geom,
                                                     "OTA",
                                                     '!CLASS![-5:]',
                                                     "PYTHON_9.3")
                     pm("\n{} SELF INTERSECTIONS IN FBOUND.\n".format(
                         count_geom))
 
-                    cursor = arcpy.UpdateCursor(lut.fbound_geom)
+                    cursor = arcpy.UpdateCursor(lui.fbound_geom)
                     for row in cursor:
                         ota = int(row.getValue("OTA"))
                         problematic_set.add(ota)
@@ -672,45 +672,45 @@ class Check:
         roads = choose_roads(_roads)
 
         if ktima_status('PST', 'ASTENOT', roads):
-            org[self.mode].add_layer([lut.pstM, lut.roadsM, lut.astenotM])
+            org[self.mode].add_layer([lui.pstM, lui.roadsM, lui.astenotM])
 
             # Eksagwgh kai enosi eidikwn ektasewn
-            arcpy.SelectLayerByAttribute_management(lut.pstM,
+            arcpy.SelectLayerByAttribute_management(lui.pstM,
                                                     "NEW_SELECTION",
                                                     " PROP_TYPE = '0701' ")
-            arcpy.CopyFeatures_management(lut.pstM, self.gdb(lut.ek))
-            clear_selection(lut.pstM)
-            arcpy.Dissolve_management(lut.ek, self.gdb(lut.temp_ek),
+            arcpy.CopyFeatures_management(lui.pstM, self.gdb(lui.ek))
+            clear_selection(lui.pstM)
+            arcpy.Dissolve_management(lui.ek, self.gdb(lui.temp_ek),
                                       "PROP_TYPE")
 
             # Elegxos gia aksones ektos EK
-            arcpy.Intersect_analysis([lut.roadsM, lut.temp_ek],
-                                     self.gdb(lut.intersections_roads),
+            arcpy.Intersect_analysis([lui.roadsM, lui.temp_ek],
+                                     self.gdb(lui.intersections_roads),
                                      output_type="POINT")
-            arcpy.DeleteField_management(lut.intersections_roads, "PROP_TYPE")
+            arcpy.DeleteField_management(lui.intersections_roads, "PROP_TYPE")
 
             # Elegxos gia aksones pou mporei na kovoun thn idia enotita
-            arcpy.SpatialJoin_analysis(lut.intersections_roads, lut.pstM,
-                                       self.gdb(lut.intersections_pst_rd),
+            arcpy.SpatialJoin_analysis(lui.intersections_roads, lui.pstM,
+                                       self.gdb(lui.intersections_pst_rd),
                                        match_option="CLOSEST")
-            arcpy.SelectLayerByAttribute_management(lut.intersections_pst_rd,
+            arcpy.SelectLayerByAttribute_management(lui.intersections_pst_rd,
                                                     "NEW_SELECTION",
                                                     " PROP_TYPE = '0101' ")
-            arcpy.SpatialJoin_analysis(lut.intersections_pst_rd,
-                                       lut.astenotM,
-                                       self.gdb(lut.intersections_astenot_rd))
+            arcpy.SpatialJoin_analysis(lui.intersections_pst_rd,
+                                       lui.astenotM,
+                                       self.gdb(lui.intersections_astenot_rd))
 
-            count_inter_all = get_count(lut.intersections_roads)
-            count_inter_astenot = get_count(lut.intersections_astenot_rd)
+            count_inter_all = get_count(lui.intersections_roads)
+            count_inter_astenot = get_count(lui.intersections_astenot_rd)
 
             if count_inter_astenot > 10:
-                arcpy.Dissolve_management(lut.intersections_astenot_rd,
-                                          self.gdb(lut.p_roads),
+                arcpy.Dissolve_management(lui.intersections_astenot_rd,
+                                          self.gdb(lui.p_roads),
                                           "CAD_ADMIN", "CAD_ADMIN COUNT")
             else:
-                arcpy.SpatialJoin_analysis(lut.intersections_pst_rd,
-                                           lut.astenotM,
-                                           self.gdb(lut.p_roads))
+                arcpy.SpatialJoin_analysis(lui.intersections_pst_rd,
+                                           lui.astenotM,
+                                           self.gdb(lui.p_roads))
 
             log_roads = [count_inter_all,
                          count_inter_astenot]
@@ -734,18 +734,18 @@ class Check:
         if ktima_status('DBOUND'):
             # Elegxos gia DBOUND pou mporei na toys leipei eite to
             # DEC_ID eite to DEC_DATE
-            org[self.mode].add_layer([lut.dboundM])
+            org[self.mode].add_layer([lui.dboundM])
 
-            arcpy.SelectLayerByAttribute_management(lut.dboundM,
+            arcpy.SelectLayerByAttribute_management(lui.dboundM,
                                                     "NEW_SELECTION",
                                                     " DEC_ID = '' ")
-            arcpy.SelectLayerByAttribute_management(lut.dboundM,
+            arcpy.SelectLayerByAttribute_management(lui.dboundM,
                                                     "ADD_TO_SELECTION",
                                                     " DEC_DATE IS NULL ")
-            arcpy.CopyFeatures_management(lut.dboundM,
-                                          self.gdb(lut.p_dbound))
+            arcpy.CopyFeatures_management(lui.dboundM,
+                                          self.gdb(lui.p_dbound))
 
-            count_dbound = get_count(lut.p_dbound)
+            count_dbound = get_count(lui.p_dbound)
 
             if count_dbound == 0:
                 pm("\nDBOUND - OK\n")
@@ -763,20 +763,20 @@ class Check:
         if ktima_status('BLD'):
             # Elegxos gia BLD pou mporei na exoun thn timh '0' eite
             # sto BLD_T_C eite sto BLD_NUM
-            org[self.mode].add_layer([lut.bldM])
+            org[self.mode].add_layer([lui.bldM])
 
-            arcpy.SelectLayerByAttribute_management(lut.bldM,
+            arcpy.SelectLayerByAttribute_management(lui.bldM,
                                                     "NEW_SELECTION",
                                                     " BLD_T_C = 0 ")
-            arcpy.SelectLayerByAttribute_management(lut.bldM,
+            arcpy.SelectLayerByAttribute_management(lui.bldM,
                                                     "ADD_TO_SELECTION",
                                                     " BLD_NUM = 0 ")
-            arcpy.CopyFeatures_management(lut.bldM, self.gdb(lut.temp_bld))
-            arcpy.SpatialJoin_analysis(lut.temp_bld, self.gdb(lut.pstM),
-                                       self.gdb(lut.p_bld),
+            arcpy.CopyFeatures_management(lui.bldM, self.gdb(lui.temp_bld))
+            arcpy.SpatialJoin_analysis(lui.temp_bld, self.gdb(lui.pstM),
+                                       self.gdb(lui.p_bld),
                                        match_option='WITHIN')
 
-            count_bld = get_count(lut.p_bld)
+            count_bld = get_count(lui.p_bld)
 
             if count_bld == 0:
                 pm("\nBLD - OK\n")
@@ -807,7 +807,7 @@ class Fix:
             for row in _data["SHAPES_GEOMETRY"]["OTA"]:
                 ota_folder = str(row)
                 repaired.append(int(ota_folder))
-                for i in lut.geometry_list:
+                for i in lui.geometry_list:
                     lyr = paths.ktima(ota_folder, i, ext=True)
 
                     if arcpy.Exists(lyr):
@@ -849,12 +849,12 @@ class Fix:
     def roads(self):
         if status[self.mode].check("ROADS", "CPROBS"):
             # Kopsimo ton aksonon 10 cm prin to orio tis enotitas
-            arcpy.Buffer_analysis(self.gdb(lut.temp_ek),
-                                  self.gdb(lut.ek_fixed_bound),
-                                  lut.ek_bound_reduction)
-            arcpy.Clip_analysis(self.gdb(lut.roadsM),
-                                self.gdb(lut.ek_fixed_bound),
-                                self.gdb(lut.gdb_roads_all))
+            arcpy.Buffer_analysis(self.gdb(lui.temp_ek),
+                                  self.gdb(lui.ek_fixed_bound),
+                                  lui.ek_bound_reduction)
+            arcpy.Clip_analysis(self.gdb(lui.roadsM),
+                                self.gdb(lui.ek_fixed_bound),
+                                self.gdb(lui.gdb_roads_all))
 
             status[self.mode].update("EXPORTED", "ROADS", False)
 
@@ -952,17 +952,17 @@ class Create:
     def fbound(self):
         if ktima_status('ASTOTA'):
             # Dhmiourgia tou sunolikou FBOUND me vasi ta nea oria ton OTA
-            arcpy.Intersect_analysis([self.gdb(lut.astotaM),
+            arcpy.Intersect_analysis([self.gdb(lui.astotaM),
                                       paths.dasinpath],
-                                     self.gdb(lut.gdb_fbound_all),
+                                     self.gdb(lui.gdb_fbound_all),
                                      output_type="INPUT")
-            arcpy.DeleteField_management(self.gdb(lut.gdb_fbound_all),
+            arcpy.DeleteField_management(self.gdb(lui.gdb_fbound_all),
                                          ["FID_merge_ASTOTA", "FID_PO_PARCELS",
                                           "FIELD", "AREA", "LEN"])
             arcpy.FeatureClassToFeatureClass_conversion(
-                self.gdb(lut.gdb_fbound_all),
+                self.gdb(lui.gdb_fbound_all),
                 paths.fboundoutpath,
-                lut.fbound_all)
+                lui.fbound_all)
 
             turn_off()
 
@@ -988,7 +988,7 @@ class Create:
             with open(paths.fbounddoc) as csvfile:
                 docs = csv.reader(csvfile)
 
-                lyr_fbound = lut.fbound_all
+                lyr_fbound = lui.fbound_all
                 pm("Processing DOC_ID in {}".format(lyr_fbound))
 
                 for row in docs:
@@ -1008,26 +1008,26 @@ class Create:
                         pm("Leipei DOC_ID gia {} apo to .txt arxeio".format(
                             ota))
 
-            arcpy.SelectLayerByAttribute_management(lut.fbound_all,
+            arcpy.SelectLayerByAttribute_management(lui.fbound_all,
                                                     "NEW_SELECTION",
                                                     " DOC_ID = '' ")
 
-            if get_count(lut.fbound_all) != 0:
+            if get_count(lui.fbound_all) != 0:
                 pm("\n !!! Leipoun DOC_ID apo to FBOUND_ALL \n!!!")
 
-            clear_selection(lut.fbound_all)
+            clear_selection(lui.fbound_all)
 
-            arcpy.DeleteField_management(lut.fbound_all, "CAD_ADMIN")
+            arcpy.DeleteField_management(lui.fbound_all, "CAD_ADMIN")
 
             pm("Exporting FBOUND / OTA")
 
             # Eksagogi FBOUND ana OTA
-            general[self.mode].export_per_ota(lut.fbound_all,
+            general[self.mode].export_per_ota(lui.fbound_all,
                                               spatial=False, field='DOC_ID',
                                               formal=True,
                                               name="FBOUND")
 
-            mdf(lut.fbound_all, importance='!')
+            mdf(lui.fbound_all, importance='!')
 
             pm("\nDONE !\n")
 
@@ -1044,8 +1044,8 @@ class Create:
                 and not status[self.mode].check("EXPORTED", "ROADS"):
 
             arcpy.FeatureClassToFeatureClass_conversion(
-                self.gdb(lut.gdb_roads_all),
-                paths.rdoutpath, lut.roads_all)
+                self.gdb(lui.gdb_roads_all),
+                paths.rdoutpath, lui.roads_all)
 
             # Dhmiourgia pinaka ROADS vasi ton prodiagrafon
             arcpy.DeleteField_management(paths.rdinpath,
@@ -1120,11 +1120,11 @@ class Create:
             pm("\nExporting ROADS / OTA")
 
             # Eksagogi ROADS ana OTA
-            general[self.mode].export_per_ota(lut.roads_all, spatial=True,
+            general[self.mode].export_per_ota(lui.roads_all, spatial=True,
                                               formal=True,
                                               name="ROADS")
 
-            mdf(lut.roads_all, importance='!')
+            mdf(lui.roads_all, importance='!')
 
             time_now = timestamp()
 
@@ -1156,62 +1156,62 @@ class Create:
         if ktima_status('PST', 'FBOUND'):
             # Dhmiourgia tou pinaka tis diekdikisis tou dasous
             arcpy.Intersect_analysis(
-                [self.gdb(lut.pstM), self.gdb(lut.fboundM)],
-                self.gdb(lut.intersection_pst_fbound),
+                [self.gdb(lui.pstM), self.gdb(lui.fboundM)],
+                self.gdb(lui.intersection_pst_fbound),
                 output_type="INPUT")
-            arcpy.Dissolve_management(lut.intersection_pst_fbound,
-                                      self.gdb(lut.gdb_fbound_claim),
+            arcpy.Dissolve_management(lui.intersection_pst_fbound,
+                                      self.gdb(lui.gdb_fbound_claim),
                                       ["KAEK", "AREA"])
-            arcpy.FeatureClassToFeatureClass_conversion(lut.gdb_fbound_claim,
+            arcpy.FeatureClassToFeatureClass_conversion(lui.gdb_fbound_claim,
                                                         paths.claimoutpath,
-                                                        lut.fbound_claim)
+                                                        lui.fbound_claim)
 
             turn_off()
 
             # Diagrafi eggrafon vasi tupikon prodiagrafon
-            arcpy.SelectLayerByAttribute_management(lut.fbound_claim,
+            arcpy.SelectLayerByAttribute_management(lui.fbound_claim,
                                                     "NEW_SELECTION",
                                                     " Shape_Area < 100 ")
             # Svinontai oles oi eggrafes kato apo 100 m2
-            arcpy.DeleteRows_management(lut.fbound_claim)
-            clear_selection(lut.fbound_claim)
-            arcpy.AddField_management(lut.fbound_claim, "AREA_MEAS", "DOUBLE",
+            arcpy.DeleteRows_management(lui.fbound_claim)
+            clear_selection(lui.fbound_claim)
+            arcpy.AddField_management(lui.fbound_claim, "AREA_MEAS", "DOUBLE",
                                       field_precision=15, field_scale=3)
-            arcpy.AddField_management(lut.fbound_claim, "AREAFOREST", "DOUBLE",
+            arcpy.AddField_management(lui.fbound_claim, "AREAFOREST", "DOUBLE",
                                       field_precision=15, field_scale=3)
-            arcpy.AddField_management(lut.fbound_claim, "AREA_REST", "DOUBLE",
+            arcpy.AddField_management(lui.fbound_claim, "AREA_REST", "DOUBLE",
                                       field_precision=15, field_scale=3)
-            arcpy.CalculateField_management(lut.fbound_claim, "AREA_MEAS",
+            arcpy.CalculateField_management(lui.fbound_claim, "AREA_MEAS",
                                             '!AREA!',
                                             "PYTHON_9.3")
-            arcpy.CalculateField_management(lut.fbound_claim, "AREAFOREST",
+            arcpy.CalculateField_management(lui.fbound_claim, "AREAFOREST",
                                             '!Shape_Area!',
                                             "PYTHON_9.3")
-            arcpy.CalculateField_management(lut.fbound_claim, "AREA_REST",
+            arcpy.CalculateField_management(lui.fbound_claim, "AREA_REST",
                                             '!AREA_MEAS! - !AREAFOREST!',
                                             "PYTHON_9.3")
-            arcpy.AddField_management(lut.fbound_claim, "TYPE", "SHORT",
+            arcpy.AddField_management(lui.fbound_claim, "TYPE", "SHORT",
                                       field_precision=1)
-            arcpy.SelectLayerByAttribute_management(lut.fbound_claim,
+            arcpy.SelectLayerByAttribute_management(lui.fbound_claim,
                                                     "NEW_SELECTION",
                                                     " AREA_REST < 1 ")
             # Oles oi eggrafes me AREA_REST kato apo 1 m2  diekdikountai pliros
-            arcpy.CalculateField_management(lut.fbound_claim, "AREA_REST", '0',
+            arcpy.CalculateField_management(lui.fbound_claim, "AREA_REST", '0',
                                             "PYTHON_9.3")
-            arcpy.CalculateField_management(lut.fbound_claim, "TYPE", '1',
+            arcpy.CalculateField_management(lui.fbound_claim, "TYPE", '1',
                                             "PYTHON_9.3")
-            clear_selection(lut.fbound_claim)
-            arcpy.DeleteField_management(lut.fbound_claim,
+            clear_selection(lui.fbound_claim)
+            arcpy.DeleteField_management(lui.fbound_claim,
                                          ["AREA", "Shape_Area", "Shape_Length",
                                           "Shape_Leng", "DOC_ID", "ORI_CODE",
                                           "LEN"])
 
-            count_claims = get_count(lut.fbound_claim)
+            count_claims = get_count(lui.fbound_claim)
 
-            mdf(lut.fbound_claim, importance='!')
+            mdf(lui.fbound_claim, importance='!')
             arcpy.FeatureClassToFeatureClass_conversion(paths.claiminpath,
                                                         paths.mdb(),
-                                                        lut.diekdikisi)
+                                                        lui.diekdikisi)
 
             pm(
                 "\nDONE ! - Forest claiming {} KAEK.\n\n"
@@ -1226,18 +1226,18 @@ class Create:
         if ktima_status('ASTOTA'):
             # Dhmiourgia tou sunolikoy PRE_FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis(
-                [self.gdb(lut.astotaM), paths.predasinpath],
-                self.gdb(lut.gdb_pre_fbound_all),
+                [self.gdb(lui.astotaM), paths.predasinpath],
+                self.gdb(lui.gdb_pre_fbound_all),
                 output_type="INPUT")
-            arcpy.DeleteField_management(self.gdb(lut.gdb_pre_fbound_all),
+            arcpy.DeleteField_management(self.gdb(lui.gdb_pre_fbound_all),
                                          ["FID_merge_ASTOTA",
                                           "FID_KYR_PO_PARCELS", "KATHGORDX",
                                           "KATHGORAL1", "AREA", "LEN",
                                           "CAD_ADMIN"])
             arcpy.FeatureClassToFeatureClass_conversion(
-                self.gdb(lut.gdb_pre_fbound_all),
+                self.gdb(lui.gdb_pre_fbound_all),
                 paths.fboundoutpath,
-                lut.pre_fbound_all)
+                lui.pre_fbound_all)
 
             turn_off()
 
@@ -1261,11 +1261,11 @@ class Create:
             pm("Exporting PRE_FBOUND / OTA")
 
             # Eksagogi PRE_FBOUND ana OTA
-            general[self.mode].export_per_ota(lut.pre_fbound_all,
+            general[self.mode].export_per_ota(lui.pre_fbound_all,
                                               spatial=True, formal=True,
                                               name="FBOUND")
 
-            mdf(lut.pre_fbound_all, importance='!')
+            mdf(lui.pre_fbound_all, importance='!')
 
             pm("\nDONE !\n")
 

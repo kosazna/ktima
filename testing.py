@@ -31,7 +31,7 @@ def show_files(path, match=None):
 #                           'KT_Info.json']))
 # naming_data = load_json(cp([meleti, inputdata, docs_i,
 #                             'KT_Naming_Schema.json']))
-# lut = NamesAndLists(info_data, naming_data)
+# lui = NamesAndLists(info_data, naming_data)
 
 ##################################################
 

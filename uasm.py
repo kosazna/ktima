@@ -6,12 +6,15 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This module is for authentication purposes
+
 import hashlib
 from paths import *
 
 
 def get_user_uid():
-    if ktl.get('company_name', 'NOT_FOUND') == 'NAMA':
+    if ktl.get('company_name', 'NOT_FOUND') == c_NA:
         ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'],
                  origin=ktl['temp'][user])
     else:

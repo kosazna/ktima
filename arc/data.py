@@ -6,6 +6,10 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This module defines all information for the project so as ArcGIS can perform
+# the tasks been provided
+
 from ktima.status import *
 
 arcpy.env.overwriteOutput = True
@@ -17,10 +21,24 @@ mxdName = os.path.basename(mxdPath)
 mxdKtimaName = "Ktima.mxd"
 
 MELETI = "None"
-# MEL_TYPE = "None"
 
 
 class Kt:
+    """
+    Kt is the corner stone of the arc subpackage
+
+    Attributes
+    ----------
+    - mode: mode for the current working session
+    - otas: otas for the current working session
+    - meleti: meleti of the project
+
+    Methods
+    -------
+    - reset_mode
+    - set_default_mode
+    """
+
     def __init__(self, meleti, mode, otas):
         self.mode = mode
         self.otas = otas
@@ -34,7 +52,7 @@ class Kt:
         pm('\nMODE : {}\n'.format(self.mode))
         pm('\nOTA : {}\n'.format(self.otas))
 
-        for shape in lut.merging_list:
+        for shape in lui.merging_list:
             status[mode].update('SHAPE', shape, False)
 
     @staticmethod
@@ -44,6 +62,7 @@ class Kt:
         write_json(kt_info_path, data)
 
 
+# DEFINING MELETI FOR THE SESSION
 if get_pass():
     if mxdName == mxdKtimaName:
         MELETI = mxdPath.split('\\')[1]
@@ -53,31 +72,30 @@ else:
     pm("\nAccess denied\n")
     print("\nAccess denied\n")
 
-# arcpy.env.workspace = cp([meleti, gdbs, 'ktima.gdb'])
-
+# PATHS FOR THE PROJECT INFO AND NAMING SCHEMA
 kt_info_path = cp([MELETI, inputdata, docs_i, 'KT_Info.json'])
 naming_path = cp([MELETI, inputdata, docs_i, 'KT_Naming_Schema.json'])
 
+# DICTIONARIES OF THE PROJECT INFO AND NAMING SCHEMA
 info_data = load_json(kt_info_path)
 naming_data = load_json(naming_path)
 
-# Instantiating Classes
-
-lut = LookUpInfo(info_data, naming_data)
-paths = Paths(MELETI, lut.mel_type, lut.company_name)
+# INSTANTIATING CLASSES
+lui = LookUpInfo(info_data, naming_data)
+paths = Paths(MELETI, lui.mel_type, lui.company_name)
 log = Log(MELETI)
 
-if lut.mode == KTIMA_MODE:
-    kt = Kt(MELETI, lut.mode, lut.ota_list)
+if lui.mode == KTIMA_MODE:
+    kt = Kt(MELETI, lui.mode, lui.ota_list)
 else:
-    kt = Kt(MELETI, lut.mode, lut.mel_ota_list)
+    kt = Kt(MELETI, lui.mode, lui.mel_ota_list)
 
 if kt.mode == KTIMA_MODE:
     arcpy.env.workspace = paths.gdb_ktima
 else:
     arcpy.env.workspace = paths.gdb_standalone
 
-status = {KTIMA_MODE: Status(MELETI, KTIMA_MODE, lut.ota_list),
+status = {KTIMA_MODE: Status(MELETI, KTIMA_MODE, lui.ota_list),
           STANDALONE_MODE: Status(MELETI, STANDALONE_MODE, kt.otas)}
 
 gdb = {KTIMA_MODE: paths.gdbc,
@@ -85,6 +103,15 @@ gdb = {KTIMA_MODE: paths.gdbc,
 
 
 def df_now(command="list_layers"):
+    """
+    Chooses the way ListDataframes is to be executed.
+
+    :param command: **str**, optional
+        - 'list_layers' (default)
+        - whatever else
+    :return: Dataframe object of ArcGIS
+    """
+
     if command == 'list_layers':
         _dataframes = arcpy.mapping.ListDataFrames(mxd)
     else:
@@ -94,6 +121,27 @@ def df_now(command="list_layers"):
 
 
 def mdf(fc, importance='', out='general', ota=None, name=None):
+    """
+    Short for Make Directories and Files.
+
+    :param fc: **str**
+        Feature class or shapefile.
+    :param importance: *str**
+        Importance of the generated result usually expressed with
+        exclamation mark. '!!' is more important that '!'
+    :param out: **str**, optional
+        - 'general': general kind of output, one folder will be created.
+        - 'ota': ota-based output, outputs of this type go to the
+                folder (\\!!OTA\\shp)
+        - 'formal': formal output based on the project structure
+        (default: 'general')
+    :param ota: **str**, optional
+        Ota number (default: None)
+    :param name: **str**, optional
+        Name for the output shapefile (default: None)
+    :return: Nothing
+    """
+
     if out == 'general':
         outpath = paths.mdf(fc, importance, out)
         name = fc
@@ -118,10 +166,19 @@ def mdf(fc, importance='', out='general', ota=None, name=None):
 
 
 def get_otas(companies):
+    """
+    Gets the otas which are under supervision of the companies provided.
+
+    :param companies: **list**
+        List of companies
+    :return: **list**
+        List with ota numbers
+    """
+
     end_list = []
 
     if companies:
         for comp in companies:
-            end_list += lut.pool[comp]
+            end_list += lui.pool[comp]
 
     return end_list

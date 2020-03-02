@@ -8,7 +8,7 @@
 # ---------------------------------------------------#
 from data import *
 
-req_map = {'merge': lut.merging_list,
+req_map = {'merge': lui.merging_list,
            'shapes': ['ASTENOT', 'ASTTOM', 'PST'],
            'export_per_ota': ['ASTOTA'],
            'fbound_geometry': ['FBOUND'],
@@ -201,8 +201,8 @@ def turn_off():
 
 
 def localfiles():
-    for ota in lut.ota_list:
-        for shape in lut.local_data_to_index_list:
+    for ota in lui.ota_list:
+        for shape in lui.local_data_to_index_list:
             local_lyr = paths.ktima(ota, shape, ext=True)
 
             lyr_name = shape + "_" + ota

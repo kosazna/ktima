@@ -6,18 +6,57 @@
 #                                                    #
 #             aznavouridis.k@gmail.com               #
 # ---------------------------------------------------#
+
+# This module is responsible for updating the status of the project.
+
 from logger import *
 
 
 class Status:
+    """
+    Status can check update and show the status of the working project.
+
+    Attributes
+    ----------
+    - mode: ktima mode which the user is working (ktima or standalone)
+    - meleti: meleti of the project
+    - otas: otas the user has selected. Mode-dependent
+    - status_path: path for the KT_Status.json file
+
+    Methods
+    -------
+    - check
+    - update
+    - show
+    """
 
     def __init__(self, meleti, mode, otas):
+        """
+        :param meleti: **str**
+            Meleti.
+        :param mode: **str**
+            Ktima mode.
+        :param otas: **list**
+            List of otas the user is working with.
+        """
+
         self.mode = mode
         self.meleti = meleti
         self.otas = otas
         self.status_path = cp([meleti, inputdata, docs_i, 'KT_Status.json'])
 
     def check(self, shape_type, shape):
+        """
+        Checks current status.
+
+        :param shape_type: **str**
+            Category inside json file.
+        :param shape: **str**
+            Category inside json file.
+        :return: **any**
+            The functions can return eiher a boolean or list or str or number.
+        """
+
         data = load_json(self.status_path)
 
         status = data[self.mode][shape_type][shape]
@@ -25,6 +64,18 @@ class Status:
         return status
 
     def update(self, shape_type, shape, status):
+        """
+        Updates current status
+
+        :param shape_type: **str**
+            Category inside json file.
+        :param shape: **str**
+            Category inside json file.
+        :param status: **any**
+            boolean or list or str or number.
+        :return: Nothing
+        """
+
         data = load_json(self.status_path)
 
         data[self.mode][shape_type][shape] = status
@@ -32,6 +83,11 @@ class Status:
         write_json(self.status_path, data)
 
     def show(self):
+        """
+        Prints predefined message of the current status
+        :return: Nothing
+        """
+        
         data = load_json(self.status_path)
 
         pm("\nMeleti: {}  --  {}".format(self.meleti, self.mode.upper()))
