@@ -25,7 +25,7 @@ def ktima_status(*args):
     """
 
     checker = 0
-    
+
     for shp in args:
         if not status[kt.mode].check('SHAPE', shp):
             pm('\n{} not Merged'.format(shp))
