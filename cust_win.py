@@ -9,7 +9,6 @@
 
 # This module has custom functions for the entire ktima project
 
-import os
 import json
 import time
 import sys
@@ -54,11 +53,30 @@ def timestamp():
     return datetime
 
 
-def cp(p_list=(), origin='C'):
+# def cp(p_list=(), origin='C'):
+#     """
+#     Creates path from a list given the drive letter.
+#
+#     :param p_list: **list** or **tuple** or **set**
+#         Items of path.
+#     :param origin: **str**, optional
+#         Drive letter (default: 'C').
+#     :return: **str**
+#         Full path for a given p_list else 'C:\\' if p_list is not provided.
+#     """
+#
+#     _path = '{}:\\'.format(origin)
+#     path = ""
+#     for i in range(0, len(p_list)):
+#         path = os.path.join(_path, p_list[i])
+#         _path = path
+#     return path if path else _path
+
+def cp(members, origin='C'):
     """
     Creates path from a list given the drive letter.
 
-    :param p_list: **list** or **tuple** or **set**
+    :param members: **list** or **tuple** or **set**
         Items of path.
     :param origin: **str**, optional
         Drive letter (default: 'C').
@@ -66,12 +84,13 @@ def cp(p_list=(), origin='C'):
         Full path for a given p_list else 'C:\\' if p_list is not provided.
     """
 
-    _path = '{}:\\'.format(origin)
-    path = ""
-    for i in range(0, len(p_list)):
-        path = os.path.join(_path, p_list[i])
-        _path = path
-    return path if path else _path
+    drive = '{}:'.format(origin)
+
+    if members is None:
+        return "{}\\".format(drive)
+    else:
+        members.insert(0, drive)
+        return '\\'.join(members)
 
 
 def load_json(path):
