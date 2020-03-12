@@ -242,7 +242,7 @@ class ExportToServer(object):
             direction="Input")
 
         shapes = arcpy.Parameter(
-            displayName="{}.gdb".format(core.paths.standalone_gdb_name),
+            displayName="File GeoDatabase Files",
             name="shapefiles",
             datatype="String",
             parameterType="Optional",
@@ -253,7 +253,7 @@ class ExportToServer(object):
         geodatabase.filter.list = ['ktima', 'standalone']
 
         if core.kt.mode == core.KTIMA_MODE:
-            _path = core.paths.gdb_company
+            _path = core.paths.gdb_ktima
         else:
             _path = core.paths.gdb_standalone
 
@@ -266,7 +266,7 @@ class ExportToServer(object):
     @staticmethod
     def updateParameters(params):
         if params[0].valueAsText == 'ktima':
-            _path = core.paths.gdb_company
+            _path = core.paths.gdb_ktima
             params[1].filter.list = core.list_gdb(_path)
         else:
             _path = core.paths.gdb_standalone
