@@ -197,7 +197,7 @@ class Builder:
 
         self.meleti = meleti
         self.company = company
-        self.kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
+        self.kt_info_path = cp([meleti, inputdata, docs_i, json_info])
 
     def mel_change(self, new_meleti):
         """
@@ -209,7 +209,7 @@ class Builder:
         """
 
         self.meleti = new_meleti
-        self.kt_info_path = cp([new_meleti, inputdata, docs_i, 'KT_Info.json'])
+        self.kt_info_path = cp([new_meleti, inputdata, docs_i, json_info])
 
     def buildtree(self):
         """
@@ -219,11 +219,9 @@ class Builder:
         """
 
         if self.company == c_NA:
-            repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-                      origin=ktl['temp'][USER])
+            repo = cp(build_folder_NA, origin=ktl['temp'][USER])
         elif self.company == c_2P:
-            repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-                      origin=ktl['temp'][USER])
+            repo = cp(build_folder_2P, origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -244,13 +242,11 @@ class Builder:
         """
 
         if self.company == c_NA:
-            repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', self.meleti],
+            repo = cp(add_mel_inpath(build_file_NA, self.meleti),
                       origin=ktl['temp'][USER])
         elif self.company == c_2P:
-            repo = cp(
-                [temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
-                 self.meleti],
-                origin=ktl['temp'][USER])
+            repo = cp(add_mel_inpath(build_file_2P, self.meleti),
+                      origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -269,13 +265,11 @@ class Builder:
         :return: Nothing
         """
         if self.company == c_NA:
-            repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure', self.meleti],
+            repo = cp(add_mel_inpath(build_file_NA, self.meleti),
                       origin=ktl['temp'][USER])
         elif self.company == c_2P:
-            repo = cp(
-                [temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
-                 self.meleti],
-                origin=ktl['temp'][USER])
+            repo = cp(add_mel_inpath(build_file_2P, self.meleti),
+                      origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -314,7 +308,7 @@ class Builder:
         """
 
         kt_target = cp([self.meleti, '!{}_log.txt'.format(self.meleti)])
-        user_target = cp([users, USER, 'KT_log.txt'])
+        user_target = cp([users, USER, txt_log])
 
         with open(kt_target, 'w') as f:
             f.write('{:<22}{:<9}{:<25}{}'.format('DATETIME', 'MELETI',
@@ -339,11 +333,9 @@ class Builder:
         """
 
         if self.company == c_NA:
-            repo = cp([mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-                      origin=ktl['temp'][USER])
+            repo = cp(build_folder_NA, origin=ktl['temp'][USER])
         elif self.company == c_2P:
-            repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'Folder_Structure'],
-                      origin=ktl['temp'][USER])
+            repo = cp(build_folder_2P, origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
@@ -364,18 +356,18 @@ class Builder:
         :return: Nothing
         """
         if self.company == c_NA:
-            repo = cp([mdev, 'Diafora', 'ktima', 'File_Structure',
-                       self.meleti, inputdata, docs_i, 'KT_Info.json'],
-                      origin=ktl['temp'][USER])
+            part1 = add_mel_inpath(build_file_NA, self.meleti)
+            final = part1.extend([inputdata, docs_i, json_info])
+            repo = cp(final, origin=ktl['temp'][USER])
         elif self.company == c_2P:
-            repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'File_Structure',
-                       self.meleti, inputdata, docs_i, 'KT_Info.json'],
-                      origin=ktl['temp'][USER])
+            part1 = add_mel_inpath(build_file_2P, self.meleti)
+            final = part1.extend([inputdata, docs_i, json_info])
+            repo = cp(final, origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
 
-        target = cp([self.meleti, inputdata, docs_i, 'KT_Info.json'])
+        target = cp([self.meleti, inputdata, docs_i, json_info])
 
         c_copy(repo, target)
 
@@ -387,16 +379,14 @@ class Builder:
         """
 
         if self.company == c_NA:
-            repo = cp([mdev, 'Diafora', 'ktima', 'paths.json'],
-                      origin=ktl['temp'][USER])
+            repo = cp(build_json_path_NA, origin=ktl['temp'][USER])
         elif self.company == c_2P:
-            repo = cp([temp2kp, mdev, 'Diafora', 'ktima', 'paths.json'],
-                      origin=ktl['temp'][USER])
+            repo = cp(build_json_path_2P, origin=ktl['temp'][USER])
         else:
             print('"company_name" not defined in paths.json')
             return
 
-        target = cp([users, USER, 'paths.json'])
+        target = cp([users, USER, json_paths])
 
         c_copy(repo, target)
 
@@ -411,7 +401,7 @@ class Builder:
         update_from_server()
 
 
-def validate_input(_func):
+def _validate_input(_func):
     """
     Custom function for USER input.
     Given a _func a custom message will be displayed for the USER.
@@ -473,7 +463,7 @@ def validate_input(_func):
 if username == mdev.strip('! ') and password == build_pass:
     print('\nMeleti: \n')
 
-    builder = Builder(validate_input('meleti'))
+    builder = Builder(_validate_input('meleti'))
 
     func_mapper = {'1': [builder.buildtree,
                          builder.update_folder_structure,
@@ -490,24 +480,24 @@ if username == mdev.strip('! ') and password == build_pass:
                          '3': builder.update_temp_paths}}
     while True:
         print('\nGive a command:\n')
-        action_type = validate_input('action')
+        action_type = _validate_input('action')
 
-        print('##########################################################')
+        print('#' * 60)
 
         if action_type == "1":
             for _func in func_mapper[action_type]:
                 _func()
         elif action_type == "2":
-            sub_action = validate_input('custom_build')
+            sub_action = _validate_input('custom_build')
             func_mapper[action_type][sub_action]()
         elif action_type == "3":
-            sub_action = validate_input('update')
+            sub_action = _validate_input('update')
             func_mapper[action_type][sub_action]()
         elif action_type == "4":
-            builder.mel_change(validate_input('meleti'))
+            builder.mel_change(_validate_input('meleti'))
         elif action_type == "5":
             builder.get_binary()
 
-        print('##########################################################')
+        print('#' * 60)
 else:
     print("\nAccess denied\n")

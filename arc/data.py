@@ -73,8 +73,8 @@ else:
     print("\nAccess denied\n")
 
 # PATHS FOR THE PROJECT INFO AND NAMING SCHEMA
-kt_info_path = cp([MELETI, inputdata, docs_i, 'KT_Info.json'])
-naming_path = cp([MELETI, inputdata, docs_i, 'KT_Naming_Schema.json'])
+kt_info_path = cp([MELETI, inputdata, docs_i, json_info])
+naming_path = cp([MELETI, inputdata, docs_i, json_naming])
 
 # DICTIONARIES OF THE PROJECT INFO AND NAMING SCHEMA
 info_data = load_json(kt_info_path)

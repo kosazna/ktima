@@ -21,6 +21,7 @@ STANDALONE_MODE = 'standalone'
 # GEODATABASES
 KTIMA_GDB = 'ktima.gdb'
 STANDALONE_GDB = 'standalone.gdb'
+ARCHIVE_MDB = 'archive.mdb'
 
 # COMPANIES
 c_NA = 'NAMA'
@@ -28,8 +29,7 @@ c_2P = '2KP'
 
 # GOOGLE DRIVE MAPPING LETTERS
 gd = {'aznavouridis.k': 'D',
-      'user1': 'C',
-      'kazna': 'D'}
+      'user1': 'C'}
 
 build_pass = 'ktima()azna'
 
@@ -52,11 +52,64 @@ users = "Users"
 mdev = "! aznavouridis.k"
 anakt = 'Anaktiseis'
 saromena = 'Saromena'
-temp2kp = '!--2KP_TEMP--'
+temp2p = '!--2KP_TEMP--'
+
+diafora = 'Diafora'
+ktima_folder = 'ktima'
+scripts = 'scripts'
+program_files = 'Program Files (x86)'
+arcgis10 = 'ArcGIS10.1'
+arcgis = 'ArcGIS'
+toolboxes_folder = '!Toolboxes'
+desktop10 = 'Desktop10.1'
+tools = 'Tools'
+kt_tools = 'KT-Tools'
+python_folder = 'Python27'
+lib = 'Lib'
+site_packages = 'site-packages'
+google_drive = 'Google Drive'
+work = 'Work'
+ktima_version = 'ktima_7'
+folder_structure = 'Folder_Structure'
+file_structure = 'File_Structure'
+passes = 'passes'
+passes_temp = 'temp'
+paratiriseis = 'paratiriseis'
+desktop = 'Desktop'
+logs = 'logs'
+
+# NAMING FILE SCHEMA
+txt_server_log = 'KTHMA_log.txt'
+json_info = 'KT_Info.json'
+json_paths = 'paths.json'
+txt_log = 'KT_log.txt'
+json_status = 'KT_Status.json'
+json_uas = 'uas.json'
+json_ipass = 'ipass.json'
+json_naming = 'KT_Naming_Schema.json'
 
 # USER AND DRIVE LETTER MAPPING FOR EACH USER
 USER = getpass.getuser()
-ktl = load_json(cp([users, USER, 'paths.json']))
+ktl = load_json(cp([users, USER, json_paths]))
+
+# MOST COMMON FOLDER PATHS
+temp_NA = [mdev, diafora, ktima_folder, scripts]
+temp_2P = [temp2p, mdev, diafora, ktima_folder, scripts]
+
+ktima_local = [python_folder, arcgis10, lib, site_packages, ktima_folder]
+ktima_gd = [google_drive, work, ktima_folder, ktima_version]
+
+toolboxes_local = [program_files, arcgis, desktop10, tools,
+                   kt_tools]
+toolboxes_ktima = [python_folder, arcgis10, lib, site_packages, ktima_folder,
+                   toolboxes_folder]
+
+build_folder_NA = [mdev, diafora, ktima_folder, folder_structure]
+build_folder_2P = [temp2p, mdev, diafora, ktima_folder, folder_structure]
+build_file_NA = [mdev, diafora, ktima_folder, file_structure]
+build_file_2P = [temp2p, mdev, diafora, ktima_folder, file_structure]
+build_json_path_NA = [mdev, diafora, ktima_folder, json_paths]
+build_json_path_2P = [temp2p, mdev, diafora, ktima_folder, json_paths]
 
 
 class LookUpInfo:

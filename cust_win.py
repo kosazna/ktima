@@ -9,11 +9,11 @@
 
 # This module has custom functions for the entire ktima project
 
-import os
 import json
 import time
 import sys
 import shutil
+import copy
 
 
 def time_it(func):
@@ -54,11 +54,30 @@ def timestamp():
     return datetime
 
 
-def cp(p_list=(), origin='C'):
+# def cp(p_list=(), origin='C'):
+#     """
+#     Creates path from a list given the drive letter.
+#
+#     :param p_list: **list** or **tuple** or **set**
+#         Items of path.
+#     :param origin: **str**, optional
+#         Drive letter (default: 'C').
+#     :return: **str**
+#         Full path for a given p_list else 'C:\\' if p_list is not provided.
+#     """
+#
+#     _path = '{}:\\'.format(origin)
+#     path = ""
+#     for i in range(0, len(p_list)):
+#         path = os.path.join(_path, p_list[i])
+#         _path = path
+#     return path if path else _path
+
+def cp(members, origin='C'):
     """
     Creates path from a list given the drive letter.
 
-    :param p_list: **list** or **tuple** or **set**
+    :param members: **list** or **tuple** or **set**
         Items of path.
     :param origin: **str**, optional
         Drive letter (default: 'C').
@@ -66,12 +85,14 @@ def cp(p_list=(), origin='C'):
         Full path for a given p_list else 'C:\\' if p_list is not provided.
     """
 
-    _path = '{}:\\'.format(origin)
-    path = ""
-    for i in range(0, len(p_list)):
-        path = os.path.join(_path, p_list[i])
-        _path = path
-    return path if path else _path
+    drive = '{}:'.format(origin)
+
+    if members is None:
+        return "{}\\".format(drive)
+    else:
+        temp_members = copy.copy(members)
+        temp_members.insert(0, drive)
+        return '\\'.join(temp_members)
 
 
 def load_json(path):
@@ -121,8 +142,8 @@ def c_copy(src, dst):
     try:
         shutil.copyfile(src, dst)
         print('!! OK !!')
-    except IOError:
-        print('!! File Not Found or Target Directory missing!!')
+    except IOError as e:
+        print(e)
 
 
 def progress(count, total):
@@ -145,6 +166,23 @@ def progress(count, total):
 
     sys.stdout.write('[%s] %s %s -- %s\r' % (bar, percents, '%', suffix))
     sys.stdout.flush()
+
+
+def add_mel_inpath(original_members, mel):
+    """
+    Given a meleti numbers it is added to the list members of a path
+
+    :param original_members: **list**
+        Items of path.
+    :param mel: **string**
+        Meleti.
+    :return: **list**
+        List of strins containing path members.
+    """
+    final_members = copy.copy(original_members)
+    final_members.append(mel)
+
+    return final_members
 
 
 def strize(iterable):

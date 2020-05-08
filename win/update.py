@@ -30,22 +30,21 @@ def update_from_server(drive=ktl['temp'][USER]):
     """
 
     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
-        src = cp([mdev, 'Diafora', 'ktima', 'scripts'], origin=drive)
+        src = cp(temp_NA, origin=drive)
     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
-        src = cp([temp2kp, mdev, 'Diafora', 'ktima', 'scripts'], origin=drive)
+        src = cp(temp_2P, origin=drive)
     else:
         print('"company_name" not defined in paths.json')
         return
 
-    dst_c = ['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima']
-    dst_t = ['Program Files (x86)', 'ArcGIS', 'Desktop10.1',
-             'Tools', 'KT-Tools']
+    dst_c = ktima_local
+    dst_t = toolboxes_local
 
     pointer = len(src.split('\\'))
 
-    for fullpath, filename, basename, ext in list_dir(src, match=['.pyc',
+    for fullpath, filename, basename, ext in list_dir(src, match=['.py',
                                                                   '.pyt']):
-        if ext == '.pyc':
+        if ext == '.py':
             out = dst_c + fullpath.split('\\')[pointer:]
             outpath = cp(out)
             c_copy(fullpath, outpath)
@@ -70,8 +69,8 @@ def main(command, gd_action):
     """
 
     def all_files(_action):
-        src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
-        dst = ['Google Drive', 'Work', 'ktima', 'ktima_7']
+        src = cp(ktima_local)
+        dst = ktima_gd
 
         pointer = len(src.split('\\'))
 
@@ -85,13 +84,12 @@ def main(command, gd_action):
                 c_copy(outpath, fullpath)
 
     def tools():
-        src = cp(['Python27', 'ArcGIS10.1', 'Lib',
-                  'site-packages', 'ktima', '!Toolboxes'])
-        dst_t = ['Program Files (x86)', 'ArcGIS',
-                 'Desktop10.1', 'Tools', 'KT-Tools']
+        src = cp(toolboxes_ktima)
+        dst_t = toolboxes_local
 
-        for fullpath, filename, basename, ext in list_dir(src):
+        for fullpath, filename, basename, ext in list_dir(src, match='.py'):
             outpath = os.path.join(cp(dst_t), '{}.pyt'.format(basename))
+
             c_copy(fullpath, outpath)
 
     if command == "all_files":

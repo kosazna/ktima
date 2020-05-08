@@ -23,13 +23,13 @@ def p_pass():
     if _user == "":
         _user = USER
 
-    _hk = hashlib.sha1(_user).hexdigest()
+    _hk = hashlib.sha256(_user).hexdigest()
 
     data = {"{}".format(_user): "{}".format(_hk)}
 
-    write_json(r"{}:\Google Drive\Work\ktima\passes\{}.json".format(gd[USER],
-                                                                    _user),
-               data)
+    write_json(
+        cp([google_drive, work, ktima_folder, passes, '{}.json'.format(_user)],
+           origin=gd[USER]), data)
 
 
 def t_pass():
@@ -45,23 +45,25 @@ def t_pass():
 
     c_date = time.strftime("%d/%m/%Y")
 
-    _hk = hashlib.sha1('{}-{}'.format(c_date, _user)).hexdigest()
+    _hk = hashlib.sha256('{}-{}'.format(c_date, _user)).hexdigest()
 
     data = {"{}".format(_user): "{}".format(_hk)}
 
     if _user == "":
-        write_json(r"C:\Users\{}\ipass.json".format(_user), data)
+        write_json(cp([users, _user, json_ipass]), data)
     else:
         try:
             os.mkdir(
-                r"{}:\Google Drive\Work\ktima\passes\temp\{}".format(gd[_user],
-                                                                     _user))
+                cp([google_drive, work, ktima_folder, passes, passes_temp,
+                    _user],
+                   origin=gd[_user]))
+
         except WindowsError:
             pass
 
         write_json(
-            r"{}:\Google Drive\Work\ktima\passes\temp\{}\ipass.json".format(
-                gd[_user], _user), data)
+            cp([google_drive, work, ktima_folder, passes, passes_temp, _user,
+                json_ipass], origin=gd[USER]), data)
 
 
 action = raw_input('Pass :\n').upper()

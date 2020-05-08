@@ -43,7 +43,7 @@ class Status:
         self.mode = mode
         self.meleti = meleti
         self.otas = otas
-        self.status_path = cp([meleti, inputdata, docs_i, 'KT_Status.json'])
+        self.status_path = cp([meleti, inputdata, docs_i, json_status])
 
     def check(self, shape_type, shape):
         """

@@ -10,6 +10,7 @@
 # File handling module for creating list of files on a directory
 # or comparing files between two directories
 
+import os
 from schemas import *
 
 

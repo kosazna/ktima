@@ -39,6 +39,6 @@ def show_files(path, match=None):
 ##################################################
 
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
-dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_6'], origin=gd[USER])
+dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_7'], origin=gd[USER])
 
 count_lines()

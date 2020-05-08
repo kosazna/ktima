@@ -27,18 +27,18 @@ def extract(mode, folder):
     :return: Nothing
     """
 
-    inpath = cp([users, USER, 'KT_log.txt'])
+    inpath = cp([users, USER, txt_log])
     filename = '{}_logs.txt'.format(USER)
 
     if mode == "Local":
         try:
-            outpath = cp([users, USER, 'Desktop', filename])
+            outpath = cp([users, USER, desktop, filename])
             shutil.copyfile(inpath, outpath)
         except IOError:
             pass
     else:
         try:
-            outpath = cp([mdev, 'Diafora', 'ktima', 'logs', filename],
+            outpath = cp([mdev, diafora, ktima_folder, logs, filename],
                          origin=folder)
             shutil.copyfile(inpath, outpath)
         except IOError:
@@ -65,8 +65,8 @@ class Log:
     def __init__(self, meleti):
         self.meleti = meleti
         self.kt_log = cp([self.meleti, '!{}_log.txt'.format(self.meleti)])
-        self.company_log = cp(['KTHMA_log.txt'], origin=ktl['data'][USER])
-        self.general_log = cp([users, USER, 'KT_log.txt'])
+        self.company_log = cp([txt_server_log], origin=ktl['data'][USER])
+        self.general_log = cp([users, USER, txt_log])
 
     def write_to_file(self, dt, msgf, commentsf):
         """

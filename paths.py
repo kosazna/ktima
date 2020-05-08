@@ -75,7 +75,7 @@ class Paths:
         self.meleti = meleti
 
         # BASIC DATABASES
-        self.mdb_general = cp([meleti, gdbs, 'archive.mdb'])
+        self.mdb_general = cp([meleti, gdbs, ARCHIVE_MDB])
         self.gdb_standalone = cp([meleti, gdbs, STANDALONE_GDB])
         self.gdb_ktima = cp([meleti, gdbs, KTIMA_GDB])
 
@@ -88,8 +88,8 @@ class Paths:
         # BASIC DOCS
         self.locality = cp([meleti, inputdata, docs_i, 'LOCALITY.txt'])
         self.fbounddoc = cp([meleti, inputdata, docs_i, 'FBOUND_DOCS.txt'])
-        self.status_path = cp([meleti, inputdata, docs_i, 'KT_Status.json'])
-        self.kt_info_path = cp([meleti, inputdata, docs_i, 'KT_Info.json'])
+        self.status_path = cp([meleti, inputdata, docs_i, json_status])
+        self.kt_info_path = cp([meleti, inputdata, docs_i, json_info])
 
         # XML DOCS
         self.geo_xml = cp([meleti, inputdata, xml_i, 'GEO_METADATA.xml'])

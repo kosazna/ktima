@@ -15,23 +15,24 @@ from paths import *
 
 def get_user_uid():
     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
-        ppp = cp([mdev, 'Diafora', 'paratiriseis', 'uas.json'],
+        ppp = cp([mdev, diafora, paratiriseis, json_uas],
                  origin=ktl['temp'][USER])
     else:
-        ppp = cp([temp2kp, mdev, 'Diafora', 'paratiriseis', 'uas.json'],
+        ppp = cp([temp2p, mdev, diafora, paratiriseis, json_uas],
                  origin=ktl['temp'][USER])
 
-    tpp = cp([users, USER, 'ipass.json'])
+    tpp = cp([users, USER, json_ipass])
 
     try:
         with open(ppp, 'r') as h_f:
-            hash_k = hashlib.sha1(USER).hexdigest()
+            hash_k = hashlib.sha256(USER).hexdigest()
             keys = json.load(h_f)
     except IOError:
         c_date = time.strftime("%d/%m/%Y")
         try:
             with open(tpp, 'r') as h_f:
-                hash_k = hashlib.sha1('{}-{}'.format(c_date, USER)).hexdigest()
+                hash_k = hashlib.sha256(
+                    '{}-{}'.format(c_date, USER)).hexdigest()
                 keys = json.load(h_f)
         except IOError:
             hash_k = None
@@ -49,7 +50,7 @@ def get_pass():
     except KeyError:
         ehk = "No Key"
 
-    if hk == ehk or mdev.strip('! ') == USER or USER == 'kazna':
+    if hk == ehk or mdev.strip('! ') == USER:
         return True
     else:
         return False
