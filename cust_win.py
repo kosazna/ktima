@@ -18,11 +18,11 @@ import copy
 
 def time_it(func):
     """
-    **Decorator**
+    Decorator
     Calculates execution time of a function.
     Prints execution time.
 
-    :param func: **Function to be measured**
+    :param func: Function to be measured
     :return: Nothing
     """
 
@@ -43,7 +43,7 @@ def timestamp():
     """
     Gives current date and time in "xx/xx/xxxx - xx:xx:xx" format.
 
-    :return: **str**
+    :return: str
         Current date and time.
     """
 
@@ -58,11 +58,11 @@ def timestamp():
 #     """
 #     Creates path from a list given the drive letter.
 #
-#     :param p_list: **list** or **tuple** or **set**
+#     :param p_list: list or tuple or set
 #         Items of path.
-#     :param origin: **str**, optional
+#     :param origin: str, optional
 #         Drive letter (default: 'C').
-#     :return: **str**
+#     :return: str
 #         Full path for a given p_list else 'C:\\' if p_list is not provided.
 #     """
 #
@@ -77,11 +77,11 @@ def cp(members, origin='C'):
     """
     Creates path from a list given the drive letter.
 
-    :param members: **list** or **tuple** or **set**
+    :param members: list or tuple or set
         Items of path.
-    :param origin: **str**, optional
+    :param origin: str, optional
         Drive letter (default: 'C').
-    :return: **str**
+    :return: str
         Full path for a given p_list else 'C:\\' if p_list is not provided.
     """
 
@@ -99,9 +99,9 @@ def load_json(path):
     """
     Loads json file to a dictionary.
 
-    :param path: **str**
+    :param path: str
         Path of json file.
-    :return: **dict**
+    :return: dict
         Python dictionary of the json file.
     """
 
@@ -117,9 +117,9 @@ def write_json(path, data):
     """
     Writes python dictionary to a json file (indent=2).
 
-    :param path: **str**
+    :param path: str
         Path to write the json file.
-    :param data: **dict**
+    :param data: dict
         Python dictionary.
     :return: Nothing
     """
@@ -132,9 +132,9 @@ def c_copy(src, dst):
     """
     Copies file for one destination to another.
 
-    :param src: **str**
+    :param src: str
         Source file path.
-    :param dst: **str**
+    :param dst: str
         Destination file path.
     :return: Nothing
     """
@@ -150,9 +150,9 @@ def progress(count, total):
     """
     Prints prograss bar to cmd.
 
-    :param count: **int**
+    :param count: int
         Current count for progress bar.
-    :param total: **int**
+    :param total: int
         Total count of progress bar.
     :return:
     """
@@ -172,11 +172,11 @@ def add_mel_inpath(original_members, mel):
     """
     Given a meleti numbers it is added to the list members of a path
 
-    :param original_members: **list**
+    :param original_members: list
         Items of path.
-    :param mel: **string**
+    :param mel: string
         Meleti.
-    :return: **list**
+    :return: list
         List of strins containing path members.
     """
     final_members = copy.copy(original_members)
@@ -189,9 +189,9 @@ def strize(iterable):
     """
     Converts any type of string (unicode etc.) to utf-8 string.
 
-    :param iterable: **list**
+    :param iterable: list
         list of strings.
-    :return: **list**
+    :return: list
         List of strings utf-8 encoded.
     """
 

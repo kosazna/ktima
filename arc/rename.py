@@ -20,7 +20,7 @@ def files(x):
     """
     Renames the file to the format (PST_22000).
 
-    :param x: **int**
+    :param x: int
         How many parent folders back is the ota number.
     :return: Nothing
     """

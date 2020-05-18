@@ -11,6 +11,10 @@
 
 import hashlib
 from paths import *
+from cust_arc import *
+
+local_ktima_version = '8.0'
+warning_counter = 0
 
 
 def get_user_uid():
@@ -27,6 +31,7 @@ def get_user_uid():
         with open(ppp, 'r') as h_f:
             hash_k = hashlib.sha256(USER).hexdigest()
             keys = json.load(h_f)
+            new_version = keys['ktima_version']
     except IOError:
         c_date = time.strftime("%d/%m/%Y")
         try:
@@ -34,23 +39,35 @@ def get_user_uid():
                 hash_k = hashlib.sha256(
                     '{}-{}'.format(c_date, USER)).hexdigest()
                 keys = json.load(h_f)
+                new_version = local_ktima_version
         except IOError:
             hash_k = None
             keys = {}
+            new_version = local_ktima_version
 
-    return hash_k, keys
+    return hash_k, keys, new_version
 
 
-hk, key = get_user_uid()
+hk, key, recent_ktima_version = get_user_uid()
 
 
 def get_pass():
+    global warning_counter
+
     try:
         ehk = key[USER]
     except KeyError:
         ehk = "No Key"
 
-    if hk == ehk or mdev.strip('! ') == USER:
+    if mdev.strip('! ') == USER:
+        return True
+    elif hk == ehk:
+        if local_ktima_version != recent_ktima_version:
+            if 4 < warning_counter < 8:
+                pm('\n! There is an updated "ktima" version !')
+                pm('Your realease : {}'.format(local_ktima_version))
+                pm('Newer release: {}\n'.format(recent_ktima_version))
+            warning_counter += 1
         return True
     else:
         return False

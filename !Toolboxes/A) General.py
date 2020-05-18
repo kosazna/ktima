@@ -31,8 +31,8 @@ class Toolbox(object):
 class ChangeMode(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "! Change Mode !".format(core.MELETI)
-        self.description = "Changing check mode".format(core.MELETI)
+        self.label = "! Change Mode !"
+        self.description = "Changing check mode"
         self.canRunInBackground = False
 
     @staticmethod
@@ -74,8 +74,8 @@ class ChangeMode(object):
             otas.filter.list = []
             company.filter.list = []
         else:
-            otas.filter.list = core.lui.mel_ota_list
-            company.filter.list = core.lui.comps
+            otas.filter.list = core.info.mel_ota_list
+            company.filter.list = core.info.comps
 
         default.value = "false"
 
@@ -86,9 +86,9 @@ class ChangeMode(object):
     @staticmethod
     def updateParameters(params):
         if params[0].valueAsText == 'standalone':
-            otas_values = copy.copy(core.lui.mel_ota_list)
+            otas_values = copy.copy(core.info.mel_ota_list)
             params[2].filter.list = otas_values
-            params[1].filter.list = core.lui.comps
+            params[1].filter.list = core.info.comps
 
             companies = params[1].valueAsText
 
@@ -109,7 +109,7 @@ class ChangeMode(object):
         if _otas:
             otas = _otas.split(';')
         else:
-            otas = core.lui.ota_list
+            otas = core.info.ota_list
 
         if default:
             core.kt.set_default_mode(mode)
@@ -181,6 +181,13 @@ class OtaExport(object):
             parameterType="Required",
             direction="Input")
 
+        spatial_method = arcpy.Parameter(
+            displayName="Spatial Method",
+            name="spatial_method",
+            datatype="String",
+            parameterType="Required",
+            direction="Input")
+
         fields = arcpy.Parameter(
             displayName="Field-base Selection",
             name="field",
@@ -192,14 +199,17 @@ class OtaExport(object):
         database.value = "false"
         spatial.value = "true"
         fields.filter.list = []
+        spatial_method.value = 'location_within'
+        spatial_method.filter.list = ['location_within', 'location_intersect',
+                                      'intersect']
 
-        params = [shape, spatial, fields, export, database]
+        params = [shape, spatial, spatial_method, fields, export, database]
         return params
 
     @staticmethod
     def updateParameters(params):
         if params[0].valueAsText:
-            params[2].filter.list = core.list_fields(params[0].valueAsText,
+            params[3].filter.list = core.list_fields(params[0].valueAsText,
                                                      'name')
 
         return params
@@ -210,15 +220,17 @@ class OtaExport(object):
 
         shape = params[0].valueAsText
         spatial = bool(params[1].value)
-        field = params[2].valueAsText
-        export = bool(params[3].value)
-        dtbase = bool(params[4].value)
+        spatial_method = params[2].valueAsText
+        field = params[3].valueAsText
+        export = bool(params[4].value)
+        dtbase = bool(params[5].value)
 
-        core.general[core.kt.mode].export_per_ota(shape,
-                                                  spatial=spatial,
-                                                  field=field,
-                                                  export_shp=export,
-                                                  database=dtbase)
+        core.general.export_per_ota(shape,
+                                    spatial=spatial,
+                                    spatial_method=spatial_method,
+                                    field=field,
+                                    export_shp=export,
+                                    database=dtbase)
 
         return
 
@@ -348,7 +360,7 @@ class Identical(object):
 
         export = bool(params[2].value)
 
-        core.find[core.kt.mode].find_identical(what_to, in_what, export)
+        core.find.find_identical(what_to, in_what, export)
 
         return
 
@@ -384,7 +396,7 @@ class Isolate(object):
         arcpy.env.addOutputsToMap = True
         shapetype = params[0].valueAsText
 
-        core.general[core.kt.mode].isolate(shapetype)
+        core.general.isolate(shapetype)
 
         return
 
@@ -415,6 +427,13 @@ class Merge(object):
             parameterType="Required",
             direction="Input")
 
+        missing = arcpy.Parameter(
+            displayName="Ignore Missing",
+            name="missing",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
+
         roads = arcpy.Parameter(
             displayName="Merge new ROADS",
             name="roads",
@@ -422,14 +441,15 @@ class Merge(object):
             parameterType="Required",
             direction="Input")
 
-        merging_list = copy.copy(core.lui.merging_list)
+        merging_list = copy.copy(core.info.merging_list)
 
         shape.filter.list = merging_list
 
         force.value = "false"
+        missing.value = "false"
         roads.value = "false"
 
-        params = [shape, force, roads]
+        params = [shape, force, missing, roads]
         return params
 
     @staticmethod
@@ -446,7 +466,13 @@ class Merge(object):
         shapetypes = shapetype.split(";")
 
         force_merge = bool(params[1].value)
-        new_roads = bool(params[2].value)
+        _missing = bool(params[2].value)
+        new_roads = bool(params[3].value)
+
+        if _missing:
+            missing = 'ignore'
+        else:
+            missing = 'raise'
 
         if new_roads:
             roads = 'new'
@@ -459,11 +485,12 @@ class Merge(object):
             except ValueError:
                 pass
 
-        core.org[core.kt.mode].add_layer(shapes, lyr=True)
+        core.org.add_layer(shapes, lyr=True)
 
-        core.geoprocessing[core.kt.mode].merge(shapetypes,
-                                               force_merge,
-                                               roads)
+        core.geoprocessing.merge(shapetypes,
+                                 force_merge,
+                                 missing,
+                                 roads)
 
         return
 
@@ -501,12 +528,12 @@ class Queries(object):
         shapetype = params[0].valueAsText
 
         if shapetype == "KAEK_in_DBOUND":
-            core.find[core.kt.mode].kaek_in_dbound()
+            core.find.kaek_in_dbound()
         elif shapetype == "KAEK_in_ASTIK":
-            core.find[core.kt.mode].kaek_in_astik()
+            core.find.kaek_in_astik()
         elif shapetype == "RD":
-            core.find[core.kt.mode].rd()
+            core.find.rd()
         elif shapetype == "PR":
-            core.find[core.kt.mode].pr()
+            core.find.pr()
 
         return

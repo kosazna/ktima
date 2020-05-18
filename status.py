@@ -12,7 +12,7 @@
 from logger import *
 
 
-class Status:
+class KTStatus:
     """
     Status can check update and show the status of the working project.
 
@@ -32,11 +32,11 @@ class Status:
 
     def __init__(self, meleti, mode, otas):
         """
-        :param meleti: **str**
+        :param meleti: str
             Meleti.
-        :param mode: **str**
+        :param mode: str
             Ktima mode.
-        :param otas: **list**
+        :param otas: list
             List of otas the USER is working with.
         """
 
@@ -49,11 +49,11 @@ class Status:
         """
         Checks current status.
 
-        :param shape_type: **str**
+        :param shape_type: str
             Category inside json file.
-        :param shape: **str**
+        :param shape: str
             Category inside json file.
-        :return: **any**
+        :return: any
             The functions can return eiher a boolean or list or str or number.
         """
 
@@ -67,11 +67,11 @@ class Status:
         """
         Updates current status
 
-        :param shape_type: **str**
+        :param shape_type: str
             Category inside json file.
-        :param shape: **str**
+        :param shape: str
             Category inside json file.
-        :param status: **any**
+        :param status: any
             boolean or list or str or number.
         :return: Nothing
         """

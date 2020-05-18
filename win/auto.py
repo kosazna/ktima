@@ -27,9 +27,9 @@ naming_data = load_json(naming_path)
 
 # INSTANTIATING CLASSES
 lui = LookUpInfo(info_data, naming_data)
-paths = Paths(MELETI, lui.mel_type, lui.company_name)
-status = Status(MELETI, KTIMA_MODE, lui.ota_list)
-log = Log(MELETI)
+paths = KTPaths(MELETI, lui.mel_type, lui.company_name)
+status = KTStatus(MELETI, KTIMA_MODE, lui.ota_list)
+log = KTLog(MELETI)
 
 
 def validate_input(_func):
@@ -42,10 +42,10 @@ def validate_input(_func):
     proceeds. While his registered action is not within the approved list USER
     is prompted to give an action again.
 
-    :param _func: **str**
+    :param _func: str
         Function which is called. This function name should me in both the
         console dict and the approved dict else KeyError is raised.
-    :return: **str**
+    :return: str
         User action after validation
     """
 
@@ -58,10 +58,10 @@ def validate_input(_func):
                               "(7) Count Paradosi Files\n"
                               "(8) Get scanned files\n"
                               "(9) Update\n\n",
-               'get_folder': "\nGet from : (S)erver  or  (L)ocal \n\n",
-               'export_folder': "\nExport to : (L)ocal  or  (P)aradosi\n\n",
-               'shapes': "\nSHAPEFILE to export: (Enter for ALL, or split with '-')\n\n",
-               'ota_code': "\nOTA to export from: (Enter for ALL, or split with '-')\n\n",
+               'get_folder': "\nGet from : (S)erver  /  (L)ocal \n\n",
+               'export_folder': "\nExport to : (L)ocal  /  (P)aradosi\n\n",
+               'shapes': "\nSHAPEFILE: (Enter for ALL, or split with '-')\n\n",
+               'ota_code': "\nOTA: (Enter for ALL, or split with '-')\n\n",
                'clear_folder': "\nDelete from :\n\n"
                                "(I)nputData\n"
                                "(L)ocal\n"
@@ -69,9 +69,9 @@ def validate_input(_func):
                                "(M)DB's\n\n"
                                "(A)naktiseis\n"
                                "(S)aromena\n\n",
-               'clear_type': "\nDelete method : (A)ll  or  (S)tandard\n\n",
-               'org_folder': "\nFiles : (A)naktiseis  or  (S)aromena  or  (M)DB's\n\n",
-               'get_scanned': "\nGive drive letter : [Enter for default ('W')]\n\n",
+               'clear_type': "\nDelete method : (A)ll  /  (S)tandard\n\n",
+               'org_folder': "\nFiles:(A)naktiseis / (S)aromena / (M)DB's\n\n",
+               'get_scanned': "\nDrive letter : [Enter for default ('W')]\n\n",
                'path_to_count': "\nCount files from:\n\n"
                                 "(L)ocalData\n"
                                 "(P)aradosiData\n\n"}

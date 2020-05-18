@@ -20,17 +20,16 @@ mxdName = os.path.basename(mxdPath)
 
 mxdKtimaName = "Ktima.mxd"
 
-MELETI = "None"
 
-
-class Kt:
+class KTMode:
     """
-    Kt is the corner stone of the arc subpackage
+    KTMode is the corner stone of the arc subpackage
 
     Attributes
     ----------
     - mode: mode for the current working session
     - otas: otas for the current working session
+    - gdb: file geodatabase to store results
     - meleti: meleti of the project
 
     Methods
@@ -42,17 +41,19 @@ class Kt:
     def __init__(self, meleti, mode, otas):
         self.mode = mode
         self.otas = otas
+        self.gdb = paths.gdbk if mode == KTIMA_MODE else paths.gdbs
         self.meleti = meleti
 
     def reset_mode(self, mode, otas):
         self.mode = mode
         self.otas = sorted(otas)
+        self.gdb = paths.gdbk if mode == KTIMA_MODE else paths.gdbs
         status[self.mode].otas = otas
 
         pm('\nMODE : {}\n'.format(self.mode))
         pm('\nOTA : {}\n'.format(self.otas))
 
-        for shape in lui.merging_list:
+        for shape in info.merging_list:
             status[mode].update('SHAPE', shape, False)
 
     @staticmethod
@@ -67,8 +68,9 @@ if get_pass():
     if mxdName == mxdKtimaName:
         MELETI = mxdPath.split('\\')[1]
     else:
-        pass
+        MELETI = None
 else:
+    MELETI = None
     pm("\nAccess denied\n")
     print("\nAccess denied\n")
 
@@ -81,32 +83,31 @@ info_data = load_json(kt_info_path)
 naming_data = load_json(naming_path)
 
 # INSTANTIATING CLASSES
-lui = LookUpInfo(info_data, naming_data)
-paths = Paths(MELETI, lui.mel_type, lui.company_name)
-log = Log(MELETI)
+# lui = LookUpInfo(info_data, naming_data)
+info = KTInfo(info_data)
+ns = KTNamingSchema(naming_data, info)  # stands for naming schema
+paths = KTPaths(MELETI, info.mel_type, info.company_name)
+log = KTLog(MELETI)
 
-if lui.mode == KTIMA_MODE:
-    kt = Kt(MELETI, lui.mode, lui.ota_list)
+if info.mode == KTIMA_MODE:
+    kt = KTMode(MELETI, info.mode, info.ota_list)
 else:
-    kt = Kt(MELETI, lui.mode, lui.mel_ota_list)
+    kt = KTMode(MELETI, info.mode, info.mel_ota_list)
 
 if kt.mode == KTIMA_MODE:
     arcpy.env.workspace = paths.gdb_ktima
 else:
     arcpy.env.workspace = paths.gdb_standalone
 
-status = {KTIMA_MODE: Status(MELETI, KTIMA_MODE, lui.ota_list),
-          STANDALONE_MODE: Status(MELETI, STANDALONE_MODE, kt.otas)}
-
-gdb = {KTIMA_MODE: paths.gdbc,
-       STANDALONE_MODE: paths.gdbs}
+status = {KTIMA_MODE: KTStatus(MELETI, KTIMA_MODE, info.ota_list),
+          STANDALONE_MODE: KTStatus(MELETI, STANDALONE_MODE, kt.otas)}
 
 
 def df_now(command="list_layers"):
     """
     Chooses the way ListDataframes is to be executed.
 
-    :param command: **str**, optional
+    :param command: str, optional
         - 'list_layers' (default)
         - whatever else
     :return: Dataframe object of ArcGIS
@@ -124,20 +125,20 @@ def mdf(fc, importance='', out='general', ota=None, name=None):
     """
     Short for Make Directories and Files.
 
-    :param fc: **str**
+    :param fc: str
         Feature class or shapefile.
-    :param importance: *str**
+    :param importance: *str
         Importance of the generated result usually expressed with
         exclamation mark. '!!' is more important that '!'
-    :param out: **str**, optional
+    :param out: str, optional
         - 'general': general kind of output, one folder will be created.
         - 'ota': ota-based output, outputs of this type go to the
                 folder (\\!!OTA\\shp)
         - 'formal': formal output based on the project structure
         (default: 'general')
-    :param ota: **str**, optional
+    :param ota: str, optional
         Ota number (default: None)
-    :param name: **str**, optional
+    :param name: str, optional
         Name for the output shapefile (default: None)
     :return: Nothing
     """
@@ -169,9 +170,9 @@ def get_otas(companies):
     """
     Gets the otas which are under supervision of the companies provided.
 
-    :param companies: **list**
+    :param companies: list
         List of companies
-    :return: **list**
+    :return: list
         List with ota numbers
     """
 
@@ -179,6 +180,6 @@ def get_otas(companies):
 
     if companies:
         for comp in companies:
-            end_list += lui.pool[comp]
+            end_list += info.pool[comp]
 
     return end_list

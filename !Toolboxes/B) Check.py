@@ -53,7 +53,7 @@ class Shapes(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check[core.kt.mode].shapes(params[0].value)
+        core.check.shapes(params[0].value)
 
         return
 
@@ -96,9 +96,9 @@ class Geometry(object):
 
         for _shape in shapes:
             if _shape == "PST":
-                core.check[core.kt.mode].pst_geometry()
+                core.check.pst_geometry()
             elif _shape == "FBOUND":
-                core.check[core.kt.mode].fbound_geometry()
+                core.check.fbound_geometry()
             else:
                 pass
 
@@ -142,7 +142,7 @@ class Roads(object):
         else:
             roads = 'old'
 
-        core.check[core.kt.mode].roads(roads)
+        core.check.roads(roads)
 
         return
 
@@ -168,7 +168,7 @@ class Dbound(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check[core.kt.mode].dbound()
+        core.check.dbound()
 
         return
 
@@ -194,6 +194,6 @@ class Bld(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check[core.kt.mode].bld()
+        core.check.bld()
 
         return

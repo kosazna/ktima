@@ -35,7 +35,18 @@ class Fbound(object):
 
     @staticmethod
     def getParameterInfo():
-        return
+        po = arcpy.Parameter(
+            displayName="Which FOREST File",
+            name="forest",
+            datatype="String",
+            parameterType="Required",
+            direction="Input")
+
+        po_files = core.file_path_dict(core.paths.input_po, match='.shp')
+        po.filter.list = po_files.keys()
+
+        params = [po]
+        return params
 
     @staticmethod
     def updateParameters(params):
@@ -45,7 +56,12 @@ class Fbound(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.create[core.kt.mode].fbound()
+        po_files = core.file_path_dict(core.paths.input_po, match='.shp')
+
+        po = params[0].valueAsText
+        po_file = po_files[po]
+
+        core.create.fbound(po_file)
 
         return
 
@@ -71,7 +87,7 @@ class Roads(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.create[core.kt.mode].roads()
+        core.create.roads()
 
         return
 
@@ -97,7 +113,7 @@ class Diekdikisi(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.create[core.kt.mode].fboundclaim()
+        core.create.fboundclaim()
 
         return
 
@@ -123,6 +139,6 @@ class PreFbound(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.create[core.kt.mode].pre_fbound()
+        core.create.pre_fbound()
 
         return

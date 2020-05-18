@@ -64,9 +64,9 @@ class Geometry(object):
 
         for _shape in shapes:
             if _shape == "PST":
-                core.fix[core.kt.mode].pst_geometry()
+                core.fix.pst_geometry()
             elif _shape == "FBOUND":
-                core.fix[core.kt.mode].fbound_geometry()
+                core.fix.fbound_geometry()
             else:
                 pass
 
@@ -94,7 +94,7 @@ class Roads(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = False
 
-        core.fix[core.kt.mode].roads()
+        core.fix.roads()
 
         return
 
@@ -136,11 +136,11 @@ class Fields(object):
 
         for _shape in shapes:
             if _shape == "ASTENOT":
-                core.fields[core.kt.mode].astenot()
+                core.fields.astenot()
             elif _shape == "ASTTOM":
-                core.fields[core.kt.mode].asttom()
+                core.fields.asttom()
             elif _shape == "PST":
-                core.fields[core.kt.mode].pst()
+                core.fields.pst()
             else:
                 pass
 

@@ -23,7 +23,7 @@ def update_from_server(drive=ktl['temp'][USER]):
     """
     Updates all the USER scripts from the company server.
 
-    :param drive: **str**, optional
+    :param drive: str, optional
         Drive letter of the server.
         (default: is defined on the paths.json file for each USER)
     :return: Nothing
@@ -59,10 +59,10 @@ def main(command, gd_action):
     It either pushes or pulls scripts for the google drive.
     It also updates python toolboxes in ArcGIS
 
-    :param command: **str**,
+    :param command: str,
         - 'all_files': update files from or to google drive.
         - 'tools': update python toolboxes
-    :param gd_action: **str**
+    :param gd_action: str
         - 'push': updates scripts on google drive from the cwd.
         - 'pull': fetches update from the google drive into the cwd.
     :return: Nothing
@@ -83,7 +83,7 @@ def main(command, gd_action):
             else:
                 c_copy(outpath, fullpath)
 
-    def tools():
+    def pyt_tools():
         src = cp(toolboxes_ktima)
         dst_t = toolboxes_local
 
@@ -95,7 +95,7 @@ def main(command, gd_action):
     if command == "all_files":
         all_files(gd_action)
     else:
-        tools()
+        pyt_tools()
 
 
 if __name__ == "__main__":

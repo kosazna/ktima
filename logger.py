@@ -19,10 +19,10 @@ def extract(mode, folder):
     """
     Copies the USER KT_log.txt in the server or in the USER desktop.
 
-    :param mode: **str**
+    :param mode: str
         - 'local': copies the log file to USER desktop
         - 'temp': copies the log file to the server
-    :param folder: **str**
+    :param folder: str
         Server drive letter of current USER.
     :return: Nothing
     """
@@ -45,7 +45,7 @@ def extract(mode, folder):
             print('No such drive')
 
 
-class Log:
+class KTLog:
     """
     Log exists so that each USER action can for the project is logged.
 
@@ -72,11 +72,11 @@ class Log:
         """
         Opens logger and writes content.
         
-        :param dt: **str**
+        :param dt: str
             Datetime timestamp.
-        :param msgf: **str**
+        :param msgf: str
             Action of the USER that is being registered.
-        :param commentsf: **str**
+        :param commentsf: str
             Comments for the USER action.
         :return: Nothing
         """
@@ -115,9 +115,9 @@ class Log:
         Object gets called and executes the write_to_file depending
         on the content.
 
-        :param msg: **str**
+        :param msg: str
             Action of the USER that is being registered.
-        :param log_list: **list**
+        :param log_list: list
             List containing neccesary info for USER actions
         :return: Nothing
         """

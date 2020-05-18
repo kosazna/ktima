@@ -13,7 +13,7 @@
 from handler import *
 
 
-class Paths:
+class KTPaths:
     """
     Paths has as attributes all the necessary file locations of the project
     and all the methods needed to create paths for different tasks
@@ -29,8 +29,8 @@ class Paths:
     - localdata: path of localdata folder
     - paradosidata: path of paradosidata folder
     - ckecks_out: path for the server folder where checks are exported
-    - locality: path of txt file containing ASTENOT locality names
-    - fbounddoc: path of txt file containing FBOUND DOC_ID names
+    - locality: path of txt file containing ASTENOT locality ns
+    - fbounddoc: path of txt file containing FBOUND DOC_ID ns
     - status_path: path of json file with the status of the project
     - kt_info_path: path of json file with all the info of the project
     - geo_xml: path of GEO_METADATA.xml
@@ -123,6 +123,9 @@ class Paths:
                                 'KYR_PO_PARCELS.shp'])
         self.dasinpath = cp([meleti, inputdata, shapefiles_i, po_i,
                              'PO_PARCELS.shp'])
+        self.kyrdasinpath = cp([meleti, inputdata, shapefiles_i, po_i,
+                                'KYR_PO_PARCELS.shp'])
+        self.input_po = cp([meleti, inputdata, shapefiles_i, po_i])
 
         # MDBS
         self.mdb_in = cp([meleti, inputdata, databases_i])
@@ -134,11 +137,11 @@ class Paths:
         Creates server paths given ota_number and shp.
         The path is company and mel_type dependent
 
-        :param ota: **str**
+        :param ota: str
             Ota number.
-        :param shp: **str**
+        :param shp: str
             Spatial data shapefile of Greek Cadastre.
-        :return: **str**
+        :return: str
             Path of the shapefile.
         """
 
@@ -151,17 +154,17 @@ class Paths:
         """
         Creates path for the local folder project
 
-        :param ota: **str**
+        :param ota: str
             Ota number.
-        :param shp: **str**
+        :param shp: str
             Spatial data shapefile of Greek Cadastre.
-        :param ext: **bolean**, optional
+        :param ext: bolean, optional
             Whether or not the extension '.shp' will be added
             (default: False)
-        :param spatial_folder: **str**, optional
+        :param spatial_folder: str, optional
             To whick folder will the shapefiles be copied.
             (default: localdata_o)
-        :return: **str**
+        :return: str
             Final path depending on the mel_type
         """
 
@@ -184,11 +187,11 @@ class Paths:
         """
         Creates path for the given metadata type.
 
-        :param ota: **str**
+        :param ota: str
             Ota number.
-        :param meta: **str**
+        :param meta: str
             Type of metadata.
-        :return: **str**
+        :return: str
             Path for the metadata.
         """
 
@@ -204,16 +207,16 @@ class Paths:
         mdf short for : Make Directories Files
         Creates paths for general purpose spatial data.
 
-        :param fc: **str**
+        :param fc: str
             Feature class or shapefile.
-        :param importance: **str**
+        :param importance: str
             Importance of the generated result usually expressed with
             exclamation mark. '!!' is more important that '!'
-        :param out: **str**
+        :param out: str
             - 'general': general kind of output, one folder will be created.
             - 'ota': ota-based output, outputs of this type go to the
                     folder (\\!!OTA\\shp)
-        :return: **str**
+        :return: str
             Path for the output
         """
 
@@ -224,13 +227,13 @@ class Paths:
             return cp([self.meleti, outputdata, shapefiles_o,
                        importance + 'OTA', fc])
 
-    def gdbc(self, fc=None):
+    def gdbk(self, fc=None):
         """
         Creates path for ktima gdb given a shapefile name.
 
-        :param fc: **str**, optional
+        :param fc: str, optional
             Feature class or shapefile (default: None)
-        :return: **str**
+        :return: str
             Path for the feature class if given 'shp' else path of gdb
         """
 
@@ -243,9 +246,9 @@ class Paths:
         """
         Creates path for standalone gdb given a shapefile name.
 
-        :param fc: **str**, optional
+        :param fc: str, optional
             Feature class or shapefile (default: None)
-        :return: **str**
+        :return: str
             Path for the feature class if given 'shp' else path of gdb
         """
 
@@ -258,9 +261,9 @@ class Paths:
         """
         Creates path for archive mdb given a shapefile name.
 
-        :param fc: **str**, optional
+        :param fc: str, optional
             Feature class or shapefile (default: None)
-        :return: **str**
+        :return: str
             Path for the feature class if given 'shp' else path of gdb
         """
 
@@ -274,11 +277,11 @@ class Paths:
         Creates server paths for the folders given ota_number and shp.
         The path is company and mel_type dependent
 
-        :param ota: **str**
+        :param ota: str
             Ota number.
-        :param shp: **str**
+        :param shp: str
             Spatial data shapefile of Greek Cadastre.
-        :return: **str**
+        :return: str
             Path of the shapefile folder.
         """
         if self.company_name == c_NA:
@@ -290,14 +293,14 @@ class Paths:
         """
         Creates path for the local folder project.
 
-        :param ota: **str**
+        :param ota: str
             Ota number.
-        :param shp: **str**
+        :param shp: str
             Spatial data shapefile of Greek Cadastre.
-        :param spatial_folder: **str**, optional
+        :param spatial_folder: str, optional
             To whick folder will the shapefiles be copied.
             (default: localdata_o)
-        :return: **str**
+        :return: str
             Final folder depending on the mel_type
         """
 

@@ -19,9 +19,9 @@ def base_ext(path):
     Splits from a filename the extension. Works even if a file has
     multiple extensions.
 
-    :param path: **str**
+    :param path: str
         Path of the filename.
-    :return: **str**, **str**, **str**
+    :return: str, str, str
         Filename, basename, extension.
     """
 
@@ -46,13 +46,13 @@ def list_dir(path, match=None):
     Yields for the given directory and for every file its
     fullpath, filename, basename and extension.
 
-    :param path: **str**
+    :param path: str
         Path of the filename.
-    :param match: **str**, **list**
+    :param match: str, list
         Filter for extension in '.py' format.
         It can be a string with 1 extension or a list with multiple extensions.
         (default: None) -> yields all files.
-    :return: **str**, **str**, **str**, **str**,
+    :return: str, str, str, str,
         Fullpath, filename, basename, extension
     """
 
@@ -63,6 +63,33 @@ def list_dir(path, match=None):
         filename, basename, ext = base_ext(fullpath)
 
         yield fullpath, filename, basename, ext
+
+
+def file_path_dict(path, match=None):
+    """
+    Creates a dictionary with file basename as key and
+    file fullpath as it's value.
+
+    :param path: str
+        Path of the filename.
+    :param match: str, list
+        Filter for extension in '.py' format.
+        It can be a string with 1 extension or a list with multiple extensions.
+        (default: None) -> yields all files.
+    :return: dict
+        basename: fullpath
+    """
+    files = Files(path)
+    files.explore(match=match)
+
+    fp_dict = {}
+
+    for fullpath in files.paths:
+        filename, basename, ext = base_ext(fullpath)
+
+        fp_dict[basename] = fullpath
+
+    return fp_dict
 
 
 class Compare:
@@ -95,11 +122,11 @@ class Compare:
 
     def __init__(self, path_1, path_2, match=None):
         """
-        :param path_1: **str**
+        :param path_1: str
             First path.
-        :param path_2: **str**
+        :param path_2: str
             Second path.
-        :param match: **str**, **list**
+        :param match: str, list
             Filter for extension in '.py' format.
             It can be a string with 1 extension or
             a list with multiple extensions.
@@ -133,7 +160,7 @@ class Compare:
             print(i)
 
         print('')
-        print('***************************')
+        print('*')
         print('')
 
         print('{} - missing:'.format(self.path_2))
@@ -146,11 +173,11 @@ class Compare:
         """
         Creates dictionaries with mapping af all, common and not common files.
 
-        :param mapping_1: **dict**
+        :param mapping_1: dict
             File mapping of path_1
-        :param mapping_2: **dict**
+        :param mapping_2: dict
             File mapping of path_2
-        :return: **dict**, **dict**, **dict**
+        :return: dict, dict, dict
             Returns dictionaries with the mapping of the files
         """
 
@@ -217,7 +244,7 @@ class Compare:
         Prints formatted columns of the filename and the fullpath of each
         provided directory.
 
-        :param what: **str**
+        :param what: str
             - 'all': Prints all files.
             - 'common': prints common files.
             - 'diff': prints files that are not common in both paths
@@ -253,7 +280,7 @@ class Files:
     Attributes
     ----------
     - path: Path
-    - names: list of all filenams
+    - ns: list of all filenams
     - paths: list of all filepaths
     - mapper: Dictionary mapping every file ({directory: [filenames]})
     - mapper_nd: Dictionary mapping every file ({basename: fullpath})
@@ -273,7 +300,7 @@ class Files:
 
     def __init__(self, path):
         """
-        :param path: **str**
+        :param path: str
             Path.
         """
         self.path = path
@@ -289,7 +316,7 @@ class Files:
         """
         Creates Files object from a list of elements of the path.
 
-        :param path_items: **list**
+        :param path_items: list
             Elements of the path.
         :return: Files object
         """
@@ -321,7 +348,7 @@ class Files:
         """
         Explores the self.path and catalogs every file.
 
-        :param match: **str**, **list**
+        :param match: str, list
             Filter for extension in '.py' format.
             It can be a string with 1 extension or
             a list with multiple extensions.
@@ -367,7 +394,7 @@ class Files:
         """
         Prints the filenames for the given directory.
 
-        :param split: **boolean**, optional
+        :param split: boolean, optional
             If True only the basename will be printed.
             If False only the filename will be printed (basename.extension).
             (default: False)
@@ -409,10 +436,10 @@ class Files:
         """
         Creates a txt file with either all the filepaths or the filenames.
 
-        :param what: **str**, optional
+        :param what: str, optional
             - 'filepaths' (default)
             - 'filenames'
-        :param split: **boolean**, optional
+        :param split: boolean, optional
             If True only the basename will be printed.
             If False only the filename will be printed (basename.extension).
             (default: False)
@@ -433,7 +460,7 @@ class Files:
         Copies all the files from the given directory to a new destination
         without their parent folders.
 
-        :param dst: **str**
+        :param dst: str
             Destination path.
         :return:
         """

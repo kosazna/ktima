@@ -189,9 +189,9 @@ class Builder:
 
     def __init__(self, meleti, company=ktl.get('company_name', c_NA)):
         """
-        :param meleti: **str**
+        :param meleti: str
             Meleti.
-        :param company: **str**, optional
+        :param company: str, optional
             Company (default: defined in paths.json).
         """
 
@@ -203,7 +203,7 @@ class Builder:
         """
         Changes meleti of the Builder object.
 
-        :param new_meleti: **str**
+        :param new_meleti: str
             New meleti for the object.
         :return: Nothing
         """
@@ -411,10 +411,10 @@ def _validate_input(_func):
     proceeds. While his registered action is not within the approved list USER
     is prompted to give an action again.
 
-    :param _func: **str**
+    :param _func: str
         Function which is called. This function name should me in both the
         console dict and the approved dict else KeyError is raised.
-    :return: **str**
+    :return: str
         User action after validation
     """
     console = {'meleti': "(1) KT1-05\n"

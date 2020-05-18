@@ -42,26 +42,4 @@ def show_files(path, match=None):
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_7'], origin=gd[USER])
 
-user = 'azna.k'
-
-public_word = 'NAMA'
-
-private_k = hashlib.sha256(user).hexdigest()
-public_k = hashlib.sha256(user).hexdigest()[len(user)::len(user)]
-
-print(private_k)
-print(public_k)
-
-
-def generate(usr):
-    step = len(usr)
-    ledger = []
-    for i in usr:
-        ledger.append(hashlib.sha256(i).hexdigest())
-    print(ledger)
-    return ''.join(ledger)[::step]
-
-
-ko = generate(user)
-
-print(ko)
+count_lines()
