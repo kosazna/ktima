@@ -11,7 +11,6 @@
 # for internal and external validations and research
 
 from uasm import *
-from cust_arc import *
 import datetime
 
 
@@ -95,7 +94,6 @@ class KTLog:
                                                                     commentsf))
                 server_loged = 'YES'
         except IOError:
-            pm('\n\n! Logging !\n\n')
             server_loged = 'NO'
 
         with open(self.general_log, 'a') as general_f:

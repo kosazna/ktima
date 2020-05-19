@@ -11,7 +11,7 @@
 
 import hashlib
 from paths import *
-from cust_arc import *
+# from cust_arc import *
 
 local_ktima_version = '8.0'
 warning_counter = 0
@@ -62,12 +62,12 @@ def get_pass():
     if mdev.strip('! ') == USER:
         return True
     elif hk == ehk:
-        if local_ktima_version != recent_ktima_version:
-            if 4 < warning_counter < 8:
-                pm('\n! There is an updated "ktima" version !')
-                pm('Your realease : {}'.format(local_ktima_version))
-                pm('Newer release: {}\n'.format(recent_ktima_version))
-            warning_counter += 1
+        # if local_ktima_version != recent_ktima_version:
+        #     if 4 < warning_counter < 8:
+        #         pm('\n! There is an updated "ktima" version !')
+        #         pm('Your realease : {}'.format(local_ktima_version))
+        #         pm('Newer release: {}\n'.format(recent_ktima_version))
+        #     warning_counter += 1
         return True
     else:
         return False

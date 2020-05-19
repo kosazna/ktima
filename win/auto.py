@@ -10,7 +10,7 @@
 # This modules has all the neccesary functions for all tasks
 # on the windows side of the project
 
-from ktima.status import *
+from status import *
 from update import update_from_server
 from collections import Counter
 

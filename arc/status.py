@@ -9,7 +9,8 @@
 
 # This module is responsible for updating the status of the project.
 
-from logger import *
+from ktima.logger import *
+from ktima.cust_arc import *
 
 
 class KTStatus:

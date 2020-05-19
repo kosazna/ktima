@@ -10,7 +10,7 @@
 # This module defines all information for the project so as ArcGIS can perform
 # the tasks been provided
 
-from ktima.status import *
+from status import *
 
 arcpy.env.overwriteOutput = True
 
