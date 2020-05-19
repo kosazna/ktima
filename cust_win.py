@@ -141,7 +141,7 @@ def c_copy(src, dst):
 
     try:
         shutil.copyfile(src, dst)
-        print('!! OK !!')
+        print('{} - OK'.format(dst.split('\\')[-1]))
     except IOError as e:
         print(e)
 
