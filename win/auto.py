@@ -26,9 +26,9 @@ info_data = load_json(kt_info_path)
 naming_data = load_json(naming_path)
 
 # INSTANTIATING CLASSES
-lui = LookUpInfo(info_data, naming_data)
-paths = KTPaths(MELETI, lui.mel_type, lui.company_name)
-status = KTStatus(MELETI, KTIMA_MODE, lui.ota_list)
+info = KTInfo(info_data)
+paths = KTPaths(MELETI, info.mel_type, info.company_name)
+status = KTStatus(MELETI, KTIMA_MODE, info.ota_list)
 log = KTLog(MELETI)
 
 
@@ -78,8 +78,8 @@ def validate_input(_func):
 
     sl = ['']
     ol = ['']
-    [sl.append(i) for i in lui.local_list]
-    [ol.append(i) for i in lui.ota_list]
+    [sl.append(i) for i in info.local_list]
+    [ol.append(i) for i in info.ota_list]
 
     approved = {'action_type': ['', '1', '2', '3', '4', '5',
                                 '6', '7', '8', '9', '1LPAA4PS5'],
@@ -150,19 +150,19 @@ def shapefiles():
     log_status = []
 
     if get_folder == "S" and export_folder == "L":
-        shape_list = lui.server_list
+        shape_list = info.server_list
         log_status.append('Server')
         log_status.append('LocalData')
 
         if not shapes:
-            for shape in lui.status_list:
+            for shape in info.status_list:
                 status.update('SHAPE', shape, False)
             status.update('EXPORTED', "FBOUND", False)
         else:
             for shape in user_shapes:
                 status.update('SHAPE', shape, False)
     elif get_folder == "L" and export_folder == "P":
-        shape_list = lui.local_list
+        shape_list = info.local_list
         log_status.append('LocalData')
         log_status.append('ParadosiData')
 
@@ -190,11 +190,11 @@ def shapefiles():
 
     if get_pass():
         if ota_code == "" and shapes == "":
-            for ota in lui.ota_list:
+            for ota in info.ota_list:
                 progress_counter += 1
                 for shape in shape_list:
                     export(shape, ota)
-                progress(progress_counter, len(lui.ota_list))
+                progress(progress_counter, len(info.ota_list))
         elif ota_code != "" and shapes != "":
             for ota in user_ota_list:
                 progress_counter += 1
@@ -208,11 +208,11 @@ def shapefiles():
                     export(shape, ota)
                 progress(progress_counter, len(user_ota_list))
         elif shapes != "":
-            for ota in lui.ota_list:
+            for ota in info.ota_list:
                 progress_counter += 1
                 for shape in user_shapes:
                     export(shape, ota)
-                progress(progress_counter, len(lui.ota_list))
+                progress(progress_counter, len(info.ota_list))
 
         log('Export Shapefiles', log_status)
     else:
@@ -240,7 +240,7 @@ def roads():
         status.update("SHAPE", "iROADS", False)
         log('New ROADS to InputData')
 
-        print("DONE !")
+        print("\nDONE !\n")
     else:
         pass
 
@@ -297,7 +297,7 @@ def clear():
             for fpath, fname, bname, ext in list_dir(clearlocalpath,
                                                      match=del_list):
                 if clear_type == "A" \
-                        and clear_folder == "P" and bname in lui.no_del_list:
+                        and clear_folder == "P" and bname in info.no_del_list:
                     pass
                 else:
                     try:
@@ -306,7 +306,7 @@ def clear():
                         print("Error while deleting file")
 
             log('Clear directories', log_status)
-            print("DONE !")
+            print("\nDONE !\n")
         else:
             for fpath, fname, bname, ext in list_dir(clearlocalpath):
                 try:
@@ -347,7 +347,7 @@ def metadata():
     except IOError:
         pass
 
-    if lui.mel_type == 1:
+    if info.mel_type == 1:
         try:
             metas = {'BLOCK_PNT_METADATA': block_pnt_cont,
                      'ROADS_METADATA': roads_cont,
@@ -362,7 +362,7 @@ def metadata():
 
     if get_pass():
         progress_counter = 0
-        for ota in lui.ota_list:
+        for ota in info.ota_list:
             progress_counter += 1
             for meta in metas:
                 path = paths.meta(ota, meta)
@@ -373,7 +373,7 @@ def metadata():
                 with open(path, 'w') as meta_f:
                     meta_f.write(content)
 
-            progress(progress_counter, len(lui.ota_list))
+            progress(progress_counter, len(info.ota_list))
 
         log("Metadata")
 
@@ -396,14 +396,14 @@ def organize():
         if org_folder == 'A':
             log_status.append('Anaktiseis')
             for fpath, fname, bname, ext in list_dir(paths.anakt_in):
-                for ota in lui.ota_list:
+                for ota in info.ota_list:
                     if ota in bname[9:14]:
                         outpath = os.path.join(paths.anakt_out, ota, fname)
                         c_copy(fpath, outpath)
         elif org_folder == 'S':
             log_status.append('Saromena')
             for fpath, fname, bname, ext in list_dir(paths.saromena_in):
-                for ota in lui.ota_list:
+                for ota in info.ota_list:
                     if bname[0] == 'D' and ota in bname[1:6]:
                         outpath = os.path.join(paths.saromena_out, ota, fname)
                         c_copy(fpath, outpath)
@@ -413,7 +413,7 @@ def organize():
         elif org_folder == 'M':
             log_status.append("MDB's")
             for fpath, fname, bname, ext in list_dir(paths.mdb_in):
-                for ota in lui.ota_list:
+                for ota in info.ota_list:
                     if ota in bname and 'VSTEAS_REL' in bname:
                         outpath = os.path.join(paths.mdb_vsteas, ota,
                                                'SHAPE', 'VSTEAS_REL', fname)
@@ -426,7 +426,7 @@ def organize():
     else:
         pass
 
-    print("DONE !")
+    print("\nDONE !\n")
 
 
 def counter():
@@ -460,12 +460,12 @@ def counter():
 
     for i in shapes.paths:
         path_list = i.split('\\')
-        if lui.mel_type == 1:
+        if info.mel_type == 1:
             ota_counter[path_list[6]].append(int(path_list[4]))
         else:
             ota_counter[path_list[5]].append(int(path_list[4]))
 
-    otas = list(map(int, lui.ota_list))
+    otas = list(map(int, info.ota_list))
 
     for i in otas:
         for shp in ota_counter:
@@ -520,7 +520,7 @@ def get_scanned():
     progress_counter = 0
     files = 0
 
-    for ota in lui.ota_list:
+    for ota in info.ota_list:
         with open(cp([MELETI, outputdata,
                       'Scanned_List',
                       '{}_Scanned_Files'.format(ota)]), 'w') as f:
@@ -532,10 +532,11 @@ def get_scanned():
                     if fname.endswith('.tif') or fname.endswith('.TIF'):
                         files += 1
                         f.write('{}\n'.format(os.path.join(dirpath, fname)))
-        progress(progress_counter, len(lui.ota_list))
+        progress(progress_counter, len(info.ota_list))
 
-    pm('\n\n{} scanned documents extracted from {}:/\n\n'.format(files,
-                                                                 drive_letter))
+    print('\n\n{} scanned documents extracted from {}:/\n\n'.format(
+        files,
+        drive_letter))
 
 
 if get_pass():
@@ -546,7 +547,9 @@ if get_pass():
         if action_type == "1LPAA4PS5":
             mod_date = (raw_input("\nMetadata Date (xx/xx/xxxx) : \n").upper())
 
-        print('###############################################################')
+        print('\n')
+        print('_' * 80)
+        print('_' * 80)
 
         if action_type == "1":
             shapefiles()
@@ -574,7 +577,9 @@ if get_pass():
         else:
             extract('Local', ktl['temp'][USER])
 
-        print('###############################################################')
+        print('\n')
+        print('_' * 80)
+        print('_' * 80)
 else:
     print("\nAccess denied\n")
     action_type = "None"
