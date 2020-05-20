@@ -3,9 +3,8 @@ from paths import *
 import hashlib
 
 
-def count_lines():
-    files = Files(cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages',
-                      'ktima']))
+def count_lines(path):
+    files = Files(path)
     files.explore(match='.py')
 
     c = 0
@@ -42,4 +41,4 @@ def show_files(path, match=None):
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_7'], origin=gd[USER])
 
-count_lines()
+count_lines(src)
