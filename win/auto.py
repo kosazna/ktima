@@ -541,6 +541,7 @@ def get_scanned():
 
 if get_pass():
     while True:
+        check_ktima_version()
         print('\nGive a command:\n')
         action_type = validate_input('action_type')
 

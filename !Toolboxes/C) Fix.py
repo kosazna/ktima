@@ -62,6 +62,8 @@ class Geometry(object):
         _fields = params[0].valueAsText
         shapes = _fields.split(";")
 
+        core.check_ktima_version()
+
         for _shape in shapes:
             if _shape == "PST":
                 core.fix.pst_geometry()
@@ -94,6 +96,7 @@ class Roads(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = False
 
+        core.check_ktima_version()
         core.fix.roads()
 
         return
@@ -133,6 +136,8 @@ class Fields(object):
 
         _fields = params[0].valueAsText
         shapes = _fields.split(";")
+
+        core.check_ktima_version()
 
         for _shape in shapes:
             if _shape == "ASTENOT":

@@ -53,6 +53,7 @@ class Shapes(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        core.check_ktima_version()
         core.check.shapes(params[0].value)
 
         return
@@ -93,6 +94,8 @@ class Geometry(object):
 
         shape = params[0].valueAsText
         shapes = shape.split(";")
+
+        core.check_ktima_version()
 
         for _shape in shapes:
             if _shape == "PST":
@@ -142,6 +145,7 @@ class Roads(object):
         else:
             roads = 'old'
 
+        core.check_ktima_version()
         core.check.roads(roads)
 
         return
@@ -168,6 +172,7 @@ class Dbound(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        core.check_ktima_version()
         core.check.dbound()
 
         return
@@ -194,6 +199,7 @@ class Bld(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        core.check_ktima_version()
         core.check.bld()
 
         return

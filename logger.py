@@ -66,6 +66,8 @@ class KTLog:
         self.kt_log = cp([self.meleti, '!{}_log.txt'.format(self.meleti)])
         self.company_log = cp([txt_server_log], origin=ktl['data'][USER])
         self.general_log = cp([users, USER, txt_log])
+        self.temp_log = cp([mdev, diafora, ktima_folder, logs, 'KT_logs.txt'],
+                           origin=ktl['temp'][USER])
 
     def write_to_file(self, dt, msgf, commentsf):
         """
@@ -92,9 +94,20 @@ class KTLog:
                                                                     self.meleti,
                                                                     msgf,
                                                                     commentsf))
+
                 server_loged = 'YES'
         except IOError:
             server_loged = 'NO'
+
+        try:
+            with open(self.temp_log, 'a') as company_f:
+                company_f.write('\n{}   {:<20}{:<9}{:<25}{}'.format(dt,
+                                                                    _user,
+                                                                    self.meleti,
+                                                                    msgf,
+                                                                    commentsf))
+        except IOError:
+            pass
 
         with open(self.general_log, 'a') as general_f:
             with open(self.kt_log, 'a') as local_f:

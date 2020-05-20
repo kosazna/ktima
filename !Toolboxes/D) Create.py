@@ -61,6 +61,7 @@ class Fbound(object):
         po = params[0].valueAsText
         po_file = po_files[po]
 
+        core.check_ktima_version()
         core.create.fbound(po_file)
 
         return
@@ -87,6 +88,7 @@ class Roads(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        core.check_ktima_version()
         core.create.roads()
 
         return
@@ -113,6 +115,7 @@ class Diekdikisi(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        core.check_ktima_version()
         core.create.fboundclaim()
 
         return
@@ -139,6 +142,7 @@ class PreFbound(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        core.check_ktima_version()
         core.create.pre_fbound()
 
         return

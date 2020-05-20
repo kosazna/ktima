@@ -29,6 +29,8 @@ def update_from_server(drive=ktl['temp'][USER]):
     :return: Nothing
     """
 
+    no_copy = ['testing', 'pass', 'mkbinary']
+
     if ktl.get('company_name', 'NOT_FOUND') == c_NA:
         src = cp(temp_NA, origin=drive)
     elif ktl.get('company_name', 'NOT_FOUND') == c_2P:
@@ -44,7 +46,7 @@ def update_from_server(drive=ktl['temp'][USER]):
 
     for fullpath, filename, basename, ext in list_dir(src, match=['.py',
                                                                   '.pyt']):
-        if ext == '.py':
+        if ext == '.py' and basename not in no_copy:
             out = dst_c + fullpath.split('\\')[pointer:]
             outpath = cp(out)
             c_copy(fullpath, outpath)

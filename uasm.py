@@ -11,10 +11,9 @@
 
 import hashlib
 from paths import *
-# from cust_arc import *
 
-local_ktima_version = '8.0'
-warning_counter = 0
+
+# from cust_arc import *
 
 
 def get_user_uid():
@@ -31,7 +30,7 @@ def get_user_uid():
         with open(ppp, 'r') as h_f:
             hash_k = hashlib.sha256(USER).hexdigest()
             keys = json.load(h_f)
-            new_version = keys['ktima_version']
+            server_version = keys['ktima_version']
     except IOError:
         c_date = time.strftime("%d/%m/%Y")
         try:
@@ -39,21 +38,19 @@ def get_user_uid():
                 hash_k = hashlib.sha256(
                     '{}-{}'.format(c_date, USER)).hexdigest()
                 keys = json.load(h_f)
-                new_version = local_ktima_version
+                server_version = ''
         except IOError:
             hash_k = None
             keys = {}
-            new_version = local_ktima_version
+            server_version = ''
 
-    return hash_k, keys, new_version
+    return hash_k, keys, server_version
 
 
-hk, key, recent_ktima_version = get_user_uid()
+hk, key, server_ktima_version = get_user_uid()
 
 
 def get_pass():
-    global warning_counter
-
     try:
         ehk = key[USER]
     except KeyError:
