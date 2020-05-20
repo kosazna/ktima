@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from paths import *
-import hashlib
 
 
 def count_lines(path):

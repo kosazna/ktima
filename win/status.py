@@ -16,6 +16,12 @@ warning_counter = 0
 
 
 def check_ktima_version():
+    """
+    Checks if the local ktima version is up to date.
+
+    :return: Nothing
+    """
+
     global warning_counter
 
     if local_ktima_version != server_ktima_version and warning_counter < 4:
