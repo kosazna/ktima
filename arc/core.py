@@ -295,9 +295,13 @@ class General:
 
     @staticmethod
     @mxd
-    def export_per_ota(fc, spatial, spatial_method='location_within',
+    def export_per_ota(fc,
+                       spatial,
+                       spatial_method='location_within',
                        field='KAEK',
-                       export_shp=True, database=False, formal=False,
+                       export_shp=True,
+                       database=False,
+                       formal=False,
                        name=None):
         """
         Given a shapefile it will export the features that intersect with
@@ -306,7 +310,7 @@ class General:
 
         :param fc: str
             Shapefile or feature class.
-        :param spatial: bollean
+        :param spatial: boolean
             If True the selection will be based on spatial location
             If False the selection will be bases on an attribute. Field
             parameter is required when set to False.
@@ -318,16 +322,16 @@ class General:
         :param field: str, optional
             Field of the shapefile attribute table that the selection will
             be based on (default: 'KAEK')
-        :param export_shp: bollean, optional
+        :param export_shp: boolean, optional
             If True, shapefiles for each ota
              will be exported in this folder (OutputData\\Shapefile\\!!OTA).
             If False, feature classes will be exported for each ota in gdb.
             (default: True)
-        :param database: bollean, optional
+        :param database: boolean, optional
             If True, mdbs will be also exported in archive.mdb
             If False, no mdbs will be made.
             (default: False)
-        :param formal: bollean, optional
+        :param formal: boolean, optional
             If True formal export will be executed based on formal mdf function
              parameter.
             If False, shapefiles for each ota
@@ -474,7 +478,7 @@ class Check:
 
         if ktima_status('PST', 'ASTTOM', 'ASTENOT'):
 
-            precision = float(10  -accuracy)
+            precision = float(10 ** -accuracy)
             precision_txt = '{:.{}f} m'.format(precision, accuracy)
 
             pm("\nCheck accuracy : {}\n".format(precision_txt))
