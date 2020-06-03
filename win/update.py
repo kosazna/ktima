@@ -44,14 +44,15 @@ def update_from_server(drive=ktl['temp'][USER]):
 
     pointer = len(src.split('\\'))
 
-    for fullpath, filename, basename, ext in list_dir(src, match=['.py',
-                                                                  '.pyt']):
-        if ext == '.py' and basename not in no_copy:
+    for fullpath, filename, basename, ext in list_dir(src, match='.py'):
+        if ext == '.py' and \
+                basename not in no_copy and \
+                basename not in toolboxes:
             out = dst_c + fullpath.split('\\')[pointer:]
             outpath = cp(out)
             c_copy(fullpath, outpath)
-        elif ext == '.pyt':
-            outpath = os.path.join(cp(dst_t), filename)
+        elif ext == '.py' and basename not in no_copy:
+            outpath = os.path.join(cp(dst_t), '{}.pyt'.format(basename))
             c_copy(fullpath, outpath)
 
 

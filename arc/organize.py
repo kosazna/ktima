@@ -164,8 +164,9 @@ class KTOrganizer:
                         arcpy.mapping.AddLayer(dataframes,
                                                layer_to_add,
                                                "AUTO_ARRANGE")
-                    except ValueError:
-                        pm("File does not exist : {}".format(feature))
+                    except ValueError as e:
+                        pm(e)
+                        pm("\n\nFile does not exist : {}".format(feature))
 
             if not lyr:
                 turn_off()

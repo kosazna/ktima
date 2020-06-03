@@ -25,6 +25,7 @@ def ktima_status(*args):
     """
 
     checker = 0
+    shp_exists = []
 
     for shp in args:
         if not status[kt.mode].check('SHAPE', shp):
@@ -32,7 +33,17 @@ def ktima_status(*args):
             checker += 1
 
     if not checker:
-        return True
+        for shp in args:
+            if not arcpy.Exists(kt.gdb('merge_{}'.format(shp))):
+                shp_exists.append(shp)
+
+        if not shp_exists:
+            return True
+        else:
+            pm("\nMerge shapefiles don't exist in {}.gdb:\n".format(kt.mode))
+            for fc in shp_exists:
+                pm(fc)
+            pm('\n\n\n!! Task Aborted !!\n\n\n')
     else:
         pm('\n\n\n!! Task Aborted !!\n\n\n')
         return False
@@ -175,10 +186,11 @@ class Queries:
 
     @staticmethod
     def kaek_in_astik():
-        arcpy.Intersect_analysis([kt.gdb(ns.pstM), kt.gdb(ns.astikM)],
-                                 kt.gdb(ns.kaek_in_astik),
-                                 output_type="INPUT")
-        pm('\nDONE !  -->  {}\n'.format(ns.kaek_in_astik))
+        if ktima_status('PST', 'ASTIK'):
+            arcpy.Intersect_analysis([kt.gdb(ns.pstM), kt.gdb(ns.astikM)],
+                                     kt.gdb(ns.kaek_in_astik),
+                                     output_type="INPUT")
+            pm('\nDONE !  -->  {}\n'.format(ns.kaek_in_astik))
 
     @staticmethod
     def rd():
@@ -199,8 +211,42 @@ class Queries:
         pm('\nDONE !  -->  {}\n'.format(ns.pr))
 
     @staticmethod
-    def advanced_query(q_type='KAEK', q_content='ASTIK'):
-        pass
+    def advanced_query(query,
+                       against,
+                       user_query=False,
+                       user_against=False):
+
+        what_to_query = {
+            'PST': ns.pstM,
+            'ASTENOT': ns.astotaM,
+            'ASTTOM': ns.astotaM,
+            'ASTIK': ns.astikM,
+            'DBOUND': ns.dboundM
+        }
+
+        if user_query:
+            find_from = query
+        else:
+            find_from = what_to_query[query]
+
+        if user_against:
+            find_in = against
+        else:
+            find_in = what_to_query[against]
+
+        org.add_layer([find_from, find_in])
+
+        arcpy.SelectLayerByLocation_management(find_from, 'WITHIN', find_in)
+
+        count = get_count(find_from)
+
+        if count != 0:
+            fc_name = "{}_within_{}".format(query, against)
+            arcpy.CopyFeatures_management(find_from, kt.gdb(fc_name))
+            clear_selection(find_from)
+            pm('\nDONE !\n-->  {} - {} features\n'.format(fc_name, count))
+        else:
+            pm('\nNo selection was made. No files were exported\n')
 
     @staticmethod
     def find_identical(what, in_what, export=False):
@@ -446,6 +492,52 @@ class General:
                 pm('Dataset {} does not exist'.format(shp))
 
         pm('\nDone !\n')
+
+    @staticmethod
+    def month_report():
+        if ktima_status('PST', 'ASTENOT', 'ASTIK', 'DBOUND'):
+            org.add_layer([ns.pstM, ns.astenotM, ns.astikM, ns.dboundM])
+
+            dbound_area = 0.0
+
+            ap = get_count(ns.pstM)
+            aa = get_count(ns.astenotM)
+
+            arcpy.SelectLayerByLocation_management(ns.pstM, 'WITHIN', ns.astikM)
+            astik_pst = get_count(ns.pstM)
+            agrot_pst = ap - astik_pst
+
+            arcpy.SelectLayerByLocation_management(ns.astenotM, 'WITHIN',
+                                                   ns.astikM)
+            astik_astenot = get_count(ns.astenotM)
+            agrot_astenot = aa - astik_astenot
+
+            clear_selection(ns.pstM)
+            clear_selection(ns.astenotM)
+
+            arcpy.SelectLayerByLocation_management(ns.pstM, 'WITHIN',
+                                                   ns.dboundM)
+            dbound_pst = get_count(ns.pstM)
+
+            cursor = arcpy.UpdateCursor(ns.dboundM)
+            for row in cursor:
+                dbound_area += float(row.getValue("AREA"))
+
+            dbound_str = round(dbound_area / 1000, 2)
+
+            pm("PST- ALL: {} / ASTIKO: {} / AGROTIKO: {}\n".format(ap,
+                                                                   astik_pst,
+                                                                   agrot_pst))
+
+            pm("ASTENOT- ALL: {} / ASTIKO: {} / AGROTIKO: {}\n".format(
+                aa,
+                astik_astenot,
+                agrot_astenot))
+
+            pm("DBOUND KAEK: {} / AREΑ (m2): {} - (stremmata): {}\n\n".format(
+                dbound_pst,
+                dbound_area,
+                dbound_str))
 
 
 class Check:
