@@ -21,7 +21,7 @@ class Toolbox(object):
         # List of tool classes associated with this toolbox
         if core.get_pass():
             self.tools = [Merge, Queries, Info, Isolate, OtaExport,
-                          Identical, ExportToServer, ChangeMode, MonthReport]
+                          Identical, ExportToServer, ChangeMode]
         else:
             self.tools = []
 
@@ -299,7 +299,7 @@ class ExportToServer(object):
         shapes = _shapes.split(";")
 
         core.check_ktima_version()
-        core.general[geodatabse].export_to_server(shapes, geodatabse)
+        core.general.export_to_server(shapes, geodatabse)
 
         return
 
@@ -546,26 +546,3 @@ class Queries(object):
             core.find.pr()
 
         return
-
-
-class MonthReport(object):
-    def __init__(self):
-        """Define the tool (tool name is the name of the class)."""
-        self.label = "! Month Report"
-        self.description = "Month Report"
-        self.canRunInBackground = False
-
-    @staticmethod
-    def getParameterInfo():
-        return
-
-    @staticmethod
-    def updateParameters(params):
-        return
-
-    @staticmethod
-    def execute(params, messages):
-        arcpy.env.addOutputsToMap = True
-
-        core.check_ktima_version()
-        core.general.month_report()

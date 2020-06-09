@@ -120,6 +120,8 @@ class KTOrganizer:
             elif lm:
                 pm("LocalData missing - {}: {}".format(shp_name, lm))
 
+        pm('\n')
+
         for shape in validation_fc:
             if self.mxd_indexing[shape]:
                 find_missing(shape, self.mxd_fl[shape], self.loc_fl[shape])

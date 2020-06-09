@@ -579,9 +579,13 @@ class Check:
 
             # GEOPROCESSING
 
-            geoprocessing.union(['PST', 'ASTENOT', 'ASTTOM'],
+            geoprocessing.union(['PST', 'ASTTOM'],
                                 precision,
                                 gaps=False)
+
+            geoprocessing.union(['ASTENOT'],
+                                precision,
+                                gaps=True)
 
             turn_off()
             org.add_layer([ns.pstM, ns.astenotM, ns.asttomM])

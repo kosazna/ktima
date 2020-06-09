@@ -11,7 +11,7 @@
 
 from ktima.logger import *
 
-local_ktima_version = '8.0'
+local_ktima_version = '8.1.0'
 warning_counter = 0
 
 
@@ -24,7 +24,7 @@ def check_ktima_version():
 
     global warning_counter
 
-    if local_ktima_version != server_ktima_version and warning_counter < 4:
+    if local_ktima_version != server_ktima_version and warning_counter < 2:
         print('\n! There is an updated "ktima" version !')
         print('Your realease : {}'.format(local_ktima_version))
         print('Newer release: {}\n'.format(server_ktima_version))
