@@ -100,19 +100,19 @@ class Geoprocessing:
 
             if not status[kt.mode].check('SHAPE',
                                          shapefile) or force_merge:
-                f_name = "merge_" + _shape
+                f_name = "merge_" + shapefile
 
-                to_merge = org.fetch(_shape, missing=missing)
+                to_merge = org.fetch(shapefile, missing=missing)
 
                 try:
                     arcpy.Merge_management(to_merge, kt.gdb(f_name))
 
-                    pm("\nMerged {}\n".format(_shape))
+                    pm("\nMerged {}\n".format(shapefile))
 
                     status[kt.mode].update('SHAPE', shapefile, True)
                     log_list.append(str(shapefile))
                 except RuntimeError:
-                    pm("\n!!! {} source files missing !!!\n".format(_shape))
+                    pm("\n!!! {} source files missing !!!\n".format(shapefile))
             else:
                 pm('\n{} already merged\n'.format(shapefile))
 
@@ -882,9 +882,14 @@ class Check:
         """
 
         roads = choose_roads(_roads)
-
         if ktima_status('PST', 'ASTENOT', roads):
-            org.add_layer([ns.pstM, ns.roadsM, ns.astenotM])
+
+            if roads == 'iROADS':
+                roads_merge = 'merge_{}'.format(roads)
+            else:
+                roads_merge = ns.roadsM
+
+            org.add_layer([ns.pstM, roads_merge, ns.astenotM])
 
             # Eksagwgh kai enosi eidikwn ektasewn
             arcpy.SelectLayerByAttribute_management(ns.pstM,
@@ -896,7 +901,7 @@ class Check:
                                       "PROP_TYPE")
 
             # Elegxos gia aksones ektos EK
-            arcpy.Intersect_analysis([ns.roadsM, ns.temp_ek],
+            arcpy.Intersect_analysis([roads_merge, ns.temp_ek],
                                      kt.gdb(ns.intersections_roads),
                                      output_type="POINT")
             arcpy.DeleteField_management(ns.intersections_roads, "PROP_TYPE")

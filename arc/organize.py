@@ -35,6 +35,7 @@ all_ktima = [
     "FBOUND",
     "PST",
     "ROADS",
+    "IROADS"
     "EAS",
     "VST",
     "EIA_PNT",
@@ -45,6 +46,8 @@ all_ktima = [
 
 
 def toc_layer(shape, ota):
+    if shape == 'iROADS':
+        return r'{}\ROADS_{}'.format(shape.lower(), ota)
     return r'{}\{}_{}'.format(shape.lower(), shape, ota)
 
 
@@ -191,24 +194,31 @@ class KTOrganizer:
         :return: list
             List of otas
         """
+        if shape == 'iROADS':
+            shapefile = 'ROADS'
+        else:
+            shapefile = shape
 
         user_otas = set(kt.otas)
-        end_otas = user_otas.intersection(self.available[shape])
+        end_otas = user_otas.intersection(self.available[shapefile])
 
         missing_from_user = end_otas.difference(user_otas)
-        missing_ota = self.available[shape].difference(self.mxd_fl[shape])
+        missing_ota = self.available[shapefile].difference(
+            self.mxd_fl[shapefile])
 
         if kt.mode == KTIMA_MODE:
             if missing == 'raise':
-                fcs = [toc_layer(shape, ota) for ota in self.mxd_fl[shape]]
+                fcs = [toc_layer(shape, ota) for ota in self.mxd_fl[shapefile]]
                 return sorted(fcs)
             elif missing == 'ignore':
                 if missing_ota:
                     for ota in sorted(missing_ota):
-                        pm('{}_{} source file not available.\n'.format(shape,
-                                                                       ota))
+                        pm('{}_{} source file not available.\n'.format(
+                            shapefile,
+                            ota))
                     pm('\nProcess continues. Missing files IGNORED.\n')
-                fcs = [toc_layer(shape, ota) for ota in self.available[shape]]
+                fcs = [toc_layer(shape, ota) for ota in
+                       self.available[shapefile]]
                 return sorted(fcs)
         elif kt.mode == STANDALONE_MODE:
             if missing == 'raise':
@@ -217,8 +227,9 @@ class KTOrganizer:
             elif missing == 'ignore':
                 if missing_from_user:
                     for ota in sorted(missing_from_user):
-                        pm('{}_{} source file not available.\n'.format(shape,
-                                                                       ota))
+                        pm('{}_{} source file not available.\n'.format(
+                            shapefile,
+                            ota))
                     pm('\nProcess continues. Missing files IGNORED.\n')
                 fcs = [toc_layer(shape, ota) for ota in end_otas]
                 return sorted(fcs)

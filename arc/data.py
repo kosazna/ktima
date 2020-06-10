@@ -53,8 +53,9 @@ class KTMode:
         pm('\nMODE : {}\n'.format(self.mode))
         pm('\nOTA : {}\n'.format(self.otas))
 
-        for shape in info.merging_list:
-            status[mode].update('SHAPE', shape, False)
+        if mode == STANDALONE_MODE:
+            for shape in info.merging_list:
+                status[mode].update('SHAPE', shape, False)
 
     @staticmethod
     def set_default_mode(mode):
