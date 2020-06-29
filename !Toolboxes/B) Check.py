@@ -19,30 +19,40 @@ class Toolbox(object):
 
         # List of tool classes associated with this toolbox
         if core.get_pass():
-            self.tools = [Dbound, Shapes, Geometry, Roads, Bld]
+            self.tools = [Dbound, Overlaps, Numbering, Geometry, Roads, Bld]
         else:
             self.tools = []
 
 
 ###############################################################################
 
-class Shapes(object):
+class Overlaps(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "! Shapefiles"
-        self.description = "Check shapefiles for overlaps and wrong KAEK"
+        self.label = "! Overlaps"
+        self.description = "Check shp_list for overlaps"
         self.canRunInBackground = False
 
     @staticmethod
     def getParameterInfo():
         dekadika = arcpy.Parameter(
-            displayName="Dekadika elegxou",
+            displayName="Precision:",
             name="dekadika",
             datatype="Long",
             parameterType="Required",
             direction="Input")
 
-        params = [dekadika]
+        check_what = arcpy.Parameter(
+            displayName="Check:",
+            name="check",
+            datatype="String",
+            parameterType="Required",
+            direction="Input",
+            multiValue=True)
+
+        check_what.filter.list = ['ASTOTA', 'ASTENOT-ASTTOM-PST']
+
+        params = [check_what, dekadika]
         return params
 
     @staticmethod
@@ -53,8 +63,41 @@ class Shapes(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        check_what = params[0].valueAsText
+
         core.check_ktima_version()
-        core.check.shapes(params[0].value)
+
+        if check_what == 'ASTOTA':
+            core.check.boundaries(params[1].value)
+        else:
+            core.check.overlaps(params[1].value)
+
+        return
+
+
+###############################################################################
+
+class Numbering(object):
+    def __init__(self):
+        """Define the tool (tool name is the name of the class)."""
+        self.label = "! Numbering"
+        self.description = "Check for wrong KAEK in ENOT and ENOT in TOM"
+        self.canRunInBackground = False
+
+    @staticmethod
+    def getParameterInfo():
+        return
+
+    @staticmethod
+    def updateParameters(params):
+        return
+
+    @staticmethod
+    def execute(params, messages):
+        arcpy.env.addOutputsToMap = True
+
+        core.check_ktima_version()
+        core.check.numbering()
 
         return
 

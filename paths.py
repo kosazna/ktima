@@ -97,7 +97,7 @@ class KTPaths:
         self.block_pnt_xml = cp([meleti, inputdata, xml_i,
                                  'BLOCK_PNT_METADATA.xml'])
 
-        # TIFFS
+        # TIFS
         self.anakt_in = cp([meleti, inputdata, anakt])
         self.anakt_out = cp([meleti, outputdata, anakt])
         self.saromena_in = cp([meleti, inputdata, saromena])
@@ -132,6 +132,9 @@ class KTPaths:
         self.mdb_out = cp([meleti, outputdata, paradosimdb_o])
         self.mdb_vsteas = cp([meleti, outputdata, paradosidata_o])
 
+        # EMPTY SHAPEFILES
+        self.empty_shps = cp([meleti, inputdata, shapefiles_i, empty_shps])
+
     def server(self, ota, shp):
         """
         Creates server paths given ota_number and shp.
@@ -162,7 +165,7 @@ class KTPaths:
             Whether or not the extension '.shp' will be added
             (default: False)
         :param spatial_folder: str, optional
-            To whick folder will the shapefiles be copied.
+            To whick folder will the shp_list be copied.
             (default: localdata_o)
         :return: str
             Final path depending on the mel_type
@@ -298,7 +301,7 @@ class KTPaths:
         :param shp: str
             Spatial data shapefile of Greek Cadastre.
         :param spatial_folder: str, optional
-            To whick folder will the shapefiles be copied.
+            To whick folder will the shp_list be copied.
             (default: localdata_o)
         :return: str
             Final folder depending on the mel_type

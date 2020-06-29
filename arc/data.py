@@ -12,14 +12,6 @@
 
 from status import *
 
-arcpy.env.overwriteOutput = True
-
-mxd = arcpy.mapping.MapDocument("CURRENT")
-mxdPath = mxd.filePath
-mxdName = os.path.basename(mxdPath)
-
-mxdKtimaName = "Ktima.mxd"
-
 
 class KTMode:
     """
@@ -57,51 +49,15 @@ class KTMode:
             for shape in info.merging_list:
                 status[mode].update('SHAPE', shape, False)
 
+        log('Change Mode', log_list=str(mode))
+
     @staticmethod
     def set_default_mode(mode):
         data = load_json(kt_info_path)
         data['mode'] = mode
         write_json(kt_info_path, data)
 
-
-# DEFINING MELETI FOR THE SESSION
-if get_pass():
-    if mxdName == mxdKtimaName:
-        MELETI = mxdPath.split('\\')[1]
-    else:
-        MELETI = None
-else:
-    MELETI = None
-    pm("\nAccess denied\n")
-    print("\nAccess denied\n")
-
-# PATHS FOR THE PROJECT INFO AND NAMING SCHEMA
-kt_info_path = cp([MELETI, inputdata, docs_i, json_info])
-naming_path = cp([MELETI, inputdata, docs_i, json_naming])
-
-# DICTIONARIES OF THE PROJECT INFO AND NAMING SCHEMA
-info_data = load_json(kt_info_path)
-naming_data = load_json(naming_path)
-
-# INSTANTIATING CLASSES
-# lui = LookUpInfo(info_data, naming_data)
-info = KTInfo(info_data)
-ns = KTNamingSchema(naming_data, info)  # stands for naming schema
-paths = KTPaths(MELETI, info.mel_type, info.company_name)
-log = KTLog(MELETI)
-
-if info.mode == KTIMA_MODE:
-    kt = KTMode(MELETI, info.mode, info.ota_list)
-else:
-    kt = KTMode(MELETI, info.mode, info.mel_ota_list)
-
-if kt.mode == KTIMA_MODE:
-    arcpy.env.workspace = paths.gdb_ktima
-else:
-    arcpy.env.workspace = paths.gdb_standalone
-
-status = {KTIMA_MODE: KTStatus(MELETI, KTIMA_MODE, info.ota_list),
-          STANDALONE_MODE: KTStatus(MELETI, STANDALONE_MODE, kt.otas)}
+        log('Set Default Mode', log_list=str(mode))
 
 
 def df_now(command="list_layers"):
@@ -184,3 +140,53 @@ def get_otas(companies):
             end_list += info.pool[comp]
 
     return end_list
+
+
+if __name__ == 'ktima.arc.data':
+    # DEFINING MELETI FOR THE SESSION
+
+    arcpy.env.overwriteOutput = True
+
+    mxd = arcpy.mapping.MapDocument("CURRENT")
+    mxdPath = mxd.filePath
+    mxdName = os.path.basename(mxdPath)
+
+    mxdKtimaName = "Ktima.mxd"
+
+    if get_pass():
+        if mxdName == mxdKtimaName:
+            MELETI = mxdPath.split('\\')[1]
+        else:
+            MELETI = None
+    else:
+        MELETI = None
+        pm("\nAccess denied\n")
+        print("\nAccess denied\n")
+
+    # PATHS FOR THE PROJECT INFO AND NAMING SCHEMA
+    kt_info_path = cp([MELETI, inputdata, docs_i, json_info])
+    naming_path = cp([MELETI, inputdata, docs_i, json_naming])
+
+    # DICTIONARIES OF THE PROJECT INFO AND NAMING SCHEMA
+    info_data = load_json(kt_info_path)
+    naming_data = load_json(naming_path)
+
+    # INSTANTIATING CLASSES
+    # lui = LookUpInfo(info_data, naming_data)
+    info = KTInfo(info_data)
+    ns = KTNamingSchema(naming_data, info)  # stands for naming schema
+    paths = KTPaths(MELETI, info.mel_type, info.company_name)
+    log = KTLog(MELETI)
+
+    if info.mode == KTIMA_MODE:
+        kt = KTMode(MELETI, info.mode, info.ota_list)
+    else:
+        kt = KTMode(MELETI, info.mode, info.mel_ota_list)
+
+    if kt.mode == KTIMA_MODE:
+        arcpy.env.workspace = paths.gdb_ktima
+    else:
+        arcpy.env.workspace = paths.gdb_standalone
+
+    status = {KTIMA_MODE: KTStatus(MELETI, KTIMA_MODE, info.ota_list),
+              STANDALONE_MODE: KTStatus(MELETI, STANDALONE_MODE, kt.otas)}

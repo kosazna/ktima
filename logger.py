@@ -133,85 +133,48 @@ class KTLog:
         :return: Nothing
         """
 
+        log_mapper = {
+            'Check Overlaps': "Check with: %s // Overlaps: ASTTOM - [%d] / ASTENOT - [%d] / PST - [%d]",
+            'Check PST Geometry': 'Self Intersections - [%d] // OTA : %s',
+            'Check ROADS': 'Intersections : ALL - [%d] / Possible problems - [%d]',
+            'Check DBOUND': 'DBOUND missing "DEC_ID" or "DEC_DATE" : [%d]',
+            'Check BLD': 'BLD missing "BLD_T_C" or "BLD_NUM" : [%d]',
+            'Fix Geometry': 'Repaired geometry in OTA : %s',
+            'Fix ROADS': 'ROADS fixed',
+            'Fields PST': 'Fixed PST Fields "ORI_TYPE"/"DEC_ID"/"ADDRESS"',
+            'Fields ASTTOM': 'Deleting "ACQ_SCALE" field from ASTTOM',
+            'Fields ASTENOT': 'Added "LOCALITY" info to ASTENOT fields',
+            'Create FBOUND': 'Created New FBOUND',
+            'Create ROADS': 'Created New ROADS',
+            'Create FBOUND Claims': 'FBOUND claims in [%d] KAEK',
+            'Create PRE_FBOUND': 'Created New PRE_FBOUND',
+            'Export Shapefiles': 'Copied files from %s to %s',
+            'Organize files': "Organized %s to !OutputData",
+            'New ROADS to InputData': "Copied new ROADS to Inputs folder for testing",
+            'Clear directories': 'Deleted from %s - %s files',
+            'Merge Shapefiles': "Merged LocalData shp_list for testing : %s",
+            'Check FBOUND Geometry': 'Self Intersections - [%d] // OTA : %s',
+            'Fix FBOUND Geometry': 'Repaired FBOUND geometry in OTA : %s',
+            'Copied iROADS to Local': 'Copied old Roads to LocalData',
+            'Metadata': "Created Metadata for ParadosiData",
+            'Update': 'Updated ktima to version: [%s]',
+            'Change Mode': 'Changed mode to: [%s]',
+            'Set Default Mode': 'Default mode set to: [%s]',
+            'Count Shapefiles': '%s',
+            'Check Numbering': "Wrong KAEK: ASTENOT-ASTTOM - [%d] / PST-ASTENOT - [%d]",
+            'Check ASTOTA': "Check with: %s // Overlaps: [%d]",
+            'Empty Shapefiles': 'Created empty shapefiles for : %s'}
+
         time_now = datetime.datetime.now().replace(microsecond=0)
 
-        if msg == 'Check Shapefiles':
-            comments = 'Check with: {0[0]} // Overlaps: ASTTOM - [{0[3]}] / ASTENOT - [{0[2]}] / PST - [{0[1]}] // Wrong KAEK: ASTENOT-ASTTOM - [{0[5]}] / PST-ASTENOT - [{0[4]}]'.format(
-                log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Check PST Geometry':
-            comments = 'Self Intersections - [{0[0]}] // OTA : {0[1]}'.format(
-                log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Check ROADS':
-            comments = 'Intersections : ALL - [{0[0]}] / Possible problems - [{0[1]}]'.format(
-                log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Check DBOUND':
-            comments = 'DBOUND missing "DEC_ID" or "DEC_DATE" : [{}]'.format(
-                log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Check BLD':
-            comments = 'BLD missing "BLD_T_C" or "BLD_NUM" : [{}]'.format(
-                log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Fix Geometry':
-            comments = 'Repaired geometry in OTA : {}'.format(log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Fix ROADS':
-            comments = 'ROADS fixed'
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Fields PST':
-            comments = 'Fixed PST Fields "ORI_TYPE"/"DEC_ID"/"ADDRESS"'
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Fields ASTTOM':
-            comments = 'Deleting "ACQ_SCALE" field from ASTTOM'
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Fields ASTENOT':
-            comments = 'Added "LOCALITY" info to ASTENOT fields'
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Create FBOUND':
-            comments = 'Created New FBOUND'
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Create ROADS':
-            comments = 'Created New ROADS'
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Create FBOUND Claims':
-            comments = 'FBOUND claims in [{}] KAEK'.format(log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Create PRE_FBOUND':
-            comments = 'Created New PRE_FBOUND'
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Export Shapefiles':
-            comments = 'Copied files from {0[0]} to {0[1]}'.format(log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == "Organize files":
-            comments = "Organized {} to !OutputData".format(log_list[0])
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'New ROADS to InputData':
-            comments = "Copied new ROADS to Inputs folder for future testing".format(
-                log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Clear directories':
-            if log_list[1] == 'all':
-                comments = 'Deleted all files from {}'.format(log_list[0])
-            else:
-                comments = "Deleted spare files from {}".format(log_list[0])
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Merge Shapefiles':
-            comments = "Merged LocalData shapefiles for testing : {}".format(
-                log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Check FBOUND Geometry':
-            comments = 'Self Intersections - [{0[0]}] // OTA : {0[1]}'.format(
-                log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Fix FBOUND Geometry':
-            comments = 'Repaired FBOUND geometry in OTA : {}'.format(log_list)
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Copied iROADS to Local':
-            comments = 'Copied old Roads to LocalData'
-            self.write_to_file(time_now, msg, comments)
-        elif msg == 'Metadata':
-            comments = "Created Metadata for ParadosiData"
-            self.write_to_file(time_now, msg, comments)
+        if log_list is None:
+            comments = log_mapper[msg]
+        elif isinstance(log_list, str):
+            comments = log_mapper[msg] % log_list
+        else:
+            try:
+                comments = log_mapper[msg] % tuple(log_list)
+            except TypeError:
+                comments = log_mapper[msg] % '-'.join(log_list)
+
+        self.write_to_file(time_now, msg, comments)

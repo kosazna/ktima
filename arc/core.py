@@ -15,13 +15,13 @@ from organize import *
 
 def ktima_status(*args):
     """
-    Checks whether or not shapefiles are merged so that
+    Checks whether or not shp_list are merged so that
     operations can performed more quickly.
 
     :param args: str
         Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
     :return: boolean
-        True if shapefiles are merged, False otherwise
+        True if shp_list are merged, False otherwise
     """
 
     checker = 0
@@ -40,7 +40,7 @@ def ktima_status(*args):
         if not shp_exists:
             return True
         else:
-            pm("\nMerge shapefiles don't exist in {}.gdb:\n".format(kt.mode))
+            pm("\nMerge shp_list don't exist in {}.gdb:\n".format(kt.mode))
             for fc in shp_exists:
                 pm(fc)
             pm('\n\n\n!! Task Aborted !!\n\n\n')
@@ -73,16 +73,16 @@ class Geoprocessing:
     @mxd
     def merge(shapes, force_merge=False, missing='raise', _roads='old'):
         """
-        ArcGIS automation to merge shapefiles
+        ArcGIS automation to merge shp_list
 
         :param missing:
         :param shapes: str
             Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
         :param force_merge: boolean, optional
-            Whether or not shapefiles will be merged even if they
+            Whether or not shp_list will be merged even if they
             are already merged (default: False)
         :param missing: str, {'raise', 'ignore'}, optional
-            Whether or nor missing shapefiles should be ignored
+            Whether or nor missing shp_list should be ignored
             (default: 'raise')
         :param _roads: str, optional
             Which roads will be used for merging. Parameter is passed
@@ -93,10 +93,7 @@ class Geoprocessing:
         log_list = []
 
         for _shape in shapes:
-            if _shape == "ROADS":
-                shapefile = choose_roads(_roads)
-            else:
-                shapefile = _shape
+            shapefile = _shape
 
             if not status[kt.mode].check('SHAPE',
                                          shapefile) or force_merge:
@@ -123,7 +120,7 @@ class Geoprocessing:
     def union(shapes, precision=info.precision, missing='raise',
               gaps=False):
         """
-        ArcGIS automation for performing Union in shapefiles
+        ArcGIS automation for performing Union in shp_list
 
 
         :param shapes: str
@@ -132,7 +129,7 @@ class Geoprocessing:
             Float number passed to "Union" in ArcGIS
             (default is defined in a json file)
         :param missing: missing: str, {'raise', 'ignore'}, optional
-            Whether or nor missing shapefiles should be ignored
+            Whether or nor missing shp_list should be ignored
             (default: 'raise')
         :param gaps: boolean, optional
             Whether or not "Union" will be performed with gaps
@@ -156,8 +153,6 @@ class Geoprocessing:
                     "NO_FID",
                     precision,
                     _gaps)
-
-            log("Union Shapefiles")
         else:
             for shape in shapes:
                 feature_name = "union_" + shape
@@ -363,13 +358,13 @@ class General:
         :param spatial_method: str {'location_intersect,
                                     'location_within',
                                     'intersect'}, optional
-            The way shapefiles per ota will be exported
+            The way shp_list per ota will be exported
             (default: 'location_within')
         :param field: str, optional
             Field of the shapefile attribute table that the selection will
             be based on (default: 'KAEK')
         :param export_shp: boolean, optional
-            If True, shapefiles for each ota
+            If True, shp_list for each ota
              will be exported in this folder (OutputData\\Shapefile\\!!OTA).
             If False, feature classes will be exported for each ota in gdb.
             (default: True)
@@ -380,7 +375,7 @@ class General:
         :param formal: boolean, optional
             If True formal export will be executed based on formal mdf function
              parameter.
-            If False, shapefiles for each ota
+            If False, shp_list for each ota
              will be exported in this folder (OutputData\\Shapefile\\!!OTA).
              (default: False)
         :param name: str, optional
@@ -463,7 +458,7 @@ class General:
     @staticmethod
     def export_to_server(copy_files, plus_name):
         """
-        Export generated shapefiles to company server
+        Export generated shp_list to company server
 
         :param copy_files: str
             Shapefile to export
@@ -542,7 +537,7 @@ class General:
 
 class Check:
     """
-    Check class has all the basic check functions for the shapefiles.
+    Check class has all the basic check functions for the shp_list.
 
     Methods
     -------
@@ -559,7 +554,82 @@ class Check:
 
     @staticmethod
     @mxd
-    def shapes(accuracy):
+    def boundaries(inner, check_leitourgoun=False, outer=4):
+        if ktima_status('ASTOTA'):
+            _inner = float(10 ** -inner)
+
+            precision_txt = '{:.{}f} m'.format(_inner, inner)
+
+            pm("\nCheck accuracy : {}\n".format(precision_txt))
+
+            pm("\nProcessing...\n")
+
+            geoprocessing.union(['ASTOTA'], _inner, gaps=False)
+            turn_off()
+
+            org.add_layer([ns.astotaM])
+
+            count_astota_m = get_count(ns.astotaM)
+            count_astota_u = get_count(ns.astotaU)
+            diff_astota = count_astota_u - count_astota_m
+
+            if count_astota_m != count_astota_u:
+                arcpy.SelectLayerByAttribute_management(
+                    ns.astotaU,
+                    "NEW_SELECTION",
+                    ''' "OBJECTID" > {} '''.format(
+                        count_astota_m))
+                arcpy.CopyFeatures_management(ns.astotaU,
+                                              kt.gdb(ns.p_overlaps_astota))
+
+            if check_leitourgoun:
+                _outer = float(10 ** -outer)
+
+                arcpy.Merge_management([ns.astotaM, ns.leitourgoun],
+                                       kt.gdb(ns.astota_leitourgounM))
+
+                arcpy.Union_analysis(
+                    [ns.astotaM, ns.leitourgoun],
+                    kt.gdb(ns.astota_leitourgounU),
+                    "NO_FID",
+                    _outer,
+                    "NO_GAPS")
+
+                count_leitourgoun_m = get_count(ns.astota_leitourgounM)
+                count_leitourgoun_u = get_count(ns.astota_leitourgounU)
+                diff_leitourgoun = count_leitourgoun_m - count_leitourgoun_u
+
+                if count_leitourgoun_m != count_leitourgoun_u:
+                    arcpy.SelectLayerByAttribute_management(
+                        ns.astota_leitourgounU,
+                        "NEW_SELECTION",
+                        ''' "OBJECTID" > {} '''.format(
+                            count_leitourgoun_m))
+                    arcpy.CopyFeatures_management(
+                        ns.astotaU,
+                        kt.gdb(
+                            ns.p_overlaps_leitourgoum))
+
+                if count_leitourgoun_m == count_leitourgoun_u:
+                    pm('\nLEITOURGOUN - OK')
+                else:
+                    pm('\nLEITOURGOUN - ! Overlaps ! - [{}]'.format(
+                        diff_leitourgoun))
+
+            log_shapes = [precision_txt,
+                          diff_astota]
+
+            # TO UNION PREPEI NA EINAI IDIO ME TO MERGE
+            if count_astota_m == count_astota_u:
+                pm('\nASTOTA - OK\n')
+            else:
+                pm('\nASTOTA - ! Overlaps ! - [{}]\n'.format(diff_astota))
+
+            log('Check ASTOTA', log_list=log_shapes)
+
+    @staticmethod
+    @mxd
+    def overlaps(accuracy):
         """
         Checks for overlaps and wrong numbering.
 
@@ -571,11 +641,12 @@ class Check:
         if ktima_status('PST', 'ASTTOM', 'ASTENOT'):
 
             precision = float(10 ** -accuracy)
+
             precision_txt = '{:.{}f} m'.format(precision, accuracy)
 
             pm("\nCheck accuracy : {}\n".format(precision_txt))
 
-            pm("\nProcessing...")
+            pm("\nProcessing...\n")
 
             # GEOPROCESSING
 
@@ -588,6 +659,81 @@ class Check:
                                 gaps=True)
 
             turn_off()
+            org.add_layer([ns.pstM, ns.astenotM, ns.asttomM])
+
+            # Problem count
+            count_pst_u = get_count(ns.pstU)
+            count_pst_m = get_count(ns.pstM)
+            diff_pst = count_pst_u - count_pst_m
+
+            count_astenot_u = get_count(ns.astenotU)
+            count_astenot_m = get_count(ns.astenotM)
+            diff_astenot = count_astenot_u - count_astenot_m
+
+            count_asttom_u = get_count(ns.asttomU)
+            count_asttom_m = get_count(ns.asttomM)
+            diff_asttom = count_asttom_u - count_asttom_m
+
+            if count_astenot_m != count_astenot_u:
+                arcpy.SelectLayerByAttribute_management(
+                    ns.astenotU,
+                    "NEW_SELECTION",
+                    ''' "OBJECTID" > {} '''.format(
+                        count_astenot_m))
+                arcpy.CopyFeatures_management(ns.astenotU,
+                                              kt.gdb(ns.p_overlaps_astenot))
+
+            if count_asttom_m != count_asttom_u:
+                arcpy.SelectLayerByAttribute_management(
+                    ns.asttomU,
+                    "NEW_SELECTION",
+                    ''' "OBJECTID" > {} '''.format(count_asttom_m))
+                arcpy.CopyFeatures_management(ns.asttomU,
+                                              kt.gdb(ns.p_overlaps_asttom))
+
+            if count_pst_m != count_pst_u:
+                arcpy.SelectLayerByAttribute_management(
+                    ns.pstU,
+                    "NEW_SELECTION",
+                    ''' "OBJECTID" > {} '''.format(count_pst_m))
+                arcpy.CopyFeatures_management(ns.pstU,
+                                              kt.gdb(ns.p_overlaps_pst))
+
+            log_shapes = [precision_txt,
+                          diff_pst,
+                          diff_astenot,
+                          diff_asttom]
+
+            # TO UNION PREPEI NA EINAI IDIO ME TO MERGE
+            if count_pst_m == count_pst_u:
+                pm('\nPST - OK')
+            else:
+                pm('\nPST - ! Overlaps ! - [{}]'.format(diff_pst))
+
+            if count_astenot_m == count_astenot_u:
+                pm('ASTENOT - OK')
+            else:
+                pm('ASTENOT - ! Overlaps ! - [{}]'.format(diff_astenot))
+
+            if count_asttom_m == count_asttom_u:
+                pm('ASTTOM - OK\n')
+            else:
+                pm('ASTTOM - ! Overlaps ! - [{}]\n'.format(diff_asttom))
+
+            time_now = timestamp()
+
+            log("Check Overlaps", log_list=log_shapes)
+            status[kt.mode].update("OVERLAPS", "DECIMALS", precision_txt)
+            status[kt.mode].update("OVERLAPS", "CD", time_now)
+            status[kt.mode].update("OVERLAPS", "ASTENOT", diff_astenot)
+            status[kt.mode].update("OVERLAPS", "ASTTOM", diff_asttom)
+            status[kt.mode].update("OVERLAPS", "PST", diff_pst)
+
+    @staticmethod
+    def numbering():
+        if ktima_status('PST', 'ASTTOM', 'ASTENOT'):
+            pm("\nProcessing...\n")
+
             org.add_layer([ns.pstM, ns.astenotM, ns.asttomM])
 
             # ENOTITES
@@ -627,6 +773,7 @@ class Check:
                 ns.pst_astenot,
                 "NEW_SELECTION",
                 " matches = '0' and pstENOT not like '%ΕΚ%' ")
+
             arcpy.CopyFeatures_management(ns.pst_astenot,
                                           kt.gdb(ns.p_pst_astenot))
 
@@ -648,73 +795,15 @@ class Check:
             arcpy.CopyFeatures_management(ns.astenot_asttom,
                                           kt.gdb(ns.p_astenot_asttom))
 
-            # Problem count
-            count_pst_u = get_count(ns.pstU)
-            count_pst_m = get_count(ns.pstM)
-            diff_pst = count_pst_u - count_pst_m
-            count_astenot_u = get_count(ns.astenotU)
-            count_astenot_m = get_count(ns.astenotM)
-            diff_astenot = count_astenot_u - count_astenot_m
-            count_asttom_u = get_count(ns.asttomU)
-            count_asttom_m = get_count(ns.asttomM)
-            diff_asttom = count_asttom_u - count_asttom_m
             count_pst_astenot = get_count(ns.p_pst_astenot)
             count_astenot_asttom = get_count(ns.p_astenot_asttom)
-
-            if count_astenot_m != count_astenot_u:
-                arcpy.SelectLayerByAttribute_management(
-                    ns.astenotU,
-                    "NEW_SELECTION",
-                    ''' "OBJECTID" > {} '''.format(
-                        count_astenot_m))
-                arcpy.CopyFeatures_management(ns.astenotU,
-                                              kt.gdb(ns.p_overlaps_astenot))
-
-            if count_asttom_m != count_asttom_u:
-                arcpy.SelectLayerByAttribute_management(
-                    ns.asttomU,
-                    "NEW_SELECTION",
-                    ''' "OBJECTID" > {} '''.format(count_asttom_m))
-                arcpy.CopyFeatures_management(ns.asttomU,
-                                              kt.gdb(ns.p_overlaps_asttom))
-
-            if count_pst_m != count_pst_u:
-                arcpy.SelectLayerByAttribute_management(
-                    ns.pstU,
-                    "NEW_SELECTION",
-                    ''' "OBJECTID" > {} '''.format(count_pst_m))
-                arcpy.CopyFeatures_management(ns.pstU,
-                                              kt.gdb(ns.p_overlaps_pst))
-
-            log_shapes = [precision_txt,
-                          diff_pst,
-                          diff_astenot,
-                          diff_asttom,
-                          count_pst_astenot,
-                          count_astenot_asttom]
-
-            # TO UNION PREPEI NA EINAI IDIO ME TO MERGE
-            if count_pst_m == count_pst_u:
-                pm('PST - OK')
-            else:
-                pm('PST - ! Overlaps ! - [{}]'.format(diff_pst))
-
-            if count_astenot_m == count_astenot_u:
-                pm('ASTENOT - OK')
-            else:
-                pm('ASTENOT - ! Overlaps ! - [{}]'.format(diff_astenot))
-
-            if count_asttom_m == count_asttom_u:
-                pm('ASTTOM - OK\n')
-            else:
-                pm('ASTTOM - ! Overlaps ! - [{}]\n'.format(diff_asttom))
 
             # PREPEI NA MIN YPARXEI KAMIA EGGRAFI STOUS PROBLIMATIKOUS PINAKES
 
             if count_pst_astenot == 0:
-                pm('PST me ASTENOT - OK')
+                pm('\nPST me ASTENOT - OK')
             else:
-                pm('! Lathos KAEK se ENOTITA ! - [{}]'.format(
+                pm('\n! Lathos KAEK se ENOTITA ! - [{}]'.format(
                     count_pst_astenot))
 
             if count_astenot_asttom == 0:
@@ -723,14 +812,10 @@ class Check:
                 pm('! Lathos KAEK se TOMEA ! - [{}]\n'.format(
                     count_astenot_asttom))
 
-            time_now = timestamp()
+            log_shapes = [count_pst_astenot,
+                          count_astenot_asttom]
 
-            log("Check Shapefiles", log_shapes)
-            status[kt.mode].update("OVERLAPS", "DECIMALS", precision_txt)
-            status[kt.mode].update("OVERLAPS", "CD", time_now)
-            status[kt.mode].update("OVERLAPS", "ASTENOT", diff_astenot)
-            status[kt.mode].update("OVERLAPS", "ASTTOM", diff_asttom)
-            status[kt.mode].update("OVERLAPS", "PST", diff_pst)
+            log("Check Numbering", log_list=log_shapes)
             status[kt.mode].update("WRONG_KAEK", "ASTENOT_ASTTOM",
                                    count_astenot_asttom)
             status[kt.mode].update("WRONG_KAEK", "PST_ASTENOT",
@@ -802,7 +887,7 @@ class Check:
 
             pm("\nDONE !\n")
 
-            log('Check PST Geometry', log_geometry)
+            log('Check PST Geometry', log_list=log_geometry)
 
     @staticmethod
     @mxd
@@ -863,7 +948,7 @@ class Check:
                 status[kt.mode].update("FBOUND_GEOMETRY", "CD", time_now)
                 status[kt.mode].update("FBOUND_GEOMETRY", "OTA", problematic)
 
-                log('Check FBOUND Geometry', log_fbound_geometry)
+                log('Check FBOUND Geometry', log_list=log_fbound_geometry)
             except RuntimeError:
                 pm("\n!!! {} source files missing !!!\n".format('FBOUND'))
         else:
@@ -871,25 +956,16 @@ class Check:
                 "\n\n\n!!! Den exeis vgalei kainouria FBOUND !!!\n\n\n")
 
     @staticmethod
-    def roads(_roads='old'):
+    def roads():
         """
-        Checks intersections on ROADS shapefiles.
+        Checks intersections on ROADS shp_list.
 
-        :param _roads: str, optional
-            Type of roads. If 'old' InputData roads will be used. If 'new'
-            localdata roads will be used.
         :return: Nothing
         """
 
-        roads = choose_roads(_roads)
-        if ktima_status('PST', 'ASTENOT', roads):
+        if ktima_status('PST', 'ASTENOT', 'ROADS'):
 
-            if roads == 'iROADS':
-                roads_merge = 'merge_{}'.format(roads)
-            else:
-                roads_merge = ns.roadsM
-
-            org.add_layer([ns.pstM, roads_merge, ns.astenotM])
+            org.add_layer([ns.pstM, ns.roadsM, ns.astenotM])
 
             # Eksagwgh kai enosi eidikwn ektasewn
             arcpy.SelectLayerByAttribute_management(ns.pstM,
@@ -901,7 +977,7 @@ class Check:
                                       "PROP_TYPE")
 
             # Elegxos gia aksones ektos EK
-            arcpy.Intersect_analysis([roads_merge, ns.temp_ek],
+            arcpy.Intersect_analysis([ns.roadsM, ns.temp_ek],
                                      kt.gdb(ns.intersections_roads),
                                      output_type="POINT")
             arcpy.DeleteField_management(ns.intersections_roads, "PROP_TYPE")
@@ -941,7 +1017,7 @@ class Check:
 
             time_now = timestamp()
 
-            log('Check ROADS', log_roads)
+            log('Check ROADS', log_list=log_roads)
             status[kt.mode].update("ROADS", "ALL", count_inter_all)
             status[kt.mode].update("ROADS", "PROBS", count_inter_astenot)
             status[kt.mode].update("ROADS", "CD", time_now)
@@ -950,7 +1026,7 @@ class Check:
     @staticmethod
     def dbound():
         """
-        Checks DBOUND shapefiles for missing data in attribute table.
+        Checks DBOUND shp_list for missing data in attribute table.
 
         :return:
         """
@@ -979,14 +1055,14 @@ class Check:
 
             time_now = timestamp()
 
-            log('Check DBOUND', count_dbound)
+            log('Check DBOUND', log_list=count_dbound)
             status[kt.mode].update("DBOUND", "PROBS", count_dbound)
             status[kt.mode].update("DBOUND", "CD", time_now)
 
     @staticmethod
     def bld():
         """
-        Checks BLD shapefiles for missing data in attribute table.
+        Checks BLD shp_list for missing data in attribute table.
 
         :return: Nothing
         """
@@ -1017,14 +1093,14 @@ class Check:
 
             time_now = timestamp()
 
-            log('Check BLD', count_bld)
+            log('Check BLD', log_list=count_bld)
             status[kt.mode].update("BLD", "PROBS", count_bld)
             status[kt.mode].update("BLD", "CD", time_now)
 
 
 class Fix:
     """
-    Class Fix has all the functions for fixing problems in shapefiles.
+    Class Fix has all the functions for fixing problems in shp_list.
 
     Methods
     -------
@@ -1053,7 +1129,7 @@ class Fix:
 
             for row in _data["SHAPES_GEOMETRY"]["OTA"]:
                 ota_folder = str(row)
-                repaired.append(int(ota_folder))
+                repaired.append(str(ota_folder))
                 for i in ns.geometry_list:
                     lyr = paths.ktima(ota_folder, i, ext=True)
 
@@ -1066,7 +1142,7 @@ class Fix:
             pm("\nNothing to fix\n")
             repaired = "None"
 
-        log('Fix Geometry', repaired)
+        log('Fix Geometry', log_list=repaired)
 
     @staticmethod
     def fbound_geometry():
@@ -1098,7 +1174,7 @@ class Fix:
             pm("\nNothing to fix\n")
             repaired = "None"
 
-        log('Fix FBOUND Geometry', repaired)
+        log('Fix FBOUND Geometry', log_list=repaired)
 
     @staticmethod
     def roads():
@@ -1237,7 +1313,7 @@ class Fields:
 
 class Create:
     """
-    Class Create has functions for creating shapefiles.
+    Class Create has functions for creating shp_list.
 
     Methods
     -------
@@ -1254,7 +1330,7 @@ class Create:
     @staticmethod
     def fbound(which_po):
         """
-        Creates FBOUND shapefiles
+        Creates FBOUND shp_list
 
         :param which_po: str
             Path for the chosen forest file to use
@@ -1355,7 +1431,7 @@ class Create:
     @staticmethod
     def roads():
         """
-        Creates ROADS shapefiles.
+        Creates ROADS shp_list.
 
         :return: Nothing
         """
@@ -1458,26 +1534,12 @@ class Create:
 
             pm("\nDONE !\n")
         else:
-            for fullpath, filename, basename, ext in list_dir(paths.old_roads,
-                                                              match=['.shp',
-                                                                     '.shx',
-                                                                     '.dbf']):
-                if basename == 'ROADS':
-                    base = paths.new_roads.split('\\')[1:]
-                    base += fullpath.split('\\')[4:]
-                    outpath = cp(base)
-                    c_copy(fullpath, outpath)
-
-            status[kt.mode].update("SHAPE", "ROADS", False)
-
-            log('Copied iROADS to Local')
-
-            pm("\nDONE !\n")
+            pm('ROADS have no problem. No creation was performed')
 
     @staticmethod
     def fboundclaim():
         """
-        Creates FOREST CLAIMS shapefiles and mdb.
+        Creates FOREST CLAIMS shp_list and mdb.
 
         :return: Nothing
         """
@@ -1551,14 +1613,14 @@ class Create:
                 "Don't forget to change AREAFOREST to AREA_FOREST\n".format(
                     count_claims))
 
-            log('Create FBOUND Claims', count_claims)
+            log('Create FBOUND Claims', log_list=count_claims)
 
             pm("\nDONE !\n")
 
     @staticmethod
     def pre_fbound():
         """
-        Creates PRE_FBOUND shapefiles.
+        Creates PRE_FBOUND shp_list.
 
         :return: Nothing
         """
@@ -1614,10 +1676,11 @@ class Create:
             raise Exception("\n\n\n!!! Den exeis kanei MERGE !!!\n\n\n")
 
 
-geoprocessing = Geoprocessing()
-find = Queries()
-general = General()
-check = Check()
-fix = Fix()
-fields = Fields()
-create = Create()
+if __name__ == 'ktima.arc.core':
+    geoprocessing = Geoprocessing()
+    find = Queries()
+    general = General()
+    check = Check()
+    fix = Fix()
+    fields = Fields()
+    create = Create()

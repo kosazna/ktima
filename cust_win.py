@@ -14,6 +14,7 @@ import time
 import sys
 import shutil
 import copy
+import os
 
 
 def time_it(func):
@@ -128,10 +129,12 @@ def write_json(path, data):
         json.dump(data, p_file, indent=2)
 
 
-def c_copy(src, dst):
+def c_copy(src, dst, status=True):
     """
     Copies file for one destination to another.
 
+    :param status: bool
+        whether or not status should be displayed
     :param src: str
         Source file path.
     :param dst: str
@@ -141,7 +144,8 @@ def c_copy(src, dst):
 
     try:
         shutil.copyfile(src, dst)
-        print('OK --> {}'.format(dst.split('\\')[-1]))
+        if status:
+            print('OK --> {}'.format(dst.split('\\')[-1]))
     except IOError as e:
         print(e)
 
@@ -196,3 +200,40 @@ def strize(iterable):
     """
 
     return [str(i) for i in iterable]
+
+
+def copy_shp(src, dst, shape_name, if_not_dst_create=False):
+    """
+
+    :param src:
+    :param dst:
+    :param shape_name:
+    :param if_not_dst_create:
+    :return:
+    """
+    shape_extensions = ['.shp', '.shx', '.dbf']
+    counter = 0
+
+    for ext in shape_extensions:
+        inpath = os.path.join(src, shape_name + ext)
+        outpath = os.path.join(dst, shape_name + ext)
+
+        if os.path.exists(inpath):
+            if os.path.exists(dst):
+                c_copy(inpath, outpath, status=False)
+                counter += 1
+            elif if_not_dst_create:
+                try:
+                    os.makedirs(dst)
+                except WindowsError:
+                    pass
+                c_copy(inpath, outpath, status=False)
+                counter += 1
+            else:
+                print('{} folder does not exist!'.format(dst))
+                break
+        else:
+            print('{} file does not exist'.format(inpath))
+
+    if counter != 3:
+        print('-- {} misses ".shp" or ".shx" or ".dbf" --'.format(shape_name))

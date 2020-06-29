@@ -8,59 +8,35 @@
 # ---------------------------------------------------#
 
 # This modules performs all subprocesses for the core processes.
-# It also makes dictionaries with the available shapefiles
+# It also makes dictionaries with the available shp_list
 
 from data import *
 
 # REQUIREMENTS FOR EACH FUNCTION FOR USE IN THE MXD DECORATOR
 req_map = {'merge': info.merging_list,
-           'shapes': ['ASTENOT', 'ASTTOM', 'PST'],
+           'overlaps': ['ASTENOT', 'ASTTOM', 'PST'],
+           'boundaries': ['ASTOTA'],
            'export_per_ota': ['ASTOTA'],
            'fbound_geometry': ['FBOUND'],
            'pst': ['PST'],
            'asttom': ['ASTTOM'],
            'astenot': ['ASTENOT']}
 
-all_ktima = [
-    "ASTENOT",
-    "ASTIK",
-    "ASTOTA",
-    "ASTTOM",
-    "BLD",
-    "BLOCK_PNT",
-    "CBOUND",
-    "DBOUND",
-    "OIK",
-    "POI",
-    "FBOUND",
-    "PST",
-    "ROADS",
-    "IROADS"
-    "EAS",
-    "VST",
-    "EIA_PNT",
-    "EIA",
-    "MRT",
-    "NOMI",
-    "VSTEAS_REL"]
-
 
 def toc_layer(shape, ota):
-    if shape == 'iROADS':
-        return r'{}\ROADS_{}'.format(shape.lower(), ota)
     return r'{}\{}_{}'.format(shape.lower(), shape, ota)
 
 
 class KTOrganizer:
     def __init__(self):
-        self.loc_fl = {shape: set() for shape in all_ktima}
-        self.mxd_fl = {shape: set() for shape in all_ktima}
-        self.mxd_indexing = {shape: False for shape in all_ktima}
-        self.available = dict.fromkeys(all_ktima)
+        self.loc_fl = {shape: set() for shape in info.all_ktima}
+        self.mxd_fl = {shape: set() for shape in info.all_ktima}
+        self.mxd_indexing = {shape: False for shape in info.all_ktima}
+        self.available = dict.fromkeys(info.all_ktima)
 
     def localfiles(self):
         """
-        Makes a list with the shapefiles of each spatial data category
+        Makes a list with the shp_list of each spatial data category
         of Greek Cadastre.
 
         :return: Nothing
@@ -136,7 +112,7 @@ class KTOrganizer:
         from LYR_Packages folder.
 
         :param features: list
-            List of shapefiles to be added.
+            List of shp_list to be added.
         :param lyr: boolean, optional
             If True layer is added from LYR_Packages.
             If False layer is added from geodatabase
@@ -183,75 +159,75 @@ class KTOrganizer:
 
     def fetch(self, shape, missing='raise'):
         """
-        Determines which for which otas shapefiles can be merged
+        Determines which for which otas shp_list can be merged
         based on their availability and USER command
 
         :param shape: str
             Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
         :param missing: str, {'raise', 'ignore'}, optional
-            Whether or nor missing shapefiles should be ignored
+            Whether or nor missing shp_list should be ignored
             (default: 'raise')
         :return: list
             List of otas
         """
-        if shape == 'iROADS':
-            shapefile = 'ROADS'
-        else:
-            shapefile = shape
 
-        user_otas = set(kt.otas)
-        end_otas = user_otas.intersection(self.available[shapefile])
+        try:
+            user_otas = set(kt.otas)
+            end_otas = user_otas.intersection(self.available[shape])
 
-        missing_from_user = end_otas.difference(user_otas)
-        missing_ota = self.available[shapefile].difference(
-            self.mxd_fl[shapefile])
+            missing_from_user = end_otas.difference(user_otas)
+            missing_ota = self.available[shape].difference(
+                self.mxd_fl[shape])
 
-        if kt.mode == KTIMA_MODE:
-            if missing == 'raise':
-                fcs = [toc_layer(shape, ota) for ota in self.mxd_fl[shapefile]]
-                return sorted(fcs)
-            elif missing == 'ignore':
-                if missing_ota:
-                    for ota in sorted(missing_ota):
-                        pm('{}_{} source file not available.\n'.format(
-                            shapefile,
-                            ota))
-                    pm('\nProcess continues. Missing files IGNORED.\n')
-                fcs = [toc_layer(shape, ota) for ota in
-                       self.available[shapefile]]
-                return sorted(fcs)
-        elif kt.mode == STANDALONE_MODE:
-            if missing == 'raise':
-                fcs = [toc_layer(shape, ota) for ota in kt.otas]
-                return sorted(fcs)
-            elif missing == 'ignore':
-                if missing_from_user:
-                    for ota in sorted(missing_from_user):
-                        pm('{}_{} source file not available.\n'.format(
-                            shapefile,
-                            ota))
-                    pm('\nProcess continues. Missing files IGNORED.\n')
-                fcs = [toc_layer(shape, ota) for ota in end_otas]
-                return sorted(fcs)
+            if kt.mode == KTIMA_MODE:
+                if missing == 'raise':
+                    fcs = [toc_layer(shape, ota) for ota in
+                           self.mxd_fl[shape]]
+                    return sorted(fcs)
+                elif missing == 'ignore':
+                    if missing_ota:
+                        for ota in sorted(missing_ota):
+                            pm('{}_{} source file not available.\n'.format(
+                                shape,
+                                ota))
+                        pm('\nProcess continues. Missing files IGNORED.\n')
+                    fcs = [toc_layer(shape, ota) for ota in
+                           self.available[shape]]
+                    return sorted(fcs)
+            elif kt.mode == STANDALONE_MODE:
+                if missing == 'raise':
+                    fcs = [toc_layer(shape, ota) for ota in kt.otas]
+                    return sorted(fcs)
+                elif missing == 'ignore':
+                    if missing_from_user:
+                        for ota in sorted(missing_from_user):
+                            pm('{}_{} source file not available.\n'.format(
+                                shape,
+                                ota))
+                        pm('\nProcess continues. Missing files IGNORED.\n')
+                    fcs = [toc_layer(shape, ota) for ota in end_otas]
+                    return sorted(fcs)
+        except TypeError:
+            pass
 
 
-def choose_roads(roads_type):
-    """
-    Chooses roads for processing.
-
-    :param roads_type: str
-        - 'old': old roads in InpusData
-        - 'new': new roads from localdata
-    :return: str
-        'iROADS' if 'old' else 'ROADS' if 'new'
-    """
-
-    if roads_type == 'old':
-        rd_shape = "iROADS"
-    else:
-        rd_shape = "ROADS"
-
-    return rd_shape
+# def choose_roads(roads_type):
+#     """
+#     Chooses roads for processing.
+#
+#     :param roads_type: str
+#         - 'old': old roads in InpusData
+#         - 'new': new roads from localdata
+#     :return: str
+#         'iROADS' if 'old' else 'ROADS' if 'new'
+#     """
+#
+#     if roads_type == 'old':
+#         rd_shape = "iROADS"
+#     else:
+#         rd_shape = "ROADS"
+#
+#     return rd_shape
 
 
 def turn_off():
@@ -289,6 +265,6 @@ def mxd(func):
     return wrapper
 
 
-org = KTOrganizer()
-
-org.localfiles()
+if __name__ == 'ktima.arc.organize':
+    org = KTOrganizer()
+    org.localfiles()

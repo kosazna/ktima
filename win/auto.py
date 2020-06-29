@@ -52,12 +52,12 @@ def validate_input(_func):
     console = {'action_type': "(1) Export Shapefiles\n"
                               "(2) Organize Files\n"
                               "(3) Create Metadata\n"
-                              "(4) Export new ROADS to InputData\n"
+                              "(4) Create Empty Shapefiles\n"
                               "(5) Status\n"
                               "(6) Delete Data\n"
-                              "(7) Count Paradosi Files\n"
+                              "(7) Count Files\n"
                               "(8) Get scanned files\n"
-                              "(9) Update\n\n",
+                              "(9) Update ktima\n\n",
                'get_folder': "\nGet from : (S)erver  /  (L)ocal \n\n",
                'export_folder': "\nExport to : (L)ocal  /  (P)aradosi\n\n",
                'shapes': "\nSHAPEFILE: (Enter for ALL, or split with '-')\n\n",
@@ -78,11 +78,11 @@ def validate_input(_func):
 
     sl = ['']
     ol = ['']
-    [sl.append(i) for i in info.local_list]
+    [sl.append(i) for i in info.all_ktima]
     [ol.append(i) for i in info.ota_list]
 
     approved = {'action_type': ['', '1', '2', '3', '4', '5',
-                                '6', '7', '8', '9', '1LPAA4PS5'],
+                                '6', '7', '8', '9'],
                 'get_folder': ['S', 'L'],
                 'export_folder': ['L', 'P'],
                 'shapes': sl,
@@ -126,22 +126,16 @@ def validate_input(_func):
 
 def shapefiles():
     """
-    Gets shapefiles from server or localdata and pastes them
+    Gets shp_list from server or localdata and pastes them
     on localdata or paradosi data.
 
     :return: Nothing
     """
 
-    if action_type == "1LPAA4PS5":
-        get_folder = "L"
-        export_folder = "P"
-        shapes = ""
-        ota_code = ""
-    else:
-        get_folder = validate_input('get_folder')
-        export_folder = validate_input('export_folder')
-        shapes = validate_input('shapes')
-        ota_code = validate_input('ota_code')
+    get_folder = validate_input('get_folder')
+    export_folder = validate_input('export_folder')
+    shapes = validate_input('shapes')
+    ota_code = validate_input('ota_code')
 
     user_shapes = shapes.split("-")
     user_ota_list = ota_code.split("-")
@@ -150,7 +144,7 @@ def shapefiles():
     log_status = []
 
     if get_folder == "S" and export_folder == "L":
-        shape_list = info.server_list
+        shape_list = info.all_ktima
         log_status.append('Server')
         log_status.append('LocalData')
 
@@ -162,7 +156,7 @@ def shapefiles():
             for shape in user_shapes:
                 status.update('SHAPE', shape, False)
     elif get_folder == "L" and export_folder == "P":
-        shape_list = info.local_list
+        shape_list = info.all_ktima
         log_status.append('LocalData')
         log_status.append('ParadosiData')
 
@@ -183,7 +177,7 @@ def shapefiles():
         for fpath, fname, bname, ext in list_dir(inpath, match=['.shp',
                                                                 '.shx',
                                                                 '.dbf']):
-            if bname == shp:
+            if bname == shp and os.path.exists(fpath):
                 shutil.copyfile(fpath, os.path.join(outpath, fname))
 
     progress_counter = 0
@@ -214,7 +208,7 @@ def shapefiles():
                     export(shape, ota)
                 progress(progress_counter, len(info.ota_list))
 
-        log('Export Shapefiles', log_status)
+        log('Export Shapefiles', log_list=log_status)
     else:
         pass
 
@@ -252,15 +246,11 @@ def clear():
     :return: Nothing
     """
 
-    if action_type == "1LPAA4PS5":
-        clear_folder = "P"
-        clear_type = "S"
+    clear_folder = validate_input('clear_folder')
+    if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
+        clear_type = validate_input('clear_type')
     else:
-        clear_folder = validate_input('clear_folder')
-        if clear_folder == 'L' or clear_folder == 'P' or clear_folder == 'I':
-            clear_type = validate_input('clear_type')
-        else:
-            clear_type = 'None'
+        clear_type = 'None'
 
     log_status = []
     clearlocalpath = ""
@@ -305,7 +295,7 @@ def clear():
                     except OSError:
                         print("Error while deleting file")
 
-            log('Clear directories', log_status)
+            log('Clear directories', log_list=log_status)
             print("\nDONE !\n")
         else:
             for fpath, fname, bname, ext in list_dir(clearlocalpath):
@@ -324,10 +314,7 @@ def metadata():
     :return: Nothing
     """
 
-    if action_type == "1LPAA4PS5":
-        date = mod_date
-    else:
-        date = (raw_input("\nDate (xx/xx/xxxx) : \n").upper())
+    date = (raw_input("\nDate (xx/xx/xxxx) : \n").upper())
 
     try:
         with open(paths.block_pnt_xml, 'r') as block_pnt_f:
@@ -422,7 +409,7 @@ def organize():
                         outpath = os.path.join(paths.mdb_out, ota, fname)
                         c_copy(fpath, outpath)
 
-        log("Organize files", log_status)
+        log("Organize files", log_list=log_status)
     else:
         pass
 
@@ -431,7 +418,7 @@ def organize():
 
 def counter():
     """
-    Counts the shapefiles for each OTA.
+    Counts the shp_list for each OTA.
 
     :return: Nothing
     """
@@ -451,7 +438,7 @@ def counter():
     mdb.explore(match='.mdb')
     xml.explore(match='.xml')
 
-    cnt_shapes = Counter(shapes.names)
+    cnt_shapes = Counter(map(str.upper, shapes.names))
     c_mdb = Counter([i[6:] if not i == 'POWNERS.mdb' else i for i in mdb.names])
     c_xml = Counter(xml.names)
 
@@ -461,13 +448,11 @@ def counter():
     for i in shapes.paths:
         path_list = i.split('\\')
         if info.mel_type == 1:
-            ota_counter[path_list[6]].append(int(path_list[4]))
+            ota_counter[path_list[6]].append(str(path_list[4]))
         else:
-            ota_counter[path_list[5]].append(int(path_list[4]))
+            ota_counter[path_list[5]].append(str(path_list[4]))
 
-    otas = list(map(int, info.ota_list))
-
-    for i in otas:
+    for i in info.ota_list:
         for shp in ota_counter:
             if i not in ota_counter[shp]:
                 missing_counter[shp].append(i)
@@ -500,8 +485,13 @@ def counter():
 
     for i in sorted(missing_counter, key=lambda x: len(missing_counter[x])):
         if missing_counter[i]:
-            print('{:<18} - {}'.format(i, missing_counter[i]))
+            print('{:<18} - {}'.format(i, '-'.join(missing_counter[i])))
 
+    log_counter = ' - '.join(
+        str(sorted(list(cnt_shapes.items()), key=lambda x: x[0])).strip(
+            '[]').split("', '"))
+
+    log('Count Shapefiles', log_list=log_counter)
     print('')
 
 
@@ -539,48 +529,160 @@ def get_scanned():
         drive_letter))
 
 
-if get_pass():
-    while True:
-        check_ktima_version()
-        print('\nGive a command:\n')
-        action_type = validate_input('action_type')
+def create_empty_dirs(base_folder, how, ota_list=None, shp_list=None):
+    """
 
-        if action_type == "1LPAA4PS5":
-            mod_date = (raw_input("\nMetadata Date (xx/xx/xxxx) : \n").upper())
+    :param base_folder:
+    :param how:
+    :param ota_list:
+    :param shp_list:
+    :return:
+    """
 
-        print('\n')
-        print('_' * 80)
-        print('_' * 80)
-
-        if action_type == "1":
-            shapefiles()
-        elif action_type == "2":
-            organize()
-        elif action_type == "3":
-            metadata()
-        elif action_type == "4":
-            roads()
-        elif action_type == "5":
-            status.show()
-        elif action_type == "6":
-            clear()
-        elif action_type == "7":
-            counter()
-        elif action_type == "8":
-            get_scanned()
-        elif action_type == '9':
-            extract('Temp', ktl['temp'][USER])
-            update_from_server()
-        elif action_type == "1LPAA4PS5":
-            shapefiles()
-            clear()
-            metadata()
+    if isinstance(ota_list, list):
+        if not ota_list:
+            print('Empty ota list')
+            return
         else:
-            extract('Local', ktl['temp'][USER])
+            final_ota = ota_list
+    else:
+        final_ota = ota_list.split('-')
 
-        print('\n')
-        print('_' * 80)
-        print('_' * 80)
-else:
-    print("\nAccess denied\n")
-    action_type = "None"
+    if isinstance(shp_list, list):
+        if not shp_list:
+            print('Empty shapefile list')
+            return
+        else:
+            final_shp = shp_list
+    else:
+        final_shp = shp_list.split('-')
+
+    if '<ota>' in how or '<shapefile>' in how:
+        if '<ota>' in how and ota_list is None:
+            print('<ota> exists without ota_list')
+            return
+        if '<shapefile>' in how and shp_list is None:
+            print('<shapefile> exists without shapefile list')
+            return
+    else:
+        print('At least one of <ota> or <shapefile> must be provided')
+        return
+
+    if ota_list is not None and shp_list is not None:
+        for ota in final_ota:
+            for shp in final_shp:
+                plus = how.replace('<ota>', ota).replace('<shapefile>', shp)
+                try:
+                    os.makedirs(os.path.join(base_folder, plus))
+                except WindowsError:
+                    pass
+    elif ota_list is not None and shp_list is None:
+        for ota in final_ota:
+            plus = how.replace('<ota>', ota)
+            try:
+                os.makedirs(os.path.join(base_folder, plus))
+            except WindowsError:
+                pass
+    elif ota_list is None and shp_list is not None:
+        for shp in final_shp:
+            plus = how.replace('<shapefile>', shp)
+            try:
+                os.makedirs(os.path.join(base_folder, plus))
+            except WindowsError:
+                pass
+
+
+def fill_empty_shp(ota_list=None, shp_list=None):
+    """
+
+    :param ota_list:
+    :param shp_list:
+    :return:
+    """
+
+    empty = Files(paths.empty_shps)
+    empty.explore()
+    empty_shp = list(set(empty.names))
+
+    if ota_list is None:
+        otas = info.ota_list
+    elif isinstance(ota_list, str):
+        otas = ota_list.split('-')
+    else:
+        otas = ota_list
+
+    if shp_list is None:
+        shapes = empty_shp
+    elif isinstance(shp_list, str):
+        shapes = shp_list.split('-')
+    else:
+        shapes = shp_list
+
+    for ota in otas:
+        for shp in shapes:
+            check_path = paths.ktima(ota, shp, ext=True)
+            if not os.path.exists(check_path):
+                inpath = os.path.join(paths.empty_shps, shp)
+                outpath = paths.ktima_folder(ota, shp)
+                copy_shp(inpath, outpath, shp)
+
+    log('Empty Shapefiles', log_list=shapes)
+
+    print('DONE !')
+
+
+if __name__ == '__main__':
+    if get_pass():
+        while True:
+            check_ktima_version()
+            print('\nGive a command:\n')
+            action_type = validate_input('action_type')
+
+            if action_type == "1LPAA4PS5":
+                mod_date = (
+                    raw_input("\nMetadata Date (xx/xx/xxxx) : \n").upper())
+
+            print('\n')
+            print('_' * 80)
+            print('_' * 80)
+
+            if action_type == "1":
+                shapefiles()
+            elif action_type == "2":
+                organize()
+            elif action_type == "3":
+                metadata()
+            elif action_type == "4":
+                otas_to_create = validate_input('ota_code')
+                shapes_to_create = validate_input('shapes')
+                if not otas_to_create:
+                    new_otas = None
+                else:
+                    new_otas = otas_to_create
+
+                if not shapes_to_create:
+                    new_shapes = None
+                else:
+                    new_shapes = shapes_to_create
+                fill_empty_shp(new_otas, new_shapes)
+            elif action_type == "5":
+                status.show()
+            elif action_type == "6":
+                clear()
+            elif action_type == "7":
+                counter()
+            elif action_type == "8":
+                get_scanned()
+            elif action_type == '9':
+                extract('Temp', ktl['temp'][USER])
+                update_from_server()
+                log('Update', log_list=str(local_ktima_version))
+            else:
+                extract('Local', ktl['temp'][USER])
+
+            print('\n')
+            print('_' * 80)
+            print('_' * 80)
+    else:
+        print("\nAccess denied\n")
+        action_type = "None"

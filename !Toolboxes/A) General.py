@@ -244,7 +244,7 @@ class ExportToServer(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
         self.label = "! Export to Server"
-        self.description = "Export shapefiles to kthma_temp"
+        self.description = "Export shp_list to kthma_temp"
         self.canRunInBackground = False
 
     @staticmethod
@@ -258,7 +258,7 @@ class ExportToServer(object):
 
         shapes = arcpy.Parameter(
             displayName="File GeoDatabase Files",
-            name="shapefiles",
+            name="shp_list",
             datatype="String",
             parameterType="Optional",
             direction="Input",
