@@ -649,6 +649,8 @@ def update_jsons():
 
     c_copy(repo, paths.kt_naming)
 
+    log('Docs update')
+
 
 if __name__ == '__main__':
     if get_pass():

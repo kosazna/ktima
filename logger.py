@@ -163,7 +163,8 @@ class KTLog:
             'Count Shapefiles': '%s',
             'Check Numbering': "Wrong KAEK: ASTENOT-ASTTOM - [%d] / PST-ASTENOT - [%d]",
             'Check ASTOTA': "Check with: %s // Overlaps: [%d]",
-            'Empty Shapefiles': 'Created empty shapefiles for : %s'}
+            'Empty Shapefiles': 'Created empty shapefiles for : %s',
+            'Docs update': 'Updated json schemas'}
 
         time_now = datetime.datetime.now().replace(microsecond=0)
 
