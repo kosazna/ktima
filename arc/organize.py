@@ -182,7 +182,7 @@ class KTOrganizer:
             if kt.mode == KTIMA_MODE:
                 if missing == 'raise':
                     fcs = [toc_layer(shape, ota) for ota in
-                           self.mxd_fl[shape]]
+                           kt.otas]
                     return sorted(fcs)
                 elif missing == 'ignore':
                     if missing_ota:

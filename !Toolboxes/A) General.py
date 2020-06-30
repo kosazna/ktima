@@ -440,22 +440,14 @@ class Merge(object):
             parameterType="Required",
             direction="Input")
 
-        roads = arcpy.Parameter(
-            displayName="Merge new ROADS",
-            name="roads",
-            datatype="Boolean",
-            parameterType="Required",
-            direction="Input")
-
         merging_list = copy.copy(core.info.merging_list)
 
         shape.filter.list = merging_list
 
         force.value = "false"
         missing.value = "false"
-        roads.value = "false"
 
-        params = [shape, force, missing, roads]
+        params = [shape, force, missing]
         return params
 
     @staticmethod
@@ -473,31 +465,18 @@ class Merge(object):
 
         force_merge = bool(params[1].value)
         _missing = bool(params[2].value)
-        new_roads = bool(params[3].value)
 
         if _missing:
             missing = 'ignore'
         else:
             missing = 'raise'
 
-        if new_roads:
-            roads = 'new'
-            shapes = copy.copy(shapetypes)
-        else:
-            roads = 'old'
-            shapes = copy.copy(shapetypes)
-            try:
-                shapes[shapes.index('ROADS')] = 'IROADS'
-            except ValueError:
-                pass
-
-        core.org.add_layer(shapes, lyr=True)
+        core.org.add_layer(shapetypes, lyr=True)
 
         core.check_ktima_version()
         core.geoprocessing.merge(shapetypes,
                                  force_merge,
-                                 missing,
-                                 roads)
+                                 missing)
 
         return
 

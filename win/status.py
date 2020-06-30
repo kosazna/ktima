@@ -154,8 +154,6 @@ class KTStatus:
             "PST      -  Not Merged")
         print "ROADS    -  Merged" if data[self.mode]["SHAPE"]["ROADS"] else (
             "ROADS    -  Not Merged")
-        print "iROADS   -  Merged\n" if data[self.mode]["SHAPE"][
-            "iROADS"] else "iROADS   -  Not Merged\n"
 
         print("\nExports")
         print("---------------------")

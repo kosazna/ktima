@@ -150,8 +150,6 @@ class KTStatus:
             "PST      -  Not Merged")
         pm("ROADS    -  Merged") if data[self.mode]["SHAPE"]["ROADS"] else pm(
             "ROADS    -  Not Merged")
-        pm("iROADS   -  Merged\n") if data[self.mode]["SHAPE"][
-            "iROADS"] else pm("iROADS   -  Not Merged\n")
 
         pm("\nExports")
         pm("---------------------")

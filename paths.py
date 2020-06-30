@@ -80,6 +80,7 @@ class KTPaths:
         self.gdb_ktima = cp([meleti, gdbs, KTIMA_GDB])
 
         # BASIC PROJECT PATHS
+        self.inputdata = cp([meleti, inputdata])
         self.localdata = cp([meleti, outputdata, localdata_o])
         self.paradosidata = cp([meleti, outputdata, paradosidata_o])
         self.checks_out = cp([mdev, '! --CHECKS-- !', meleti],
@@ -90,6 +91,7 @@ class KTPaths:
         self.fbounddoc = cp([meleti, inputdata, docs_i, 'FBOUND_DOCS.txt'])
         self.status_path = cp([meleti, inputdata, docs_i, json_status])
         self.kt_info_path = cp([meleti, inputdata, docs_i, json_info])
+        self.kt_naming = cp([meleti, inputdata, docs_i, json_naming])
 
         # XML DOCS
         self.geo_xml = cp([meleti, inputdata, xml_i, 'GEO_METADATA.xml'])

@@ -53,7 +53,10 @@ all_ktima = [
     "DBOUND",
     "OIK",
     "POI",
+    "POL",
     "FBOUND",
+    "PRE_FBOUND",
+    "PRE_COASTLINE",
     "PST",
     "ROADS",
     "EAS",
@@ -65,5 +68,5 @@ all_ktima = [
     "VSTEAS_REL",
     "RBOUND"]
 
-count_lines(src)
+print(sorted(all_ktima))
 

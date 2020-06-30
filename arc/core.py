@@ -71,7 +71,7 @@ class Geoprocessing:
 
     @staticmethod
     @mxd
-    def merge(shapes, force_merge=False, missing='raise', _roads='old'):
+    def merge(shapes, force_merge=False, missing='raise'):
         """
         ArcGIS automation to merge shp_list
 
@@ -84,9 +84,6 @@ class Geoprocessing:
         :param missing: str, {'raise', 'ignore'}, optional
             Whether or nor missing shp_list should be ignored
             (default: 'raise')
-        :param _roads: str, optional
-            Which roads will be used for merging. Parameter is passed
-            to choose_roads function (default: 'old')
         :return: nothing
         """
 
@@ -1130,10 +1127,10 @@ class Fix:
             for row in _data["SHAPES_GEOMETRY"]["OTA"]:
                 ota_folder = str(row)
                 repaired.append(str(ota_folder))
-                for i in ns.geometry_list:
+                for i in info.geometry_list:
                     lyr = paths.ktima(ota_folder, i, ext=True)
 
-                    if arcpy.Exists(lyr):
+                    if os.path.exists(lyr):
                         pm("Repairing geometry in {}_{}".format(i, ota_folder))
                         arcpy.RepairGeometry_management(lyr, "KEEP_NULL")
 

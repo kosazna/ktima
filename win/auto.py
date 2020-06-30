@@ -12,6 +12,7 @@
 
 from status import *
 from update import update_from_server
+from build import Builder
 from collections import Counter
 
 
@@ -57,7 +58,9 @@ def validate_input(_func):
                               "(6) Delete Data\n"
                               "(7) Count Files\n"
                               "(8) Get scanned files\n"
-                              "(9) Update ktima\n\n",
+                              "(9) Create Directories\n"
+                              "(10) Update ktima\n"
+                              "(11) Update JSONS\n\n",
                'get_folder': "\nGet from : (S)erver  /  (L)ocal \n\n",
                'export_folder': "\nExport to : (L)ocal  /  (P)aradosi\n\n",
                'shapes': "\nSHAPEFILE: (Enter for ALL, or split with '-')\n\n",
@@ -76,13 +79,13 @@ def validate_input(_func):
                                 "(L)ocalData\n"
                                 "(P)aradosiData\n\n"}
 
-    sl = ['']
-    ol = ['']
+    sl = ['', '~']
+    ol = ['', '~']
     [sl.append(i) for i in info.all_ktima]
     [ol.append(i) for i in info.ota_list]
 
     approved = {'action_type': ['', '1', '2', '3', '4', '5',
-                                '6', '7', '8', '9'],
+                                '6', '7', '8', '9', '10', '11'],
                 'get_folder': ['S', 'L'],
                 'export_folder': ['L', 'P'],
                 'shapes': sl,
@@ -226,9 +229,9 @@ def roads():
                                                         '.shx',
                                                         '.dbf']):
             if bname == 'ROADS':
-                base = paths.old_roads.split('\\')[1:]
-                base += fpath.split('\\')[4:]
-                outpath = cp(base)
+                _base = paths.old_roads.split('\\')[1:]
+                _base += fpath.split('\\')[4:]
+                outpath = cp(_base)
                 c_copy(fpath, outpath)
 
         status.update("SHAPE", "iROADS", False)
@@ -545,8 +548,10 @@ def create_empty_dirs(base_folder, how, ota_list=None, shp_list=None):
             return
         else:
             final_ota = ota_list
-    else:
+    elif isinstance(ota_list, str):
         final_ota = ota_list.split('-')
+    else:
+        final_ota = ota_list
 
     if isinstance(shp_list, list):
         if not shp_list:
@@ -554,8 +559,10 @@ def create_empty_dirs(base_folder, how, ota_list=None, shp_list=None):
             return
         else:
             final_shp = shp_list
-    else:
+    elif isinstance(shp_list, str):
         final_shp = shp_list.split('-')
+    else:
+        final_shp = shp_list
 
     if '<ota>' in how or '<shapefile>' in how:
         if '<ota>' in how and ota_list is None:
@@ -631,6 +638,18 @@ def fill_empty_shp(ota_list=None, shp_list=None):
     print('DONE !')
 
 
+def update_jsons():
+    constructor = Builder(MELETI, info.company_name)
+    constructor.update_ktima_info()
+    constructor.update_temp_paths()
+
+    components = add_mel_inpath(build_file_NA, MELETI)
+    components.extend([inputdata, docs_i, json_naming])
+    repo = cp(components, origin=ktl['temp'][USER])
+
+    c_copy(repo, paths.kt_naming)
+
+
 if __name__ == '__main__':
     if get_pass():
         while True:
@@ -638,13 +657,8 @@ if __name__ == '__main__':
             print('\nGive a command:\n')
             action_type = validate_input('action_type')
 
-            if action_type == "1LPAA4PS5":
-                mod_date = (
-                    raw_input("\nMetadata Date (xx/xx/xxxx) : \n").upper())
-
             print('\n')
-            print('_' * 80)
-            print('_' * 80)
+            print('=' * 80)
 
             if action_type == "1":
                 shapefiles()
@@ -673,16 +687,52 @@ if __name__ == '__main__':
                 counter()
             elif action_type == "8":
                 get_scanned()
-            elif action_type == '9':
+            elif action_type == "9":
+                base = raw_input('Give folder path to create directories\n')
+                method = raw_input('Give method of creation\n')
+                if base.startswith('paths.'):
+                    folder_base = eval(base)
+                else:
+                    folder_base = base
+
+                otas_to_create = validate_input('ota_code')
+                print('Available Shpaefiles:\n')
+                print(strize(info.all_ktima))
+                shapes_to_create = validate_input('shapes')
+
+                if not otas_to_create:
+                    new_otas = info.ota_list
+                elif otas_to_create == "~":
+                    new_otas = None
+                elif otas_to_create.startswith('~'):
+                    no_need = otas_to_create.split('-')[1:]
+                    new_otas = [_ota for _ota in info.ota_list if
+                                _ota not in no_need]
+                else:
+                    new_otas = otas_to_create
+
+                if not shapes_to_create:
+                    new_shapes = info.all_ktima
+                elif shapes_to_create == "~":
+                    new_shapes = None
+                elif shapes_to_create.startswith('~'):
+                    no_need = shapes_to_create.split('-')[1:]
+                    new_shapes = [_shape for _shape in info.all_ktima if
+                                  _shape not in no_need]
+                else:
+                    new_shapes = shapes_to_create
+                create_empty_dirs(folder_base, method, new_otas, new_shapes)
+            elif action_type == "10":
                 extract('Temp', ktl['temp'][USER])
                 update_from_server()
                 log('Update', log_list=str(local_ktima_version))
+            elif action_type == "11":
+                update_jsons()
             else:
                 extract('Local', ktl['temp'][USER])
 
             print('\n')
-            print('_' * 80)
-            print('_' * 80)
+            print('=' * 80)
     else:
         print("\nAccess denied\n")
         action_type = "None"

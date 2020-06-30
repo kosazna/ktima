@@ -162,17 +162,7 @@ class Roads(object):
 
     @staticmethod
     def getParameterInfo():
-        roads = arcpy.Parameter(
-            displayName="Check new ROADS",
-            name="roads",
-            datatype="Boolean",
-            parameterType="Required",
-            direction="Input")
-
-        roads.value = "false"
-
-        params = [roads]
-        return params
+        return
 
     @staticmethod
     def updateParameters(params):
@@ -181,15 +171,9 @@ class Roads(object):
     @staticmethod
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
-        new_roads = bool(params[0].value)
-
-        if new_roads:
-            roads = 'new'
-        else:
-            roads = 'old'
 
         core.check_ktima_version()
-        core.check.roads(roads)
+        core.check.roads()
 
         return
 

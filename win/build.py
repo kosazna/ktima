@@ -284,7 +284,7 @@ def _validate_input(_func):
                          "(2) Update Meleti Info\n"
                          "(3) Update User Paths\n\n"}
 
-    approved = {'meleti': ['1', '2', '3', '4', '5', '6'],
+    approved = {'meleti': ['1', '2', '3', '4', '5', '6', '7'],
                 'action': ['1', '2', '3', '4', '5'],
                 'custom_build': ['1', '2', '3', '4', '5'],
                 'update': ['1', '2', '3']}
@@ -295,11 +295,12 @@ def _validate_input(_func):
         user_action = raw_input(console[_func]).upper()
 
     mel_mapper = {'1': 'KT1-05',
-                  '2': 'KT2-11',
-                  '3': 'KT5-14',
-                  '4': 'KT5-16',
-                  '5': 'KT5-17',
-                  '6': 'KT5-22'}
+                  '2': 'KT2-02',
+                  '3': 'KT2-11',
+                  '4': 'KT5-14',
+                  '5': 'KT5-16',
+                  '6': 'KT5-17',
+                  '7': 'KT5-22'}
 
     if _func == 'meleti':
         return mel_mapper[user_action]
@@ -332,7 +333,7 @@ if __name__ == '__main__':
             print('\nGive a command:\n')
             action_type = _validate_input('action')
 
-            print('#' * 60)
+            print('=' * 60)
 
             if action_type == "1":
                 for _func in func_mapper[action_type]:
@@ -348,6 +349,6 @@ if __name__ == '__main__':
             elif action_type == "5":
                 builder.get_binary()
 
-            print('#' * 60)
+            print('=' * 60)
     else:
         print("\nAccess denied\n")

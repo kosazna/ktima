@@ -172,7 +172,6 @@ if __name__ == 'ktima.arc.data':
     naming_data = load_json(naming_path)
 
     # INSTANTIATING CLASSES
-    # lui = LookUpInfo(info_data, naming_data)
     info = KTInfo(info_data)
     ns = KTNamingSchema(naming_data, info)  # stands for naming schema
     paths = KTPaths(MELETI, info.mel_type, info.company_name)
