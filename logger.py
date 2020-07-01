@@ -170,7 +170,7 @@ class KTLog:
 
         if log_list is None:
             comments = log_mapper[msg]
-        elif isinstance(log_list, str):
+        elif isinstance(log_list, (str, int)):
             comments = log_mapper[msg] % log_list
         else:
             try:

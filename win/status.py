@@ -11,7 +11,6 @@
 
 from ktima.logger import *
 
-local_ktima_version = '8.1.0'
 warning_counter = 0
 
 
@@ -116,7 +115,7 @@ class KTStatus:
         print("\nMeleti: {}  --  {}".format(self.meleti, self.mode.upper()))
 
         if self.mode == STANDALONE_MODE:
-            print("\nOTA : {}".format(self.otas))
+            print("\nOTA : {}".format('-'.join(self.otas)))
 
         print("\nGeometry Status")
         print("---------------------")

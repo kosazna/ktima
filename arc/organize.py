@@ -43,7 +43,7 @@ class KTOrganizer:
         """
 
         for shape in self.loc_fl.keys():
-            for ota in info.ota_list:
+            for ota in info.mel_ota_list:
                 local_lyr = paths.ktima(ota, shape, ext=True)
 
                 if os.path.exists(local_lyr):
@@ -89,15 +89,19 @@ class KTOrganizer:
             loc_miss = mxdlist.difference(locallist)
             mxd_miss = locallist.difference(mxdlist)
 
-            lm = sorted(loc_miss)
-            mm = sorted(mxd_miss)
+            lm_need = [i for i in loc_miss if i in kt.otas]
+            mm_need = [i for i in mxd_miss if i in kt.otas]
+
+            lm = sorted(lm_need)
+            mm = sorted(mm_need)
 
             if not mm and not lm:
                 pm("{} - missing : None".format(shp_name))
             elif mm:
-                pm("MXD missing - {}: {}".format(shp_name, mm))
+                pm("MXD missing - {:>7}: [{}]".format(shp_name, ', '.join(mm)))
             elif lm:
-                pm("LocalData missing - {}: {}".format(shp_name, lm))
+                pm("LocalData missing - {:>7}: [{}]".format(shp_name,
+                                                            ', '.join(lm)))
 
         pm('\n')
 
@@ -209,25 +213,6 @@ class KTOrganizer:
                     return sorted(fcs)
         except TypeError:
             pass
-
-
-# def choose_roads(roads_type):
-#     """
-#     Chooses roads for processing.
-#
-#     :param roads_type: str
-#         - 'old': old roads in InpusData
-#         - 'new': new roads from localdata
-#     :return: str
-#         'iROADS' if 'old' else 'ROADS' if 'new'
-#     """
-#
-#     if roads_type == 'old':
-#         rd_shape = "iROADS"
-#     else:
-#         rd_shape = "ROADS"
-#
-#     return rd_shape
 
 
 def turn_off():

@@ -13,7 +13,7 @@
 import getpass
 from cust_win import *
 
-local_ktima_version = '8.2'
+local_ktima_version = '8.2.2'
 
 # MODES
 KTIMA_MODE = 'ktima'

@@ -162,7 +162,7 @@ def progress(count, total):
     """
 
     suffix = '{}/{}'.format(count, total)
-    bar_len = 80
+    bar_len = 40
     filled_len = int(round(bar_len * count / float(total)))
 
     percents = int(round(100.0 * count / total, 0))
@@ -215,8 +215,8 @@ def copy_shp(src, dst, shape_name, if_not_dst_create=False):
     counter = 0
 
     for ext in shape_extensions:
-        inpath = os.path.join(src, shape_name + ext)
-        outpath = os.path.join(dst, shape_name + ext)
+        inpath = os.path.join(src, "{}{}".format(shape_name, ext))
+        outpath = os.path.join(dst, "{}{}".format(shape_name, ext))
 
         if os.path.exists(inpath):
             if os.path.exists(dst):

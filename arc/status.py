@@ -115,7 +115,7 @@ class KTStatus:
         pm("\nMeleti: {}  --  {}".format(self.meleti, self.mode.upper()))
 
         if self.mode == STANDALONE_MODE:
-            pm("\nOTA : {}".format(self.otas))
+            pm("\nOTA : {}".format('-'.join(self.otas)))
 
         pm("\nGeometry Status")
         pm("---------------------")

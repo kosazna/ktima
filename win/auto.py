@@ -33,6 +33,31 @@ status = KTStatus(MELETI, KTIMA_MODE, info.ota_list)
 log = KTLog(MELETI)
 
 
+def fmt2list(formatter, full_list):
+    if not formatter:
+        final_list = full_list
+    elif formatter == "~":
+        final_list = None
+    elif formatter.startswith('~'):
+        no_need = formatter.split('-')[1:]
+        final_list = [_i for _i in full_list if _i not in no_need]
+    elif formatter.startswith('info.'):
+        final_list = eval(formatter)
+    else:
+        final_list = formatter.split('-')
+
+    return sorted(final_list)
+
+
+def fmt2path(formatter):
+    if formatter.startswith('paths.'):
+        folder_base = eval(formatter)
+    else:
+        folder_base = formatter
+
+    return folder_base
+
+
 def validate_input(_func):
     """
     Custom function for USER input.
@@ -59,8 +84,7 @@ def validate_input(_func):
                               "(7) Count Files\n"
                               "(8) Get scanned files\n"
                               "(9) Create Directories\n"
-                              "(10) Update ktima\n"
-                              "(11) Update JSONS\n\n",
+                              "(10) Update ktima\n\n",
                'get_folder': "\nGet from : (S)erver  /  (L)ocal \n\n",
                'export_folder': "\nExport to : (L)ocal  /  (P)aradosi\n\n",
                'shapes': "\nSHAPEFILE: (Enter for ALL, or split with '-')\n\n",
@@ -85,7 +109,7 @@ def validate_input(_func):
     [ol.append(i) for i in info.ota_list]
 
     approved = {'action_type': ['', '1', '2', '3', '4', '5',
-                                '6', '7', '8', '9', '10', '11'],
+                                '6', '7', '8', '9', '10'],
                 'get_folder': ['S', 'L'],
                 'export_folder': ['L', 'P'],
                 'shapes': sl,
@@ -135,36 +159,6 @@ def shapefiles():
     :return: Nothing
     """
 
-    get_folder = validate_input('get_folder')
-    export_folder = validate_input('export_folder')
-    shapes = validate_input('shapes')
-    ota_code = validate_input('ota_code')
-
-    user_shapes = shapes.split("-")
-    user_ota_list = ota_code.split("-")
-
-    shape_list = []
-    log_status = []
-
-    if get_folder == "S" and export_folder == "L":
-        shape_list = info.all_ktima
-        log_status.append('Server')
-        log_status.append('LocalData')
-
-        if not shapes:
-            for shape in info.status_list:
-                status.update('SHAPE', shape, False)
-            status.update('EXPORTED', "FBOUND", False)
-        else:
-            for shape in user_shapes:
-                status.update('SHAPE', shape, False)
-    elif get_folder == "L" and export_folder == "P":
-        shape_list = info.all_ktima
-        log_status.append('LocalData')
-        log_status.append('ParadosiData')
-
-    print("Initializing...\n")
-
     def export(shp, ota_num):
         inpath = ""
         outpath = ""
@@ -177,39 +171,45 @@ def shapefiles():
             outpath = paths.ktima_folder(ota_num, shp,
                                          spatial_folder=paradosidata_o)
 
-        for fpath, fname, bname, ext in list_dir(inpath, match=['.shp',
-                                                                '.shx',
-                                                                '.dbf']):
-            if bname == shp and os.path.exists(fpath):
-                shutil.copyfile(fpath, os.path.join(outpath, fname))
+        for fpath, fname, bname, ext in list_dir(inpath, match='.shp'):
+            if bname == shp:
+                copy_shp(inpath, outpath, bname)
 
-    progress_counter = 0
+    get_folder = validate_input('get_folder')
+    export_folder = validate_input('export_folder')
+    shapes = validate_input('shapes')
+    ota_code = validate_input('ota_code')
+
+    user_shapes = fmt2list(shapes, info.all_ktima)
+    user_ota_list = fmt2list(ota_code, info.ota_list)
+
+    log_status = []
+
+    if get_folder == "S" and export_folder == "L":
+        log_status.append('Server')
+        log_status.append('LocalData')
+
+        if not shapes:
+            for shape in info.status_list:
+                status.update('SHAPE', shape, False)
+            status.update('EXPORTED', "FBOUND", False)
+        else:
+            for shape in user_shapes:
+                status.update('SHAPE', shape, False)
+    elif get_folder == "L" and export_folder == "P":
+        log_status.append('LocalData')
+        log_status.append('ParadosiData')
+
+    print("Initializing...\n")
+
+    progress_counter_ota = 0
 
     if get_pass():
-        if ota_code == "" and shapes == "":
-            for ota in info.ota_list:
-                progress_counter += 1
-                for shape in shape_list:
-                    export(shape, ota)
-                progress(progress_counter, len(info.ota_list))
-        elif ota_code != "" and shapes != "":
-            for ota in user_ota_list:
-                progress_counter += 1
-                for shape in user_shapes:
-                    export(shape, ota)
-                progress(progress_counter, len(user_ota_list))
-        elif ota_code != "":
-            for ota in user_ota_list:
-                progress_counter += 1
-                for shape in shape_list:
-                    export(shape, ota)
-                progress(progress_counter, len(user_ota_list))
-        elif shapes != "":
-            for ota in info.ota_list:
-                progress_counter += 1
-                for shape in user_shapes:
-                    export(shape, ota)
-                progress(progress_counter, len(info.ota_list))
+        for ota in user_ota_list:
+            progress_counter_ota += 1
+            for shape in user_shapes:
+                export(shape, ota)
+            progress(progress_counter_ota, len(user_ota_list))
 
         log('Export Shapefiles', log_list=log_status)
     else:
@@ -542,28 +542,6 @@ def create_empty_dirs(base_folder, how, ota_list=None, shp_list=None):
     :return:
     """
 
-    if isinstance(ota_list, list):
-        if not ota_list:
-            print('Empty ota list')
-            return
-        else:
-            final_ota = ota_list
-    elif isinstance(ota_list, str):
-        final_ota = ota_list.split('-')
-    else:
-        final_ota = ota_list
-
-    if isinstance(shp_list, list):
-        if not shp_list:
-            print('Empty shapefile list')
-            return
-        else:
-            final_shp = shp_list
-    elif isinstance(shp_list, str):
-        final_shp = shp_list.split('-')
-    else:
-        final_shp = shp_list
-
     if '<ota>' in how or '<shapefile>' in how:
         if '<ota>' in how and ota_list is None:
             print('<ota> exists without ota_list')
@@ -576,22 +554,22 @@ def create_empty_dirs(base_folder, how, ota_list=None, shp_list=None):
         return
 
     if ota_list is not None and shp_list is not None:
-        for ota in final_ota:
-            for shp in final_shp:
+        for ota in ota_list:
+            for shp in shp_list:
                 plus = how.replace('<ota>', ota).replace('<shapefile>', shp)
                 try:
                     os.makedirs(os.path.join(base_folder, plus))
                 except WindowsError:
                     pass
     elif ota_list is not None and shp_list is None:
-        for ota in final_ota:
+        for ota in ota_list:
             plus = how.replace('<ota>', ota)
             try:
                 os.makedirs(os.path.join(base_folder, plus))
             except WindowsError:
                 pass
     elif ota_list is None and shp_list is not None:
-        for shp in final_shp:
+        for shp in shp_list:
             plus = how.replace('<shapefile>', shp)
             try:
                 os.makedirs(os.path.join(base_folder, plus))
@@ -607,33 +585,15 @@ def fill_empty_shp(ota_list=None, shp_list=None):
     :return:
     """
 
-    empty = Files(paths.empty_shps)
-    empty.explore()
-    empty_shp = list(set(empty.names))
-
-    if ota_list is None:
-        otas = info.ota_list
-    elif isinstance(ota_list, str):
-        otas = ota_list.split('-')
-    else:
-        otas = ota_list
-
-    if shp_list is None:
-        shapes = empty_shp
-    elif isinstance(shp_list, str):
-        shapes = shp_list.split('-')
-    else:
-        shapes = shp_list
-
-    for ota in otas:
-        for shp in shapes:
+    for ota in ota_list:
+        for shp in shp_list:
             check_path = paths.ktima(ota, shp, ext=True)
             if not os.path.exists(check_path):
                 inpath = os.path.join(paths.empty_shps, shp)
                 outpath = paths.ktima_folder(ota, shp)
                 copy_shp(inpath, outpath, shp)
 
-    log('Empty Shapefiles', log_list=shapes)
+    log('Empty Shapefiles', log_list=shp_list)
 
     print('DONE !')
 
@@ -643,8 +603,9 @@ def update_jsons():
     constructor.update_ktima_info()
     constructor.update_temp_paths()
 
-    components = add_mel_inpath(build_file_NA, MELETI)
-    components.extend([inputdata, docs_i, json_naming])
+    components = copy.copy(build_folder_NA).extend(
+        [inputdata, docs_i, json_naming])
+
     repo = cp(components, origin=ktl['temp'][USER])
 
     c_copy(repo, paths.kt_naming)
@@ -660,7 +621,7 @@ if __name__ == '__main__':
             action_type = validate_input('action_type')
 
             print('\n')
-            print('=' * 80)
+            print('=#' * 40)
 
             if action_type == "1":
                 shapefiles()
@@ -671,15 +632,14 @@ if __name__ == '__main__':
             elif action_type == "4":
                 otas_to_create = validate_input('ota_code')
                 shapes_to_create = validate_input('shapes')
-                if not otas_to_create:
-                    new_otas = None
-                else:
-                    new_otas = otas_to_create
 
-                if not shapes_to_create:
-                    new_shapes = None
-                else:
-                    new_shapes = shapes_to_create
+                empty = Files(paths.empty_shps)
+                empty.explore()
+                empty_shp = list(set(empty.names))
+
+                new_otas = fmt2list(otas_to_create, info.ota_list)
+                new_shapes = fmt2list(shapes_to_create, empty_shp)
+
                 fill_empty_shp(new_otas, new_shapes)
             elif action_type == "5":
                 status.show()
@@ -692,49 +652,26 @@ if __name__ == '__main__':
             elif action_type == "9":
                 base = raw_input('Give folder path to create directories\n')
                 method = raw_input('Give method of creation\n')
-                if base.startswith('paths.'):
-                    folder_base = eval(base)
-                else:
-                    folder_base = base
-
                 otas_to_create = validate_input('ota_code')
                 print('Available Shpaefiles:\n')
                 print(strize(info.all_ktima))
                 shapes_to_create = validate_input('shapes')
 
-                if not otas_to_create:
-                    new_otas = info.ota_list
-                elif otas_to_create == "~":
-                    new_otas = None
-                elif otas_to_create.startswith('~'):
-                    no_need = otas_to_create.split('-')[1:]
-                    new_otas = [_ota for _ota in info.ota_list if
-                                _ota not in no_need]
-                else:
-                    new_otas = otas_to_create
+                folder = fmt2path(base)
+                new_otas = fmt2list(otas_to_create, info.ota_list)
+                new_shapes = fmt2list(shapes_to_create, info.all_ktima)
 
-                if not shapes_to_create:
-                    new_shapes = info.all_ktima
-                elif shapes_to_create == "~":
-                    new_shapes = None
-                elif shapes_to_create.startswith('~'):
-                    no_need = shapes_to_create.split('-')[1:]
-                    new_shapes = [_shape for _shape in info.all_ktima if
-                                  _shape not in no_need]
-                else:
-                    new_shapes = shapes_to_create
-                create_empty_dirs(folder_base, method, new_otas, new_shapes)
+                create_empty_dirs(folder, method, new_otas, new_shapes)
             elif action_type == "10":
                 extract('Temp', ktl['temp'][USER])
+                update_jsons()
                 update_from_server()
                 log('Update', log_list=str(local_ktima_version))
-            elif action_type == "11":
-                update_jsons()
             else:
                 extract('Local', ktl['temp'][USER])
 
             print('\n')
-            print('=' * 80)
+            print('=#' * 40)
     else:
         print("\nAccess denied\n")
         action_type = "None"

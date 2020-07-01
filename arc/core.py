@@ -834,12 +834,12 @@ class Check:
 
             count_geom = get_count(ns.pst_geom)
             problematic_set = set()
-            problematic = []
 
             # Elegxos gia to an uparxoun self_intersections kai
             # apomonosi ton provlimatikon KAEK
             if count_geom == 0:
                 pm("\nGEOMETRY OK - NO SELF INTERSECTIONS.\n")
+                problematic = []
             else:
                 pm("\n{} SELF INTERSECTIONS.\n".format(count_geom))
                 pm("Processing...\n")
@@ -858,13 +858,10 @@ class Check:
                 cursor = arcpy.UpdateCursor(ns.p_geometry_ota)
 
                 for row in cursor:
-                    ota = int(row.getValue("OTA"))
+                    ota = str(row.getValue("OTA"))
                     problematic_set.add(ota)
 
-                for item in problematic_set:
-                    problematic.append(item)
-
-                problematic.sort()
+                problematic = sorted(list(problematic_set))
 
                 pm("OTA with geometry problems:\n")
                 for prob_ota in problematic:
@@ -903,12 +900,12 @@ class Check:
 
                 count_geom = get_count(ns.fbound_geom)
                 problematic_set = set()
-                problematic = []
 
                 # Elegxos gia to an uparxoun self_intersections
                 # kai apomonosi ton provlimatikon KAEK
                 if count_geom == 0:
                     pm("\nGEOMETRY OK - NO SELF INTERSECTIONS IN FBOUND.\n")
+                    problematic = []
                 else:
                     arcpy.AddField_management(ns.fbound_geom, "OTA", "TEXT",
                                               field_length=5)
@@ -924,10 +921,7 @@ class Check:
                         ota = int(row.getValue("OTA"))
                         problematic_set.add(ota)
 
-                    for item in problematic_set:
-                        problematic.append(item)
-
-                    problematic.sort()
+                    problematic = sorted(list(problematic_set))
 
                     pm("OTA with FBOUND geometry problems :\n")
                     for prob_ota in problematic:
@@ -1226,9 +1220,10 @@ class Fields:
         for lyr_pst in org.fetch('PST', missing='ignore'):
             if lyr_pst[-5:] in kt.otas:
                 pm("Processing {}".format(lyr_pst))
-                arcpy.SelectLayerByAttribute_management(lyr_pst,
-                                                        "NEW_SELECTION",
-                                                        " ORI_CODE = '' ")
+                arcpy.SelectLayerByAttribute_management(
+                    lyr_pst,
+                    "NEW_SELECTION",
+                    " ORI_CODE = '' AND ORI_TYPE NOT IN (5,6) ")
                 arcpy.CalculateField_management(lyr_pst, "ORI_TYPE", '1',
                                                 "PYTHON_9.3")
                 arcpy.CalculateField_management(lyr_pst, "DEC_ID", "''",

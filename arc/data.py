@@ -43,7 +43,7 @@ class KTMode:
         status[self.mode].otas = otas
 
         pm('\nMODE : {}\n'.format(self.mode))
-        pm('\nOTA : {}\n'.format(self.otas))
+        pm('\nOTA : {}\n'.format('-'.join(self.otas)))
 
         if mode == STANDALONE_MODE:
             for shape in info.merging_list:

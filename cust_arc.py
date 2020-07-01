@@ -26,7 +26,7 @@ def pm(msg):
 
 def get_count(fc):
     """
-    Counts how many features a shapefile has.
+    Counts formatter many features a shapefile has.
 
     :param fc: str
         Shapefile or feature class .

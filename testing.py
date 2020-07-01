@@ -42,31 +42,29 @@ paths = KTPaths(meleti, mel_type, company_name)
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_7'], origin=gd[USER])
 
-all_ktima = [
-    "ASTENOT",
-    "ASTIK",
-    "ASTOTA",
-    "ASTTOM",
-    "BLD",
-    "BLOCK_PNT",
-    "CBOUND",
-    "DBOUND",
-    "OIK",
-    "POI",
-    "POL",
-    "FBOUND",
-    "PRE_FBOUND",
-    "PRE_COASTLINE",
-    "PST",
-    "ROADS",
-    "EAS",
-    "VST",
-    "EIA_PNT",
-    "EIA",
-    "MRT",
-    "NOMI",
-    "VSTEAS_REL",
-    "RBOUND"]
+all_ktima = ['ASTENOT',
+             'ASTIK',
+             'ASTOTA',
+             'ASTTOM',
+             'BLD',
+             'BLOCK_PNT',
+             'CBOUND',
+             'DBOUND',
+             'EAS',
+             'EIA',
+             'EIA_PNT',
+             'FBOUND',
+             'MRT',
+             'NOMI',
+             'OIK',
+             'POI',
+             'POL',
+             'PRE_COASTLINE',
+             'PRE_FBOUND',
+             'PST',
+             'RBOUND',
+             'ROADS',
+             'VST',
+             'VSTEAS_REL']
 
-print(sorted(all_ktima))
-
+count_lines(src)

@@ -349,6 +349,6 @@ if __name__ == '__main__':
             elif action_type == "5":
                 builder.get_binary()
 
-            print('=' * 60)
+            print('=#' * 40)
     else:
         print("\nAccess denied\n")
