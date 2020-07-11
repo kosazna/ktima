@@ -97,7 +97,7 @@ class Geoprocessing:
                 f_name = "merge_" + shapefile
 
                 to_merge = org.fetch(shapefile, missing=missing)
-
+                
                 try:
                     arcpy.Merge_management(to_merge, kt.gdb(f_name))
 
