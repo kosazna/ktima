@@ -13,7 +13,7 @@
 import getpass
 from cust_win import *
 
-local_ktima_version = '8.2.2'
+local_ktima_version = '8.3'
 
 # MODES
 KTIMA_MODE = 'ktima'
@@ -70,7 +70,7 @@ lib = 'Lib'
 site_packages = 'site-packages'
 google_drive = 'Google Drive'
 work = 'Work'
-ktima_version = 'ktima_7'
+ktima_version = 'ktima_8'
 folder_structure = 'Folder_Structure'
 file_structure = 'File_Structure'
 passes = 'passes'

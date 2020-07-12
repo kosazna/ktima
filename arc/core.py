@@ -97,7 +97,7 @@ class Geoprocessing:
                 f_name = "merge_" + shapefile
 
                 to_merge = org.fetch(shapefile, missing=missing)
-                
+
                 try:
                     arcpy.Merge_management(to_merge, kt.gdb(f_name))
 
@@ -401,8 +401,12 @@ class General:
                 else:
                     how = 'WITHIN'
 
-                for lyr_astota in org.fetch('ASTOTA', missing='ignore'):
-                    ota = str(lyr_astota[-5:])
+                for ota in org.fetch('ASTOTA',
+                                     missing='ignore',
+                                     ota_num=True):
+
+                    lyr_astota = toc_layer('ASTOTA', ota)
+
                     if ota in kt.otas:
                         arcpy.SelectLayerByLocation_management(fc,
                                                                how,
@@ -766,13 +770,24 @@ class Check:
             arcpy.CalculateField_management(ns.pst_astenot, "matches",
                                             'bool(!CAD_ADMIN!==!pstENOT!)',
                                             "PYTHON_9.3")
+
+            count_pst_astenot_og = get_count(ns.pst_astenot)
+
             arcpy.SelectLayerByAttribute_management(
                 ns.pst_astenot,
                 "NEW_SELECTION",
                 " matches = '0' and pstENOT not like '%ΕΚ%' ")
 
-            arcpy.CopyFeatures_management(ns.pst_astenot,
-                                          kt.gdb(ns.p_pst_astenot))
+            count_pst_astenot = get_count(ns.pst_astenot)
+
+            if count_pst_astenot == count_pst_astenot_og:
+                probs_pst_astenot = 0
+            else:
+                probs_pst_astenot = count_pst_astenot
+
+            if probs_pst_astenot:
+                arcpy.CopyFeatures_management(ns.pst_astenot,
+                                              kt.gdb(ns.p_pst_astenot))
 
             arcpy.AddField_management(ns.astenot_asttom, "enotTOM", "TEXT",
                                       field_length=50)
@@ -786,37 +801,46 @@ class Check:
                                             "matches",
                                             'bool(!TOM!==!enotTOM!)',
                                             "PYTHON_9.3")
+
+            count_astenot_asttom_og = get_count(ns.astenot_asttom)
+
             arcpy.SelectLayerByAttribute_management(ns.astenot_asttom,
                                                     "NEW_SELECTION",
                                                     " matches = '0' ")
-            arcpy.CopyFeatures_management(ns.astenot_asttom,
-                                          kt.gdb(ns.p_astenot_asttom))
 
-            count_pst_astenot = get_count(ns.p_pst_astenot)
-            count_astenot_asttom = get_count(ns.p_astenot_asttom)
+            count_astenot_asttom = get_count(ns.astenot_asttom)
+
+            if count_astenot_asttom == count_astenot_asttom_og:
+                probs_astenot_asttom = 0
+            else:
+                probs_astenot_asttom = count_astenot_asttom
+
+            if probs_astenot_asttom:
+                arcpy.CopyFeatures_management(ns.astenot_asttom,
+                                              kt.gdb(ns.p_astenot_asttom))
 
             # PREPEI NA MIN YPARXEI KAMIA EGGRAFI STOUS PROBLIMATIKOUS PINAKES
 
-            if count_pst_astenot == 0:
+            if probs_pst_astenot == 0:
                 pm('\nPST me ASTENOT - OK')
             else:
                 pm('\n! Lathos KAEK se ENOTITA ! - [{}]'.format(
                     count_pst_astenot))
 
-            if count_astenot_asttom == 0:
+            if probs_astenot_asttom == 0:
                 pm('ASTENOT me ASTTOM - OK\n')
             else:
                 pm('! Lathos KAEK se TOMEA ! - [{}]\n'.format(
                     count_astenot_asttom))
 
-            log_shapes = [count_pst_astenot,
-                          count_astenot_asttom]
+            log_shapes = [probs_pst_astenot,
+                          probs_astenot_asttom]
 
             log("Check Numbering", log_list=log_shapes)
             status[kt.mode].update("WRONG_KAEK", "ASTENOT_ASTTOM",
-                                   count_astenot_asttom)
+                                   probs_pst_astenot)
             status[kt.mode].update("WRONG_KAEK", "PST_ASTENOT",
-                                   count_pst_astenot)
+                                   probs_astenot_asttom)
 
     @staticmethod
     def pst_geometry():

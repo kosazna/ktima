@@ -161,58 +161,39 @@ class KTOrganizer:
         else:
             pass
 
-    def fetch(self, shape, missing='raise'):
+    def fetch(self, shape, missing='raise', ota_num=False):
         """
         Determines which for which otas shp_list can be merged
         based on their availability and USER command
+
 
         :param shape: str
             Spatial data categories of Greek Cadastre ('ASTOTA', 'PST', etc.)
         :param missing: str, {'raise', 'ignore'}, optional
             Whether or nor missing shp_list should be ignored
             (default: 'raise')
+        :param ota_num: bool
+            Whether or not to return only ota number
         :return: list
             List of otas
         """
 
-        try:
-            user_otas = set(kt.otas)
-            end_otas = user_otas.intersection(self.available[shape])
-
-            missing_from_user = end_otas.difference(user_otas)
-            missing_ota = self.available[shape].difference(
-                self.mxd_fl[shape])
-
-            if kt.mode == KTIMA_MODE:
-                if missing == 'raise':
-                    fcs = [toc_layer(shape, ota) for ota in
-                           kt.otas]
-                    return sorted(fcs)
-                elif missing == 'ignore':
-                    if missing_ota:
-                        for ota in sorted(missing_ota):
-                            pm('{}_{} source file not available.\n'.format(
-                                shape,
-                                ota))
-                        pm('\nProcess continues. Missing files IGNORED.\n')
-                    fcs = [toc_layer(shape, ota) for ota in
-                           self.available[shape]]
-                    return sorted(fcs)
-            elif kt.mode == STANDALONE_MODE:
-                if missing == 'raise':
-                    fcs = [toc_layer(shape, ota) for ota in kt.otas]
-                    return sorted(fcs)
-                elif missing == 'ignore':
-                    if missing_from_user:
-                        for ota in sorted(missing_from_user):
-                            pm('{}_{} source file not available.\n'.format(
-                                shape,
-                                ota))
-                        pm('\nProcess continues. Missing files IGNORED.\n')
-                    fcs = [toc_layer(shape, ota) for ota in end_otas]
-                    return sorted(fcs)
-        except TypeError:
-            pass
+        if missing == 'raise':
+            if ota_num:
+                fcs = [ota for ota in kt.otas if ota in self.mxd_fl[shape]]
+                return sorted(fcs)
+            else:
+                fcs = [toc_layer(shape, ota) for ota in kt.otas if
+                       ota in self.mxd_fl[shape]]
+                return sorted(fcs)
+        elif missing == 'ignore':
+            if ota_num:
+                fcs = [ota for ota in kt.otas if ota in self.available[shape]]
+                return sorted(fcs)
+            else:
+                fcs = [toc_layer(shape, ota) for ota in kt.otas if
+                       ota in self.available[shape]]
+                return sorted(fcs)
 
 
 def turn_off():
