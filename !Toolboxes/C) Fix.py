@@ -86,7 +86,18 @@ class Roads(object):
 
     @staticmethod
     def getParameterInfo():
-        return
+        st_ignore = arcpy.Parameter(
+            displayName="Ignore Status",
+            name="ignore status",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
+
+        st_ignore.value = "false"
+
+        params = [st_ignore]
+
+        return params
 
     @staticmethod
     def updateParameters(params):
@@ -96,8 +107,10 @@ class Roads(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = False
 
+        ignore_status = bool(params[0].value)
+
         core.check_ktima_version()
-        core.fix.roads()
+        core.fix.roads(ignore_status=ignore_status)
 
         return
 
@@ -121,7 +134,7 @@ class Fields(object):
             direction="Input",
             multiValue=True)
 
-        fields.filter.list = ["ASTENOT", "ASTTOM", "PST"]
+        fields.filter.list = ["ASTENOT", "ASTTOM", "PST", "FBOUND_DOC_ID"]
 
         params = [fields]
         return params
@@ -134,8 +147,11 @@ class Fields(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = False
 
-        _fields = params[0].valueAsText
+        _fields = str(params[0].valueAsText)
+
         shapes = _fields.split(";")
+
+        core.pm(shapes)
 
         core.check_ktima_version()
 
@@ -146,6 +162,8 @@ class Fields(object):
                 core.fields.asttom()
             elif _shape == "PST":
                 core.fields.pst()
+            elif _shape == "FBOUND_DOC_ID":
+                core.fields.fbound_docs()
             else:
                 pass
 

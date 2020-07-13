@@ -20,7 +20,8 @@ req_map = {'merge': info.merging_list,
            'fbound_geometry': ['FBOUND'],
            'pst': ['PST'],
            'asttom': ['ASTTOM'],
-           'astenot': ['ASTENOT']}
+           'astenot': ['ASTENOT'],
+           'fbound_docs': ['FBOUND']}
 
 
 def toc_layer(shape, ota):

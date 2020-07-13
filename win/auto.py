@@ -406,7 +406,7 @@ def organize():
                 for ota in info.ota_list:
                     if ota in bname and 'VSTEAS_REL' in bname:
                         outpath = os.path.join(paths.mdb_vsteas, ota,
-                                               'SHAPE', 'VSTEAS_REL', fname)
+                                               'SHAPE', 'VSTEAS_REL', fname[6:])
                         c_copy(fpath, outpath)
                     elif ota in bname:
                         outpath = os.path.join(paths.mdb_out, ota, fname)
@@ -442,7 +442,7 @@ def counter():
     xml.explore(match='.xml')
 
     cnt_shapes = Counter(map(str.upper, shapes.names))
-    c_mdb = Counter([i[6:] if not i == 'POWNERS.mdb' else i for i in mdb.names])
+    c_mdb = Counter(mdb.names)
     c_xml = Counter(xml.names)
 
     ota_counter = {os.path.splitext(k)[0]: [] for k in cnt_shapes.keys()}

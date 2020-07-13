@@ -78,7 +78,18 @@ class Roads(object):
 
     @staticmethod
     def getParameterInfo():
-        return
+        st_ignore = arcpy.Parameter(
+            displayName="Ignore Status",
+            name="ignore status",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
+
+        st_ignore.value = "false"
+
+        params = [st_ignore]
+
+        return params
 
     @staticmethod
     def updateParameters(params):
@@ -88,8 +99,10 @@ class Roads(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        ignore_status = bool(params[0].value)
+
         core.check_ktima_version()
-        core.create.roads()
+        core.create.roads(ignore_status=ignore_status)
 
         return
 

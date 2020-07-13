@@ -42,29 +42,45 @@ paths = KTPaths(meleti, mel_type, company_name)
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
 dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_7'], origin=gd[USER])
 
-all_ktima = ['ASTENOT',
-             'ASTIK',
-             'ASTOTA',
-             'ASTTOM',
-             'BLD',
-             'BLOCK_PNT',
-             'CBOUND',
-             'DBOUND',
-             'EAS',
-             'EIA',
-             'EIA_PNT',
-             'FBOUND',
-             'MRT',
-             'NOMI',
-             'OIK',
-             'POI',
-             'POL',
-             'PRE_COASTLINE',
-             'PRE_FBOUND',
-             'PST',
-             'RBOUND',
-             'ROADS',
-             'VST',
-             'VSTEAS_REL']
+all_ktima = [
+    "ASTENOT",
+    "ASTIK",
+    "ASTOTA",
+    "ASTTOM",
+    "BLD",
+    "BLOCK_PNT",
+    "CBOUND",
+    "DBOUND",
+    "OIK",
+    "POI",
+    "POL",
+    "FBOUND",
+    "PRE_FBOUND",
+    "PRE_COASTLINE",
+    "PST",
+    "ROADS",
+    "EAS",
+    "VST",
+    "EIA_PNT",
+    "EIA",
+    "MRT",
+    "NOMI",
+    "VSTEAS_REL",
+    "RBOUND"]
 
-count_lines(src)
+print(sorted(all_ktima))
+
+
+def something(how, full_list):
+    if not how:
+        new = full_list
+    elif how == "~":
+        new = None
+    elif how.startswith('~'):
+        no_need = how.split('-')[1:]
+        new = [_i for _i in full_list if
+               _i not in no_need]
+    else:
+        new = how
+
+    return new

@@ -134,9 +134,9 @@ class KTLog:
         """
 
         log_mapper = {
-            'Check Overlaps': "Check with: %s // Overlaps: ASTTOM - [%d] / ASTENOT - [%d] / PST - [%d]",
+            'Check Overlaps': "%s / ASTTOM- [%d] / ASTENOT- [%d] / PST- [%d]",
             'Check PST Geometry': 'Self Intersections - [%d] // OTA : %s',
-            'Check ROADS': 'Intersections : ALL - [%d] / Possible problems - [%d]',
+            'Check ROADS': 'Intersections: ALL - [%d] / Problematic - [%d]',
             'Check DBOUND': 'DBOUND missing "DEC_ID" or "DEC_DATE" : [%d]',
             'Check BLD': 'BLD missing "BLD_T_C" or "BLD_NUM" : [%d]',
             'Fix Geometry': 'Repaired geometry in OTA : %s',
@@ -150,7 +150,6 @@ class KTLog:
             'Create PRE_FBOUND': 'Created New PRE_FBOUND',
             'Export Shapefiles': 'Copied files from %s to %s',
             'Organize files': "Organized %s to !OutputData",
-            'New ROADS to InputData': "Copied new ROADS to Inputs folder for testing",
             'Clear directories': 'Deleted from %s - %s files',
             'Merge Shapefiles': "Merged LocalData shp_list for testing : %s",
             'Check FBOUND Geometry': 'Self Intersections - [%d] // OTA : %s',
@@ -161,10 +160,11 @@ class KTLog:
             'Change Mode': 'Changed mode to: [%s]',
             'Set Default Mode': 'Default mode set to: [%s]',
             'Count Shapefiles': '%s',
-            'Check Numbering': "Wrong KAEK: ASTENOT-ASTTOM - [%d] / PST-ASTENOT - [%d]",
+            'Check Numbering': "Wrong KAEK: ASTENOT - [%d] / PST - [%d]",
             'Check ASTOTA': "Check with: %s // Overlaps: [%d]",
             'Empty Shapefiles': 'Created empty shapefiles for : %s',
-            'Docs update': 'Updated json schemas'}
+            'Docs update': 'Updated json schemas',
+            'Fields FBOUND': 'Added DOC_ID info to FBOUNDs'}
 
         time_now = datetime.datetime.now().replace(microsecond=0)
 

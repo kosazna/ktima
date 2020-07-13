@@ -916,59 +916,55 @@ class Check:
         :return: Nothing
         """
 
-        if status[kt.mode].check('EXPORTED', "FBOUND"):
-            try:
-                arcpy.CheckGeometry_management(
-                    org.fetch('FBOUND', missing='ignore'),
-                    kt.gdb(ns.fbound_geom))
+        try:
+            arcpy.CheckGeometry_management(
+                org.fetch('FBOUND', missing='ignore'),
+                kt.gdb(ns.fbound_geom))
 
-                count_geom = get_count(ns.fbound_geom)
-                problematic_set = set()
+            count_geom = get_count(ns.fbound_geom)
+            problematic_set = set()
 
-                # Elegxos gia to an uparxoun self_intersections
-                # kai apomonosi ton provlimatikon KAEK
-                if count_geom == 0:
-                    pm("\nGEOMETRY OK - NO SELF INTERSECTIONS IN FBOUND.\n")
-                    problematic = []
-                else:
-                    arcpy.AddField_management(ns.fbound_geom, "OTA", "TEXT",
-                                              field_length=5)
-                    arcpy.CalculateField_management(ns.fbound_geom,
-                                                    "OTA",
-                                                    '!CLASS![-5:]',
-                                                    "PYTHON_9.3")
-                    pm("\n{} SELF INTERSECTIONS IN FBOUND.\n".format(
-                        count_geom))
+            # Elegxos gia to an uparxoun self_intersections
+            # kai apomonosi ton provlimatikon KAEK
+            if count_geom == 0:
+                pm("\nGEOMETRY OK - NO SELF INTERSECTIONS IN FBOUND.\n")
+                problematic = []
+            else:
+                arcpy.AddField_management(ns.fbound_geom, "OTA", "TEXT",
+                                          field_length=5)
+                arcpy.CalculateField_management(ns.fbound_geom,
+                                                "OTA",
+                                                '!CLASS![-5:]',
+                                                "PYTHON_9.3")
+                pm("\n{} SELF INTERSECTIONS IN FBOUND.\n".format(
+                    count_geom))
 
-                    cursor = arcpy.UpdateCursor(ns.fbound_geom)
-                    for row in cursor:
-                        ota = int(row.getValue("OTA"))
-                        problematic_set.add(ota)
+                cursor = arcpy.UpdateCursor(ns.fbound_geom)
+                for row in cursor:
+                    ota = int(row.getValue("OTA"))
+                    problematic_set.add(ota)
 
-                    problematic = sorted(list(problematic_set))
+                problematic = sorted(list(problematic_set))
 
-                    pm("OTA with FBOUND geometry problems :\n")
-                    for prob_ota in problematic:
-                        pm(prob_ota)
+                pm("OTA with FBOUND geometry problems :\n")
+                for prob_ota in problematic:
+                    pm(prob_ota)
 
-                log_fbound_geometry = [count_geom,
-                                       problematic]
+            log_fbound_geometry = [count_geom,
+                                   problematic]
 
-                pm("\nDONE !\n")
+            pm("\nDONE !\n")
 
-                time_now = timestamp()
+            time_now = timestamp()
 
-                status[kt.mode].update("FBOUND_GEOMETRY", "PROBS",
-                                       bool(count_geom))
-                status[kt.mode].update("FBOUND_GEOMETRY", "CD", time_now)
-                status[kt.mode].update("FBOUND_GEOMETRY", "OTA", problematic)
+            status[kt.mode].update("FBOUND_GEOMETRY", "PROBS",
+                                   bool(count_geom))
+            status[kt.mode].update("FBOUND_GEOMETRY", "CD", time_now)
+            status[kt.mode].update("FBOUND_GEOMETRY", "OTA", problematic)
 
-                log('Check FBOUND Geometry', log_list=log_fbound_geometry)
-            except RuntimeError:
-                pm("\n!!! {} source files missing !!!\n".format('FBOUND'))
-        else:
-            raise Exception(
-                "\n\n\n!!! Den exeis vgalei kainouria FBOUND !!!\n\n\n")
+            log('Check FBOUND Geometry', log_list=log_fbound_geometry)
+        except RuntimeError:
+            pm("\n!!! {} source files missing !!!\n".format('FBOUND'))
 
     @staticmethod
     def roads():
@@ -986,8 +982,11 @@ class Check:
             arcpy.SelectLayerByAttribute_management(ns.pstM,
                                                     "NEW_SELECTION",
                                                     " PROP_TYPE = '0701' ")
+
             arcpy.CopyFeatures_management(ns.pstM, kt.gdb(ns.ek))
+
             clear_selection(ns.pstM)
+
             arcpy.Dissolve_management(ns.ek, kt.gdb(ns.temp_ek),
                                       "PROP_TYPE")
 
@@ -995,21 +994,26 @@ class Check:
             arcpy.Intersect_analysis([ns.roadsM, ns.temp_ek],
                                      kt.gdb(ns.intersections_roads),
                                      output_type="POINT")
+
             arcpy.DeleteField_management(ns.intersections_roads, "PROP_TYPE")
 
-            # Elegxos gia aksones pou mporei na kovoun thn idia enotita
-            arcpy.SpatialJoin_analysis(ns.intersections_roads, ns.pstM,
-                                       kt.gdb(ns.intersections_pst_rd),
-                                       match_option="CLOSEST")
-            arcpy.SelectLayerByAttribute_management(ns.intersections_pst_rd,
-                                                    "NEW_SELECTION",
-                                                    " PROP_TYPE = '0101' ")
-            arcpy.SpatialJoin_analysis(ns.intersections_pst_rd,
-                                       ns.astenotM,
-                                       kt.gdb(ns.intersections_astenot_rd))
-
             count_inter_all = get_count(ns.intersections_roads)
-            count_inter_astenot = get_count(ns.intersections_astenot_rd)
+
+            if count_inter_all:
+                # Elegxos gia aksones pou mporei na kovoun thn idia enotita
+                arcpy.SpatialJoin_analysis(ns.intersections_roads, ns.pstM,
+                                           kt.gdb(ns.intersections_pst_rd),
+                                           match_option="CLOSEST")
+                arcpy.SelectLayerByAttribute_management(ns.intersections_pst_rd,
+                                                        "NEW_SELECTION",
+                                                        " PROP_TYPE = '0101' ")
+                arcpy.SpatialJoin_analysis(ns.intersections_pst_rd,
+                                           ns.astenotM,
+                                           kt.gdb(ns.intersections_astenot_rd))
+
+                count_inter_astenot = get_count(ns.intersections_astenot_rd)
+            else:
+                count_inter_astenot = 0
 
             if count_inter_astenot > 10:
                 arcpy.Dissolve_management(ns.intersections_astenot_rd,
@@ -1173,7 +1177,7 @@ class Fix:
 
             repaired = []
 
-            for row in _data["FBOUND_GEOMETRY"]["OTA"]:
+            for row in _data[kt.mode]["FBOUND_GEOMETRY"]["OTA"]:
                 repair_ota = str(row)
                 repaired.append(int(repair_ota))
 
@@ -1192,14 +1196,14 @@ class Fix:
         log('Fix FBOUND Geometry', log_list=repaired)
 
     @staticmethod
-    def roads():
+    def roads(ignore_status=False):
         """
         Fixes ROADS.
 
         :return: Nothing
         """
 
-        if status[kt.mode].check("ROADS", "CPROBS"):
+        if status[kt.mode].check("ROADS", "CPROBS") or ignore_status:
             # Kopsimo ton aksonon 10 cm prin to orio tis enotitas
             arcpy.Buffer_analysis(kt.gdb(ns.temp_ek),
                                   kt.gdb(ns.ek_fixed_bound),
@@ -1292,7 +1296,7 @@ class Fields:
         """
 
         # Prosthiki onomasias sto pedio LOCALITY ton ASTENOT me vasi txt arxeio
-        available_otas = org.fetch('ASTENOT', missing='ignore')
+        available_otas = org.fetch('ASTENOT', missing='ignore', ota_num=True)
 
         with open(paths.locality) as csvfile:
             localnames = csv.reader(csvfile)
@@ -1301,7 +1305,7 @@ class Fields:
                 try:
                     ota = row[0][:5]
                     if ota in available_otas:
-                        lyr_astenot = "ASTENOT_{}".format(ota)
+                        lyr_astenot = toc_layer('ASTENOT', ota)
                         pm("Processing {}".format(lyr_astenot))
                         arcpy.SelectLayerByAttribute_management(
                             lyr_astenot,
@@ -1325,6 +1329,30 @@ class Fields:
         pm("\nDONE !\n")
 
         log('Fields ASTENOT')
+
+    @staticmethod
+    @mxd
+    def fbound_docs():
+        with open(paths.fbounddoc) as csvfile:
+            docs = csv.reader(csvfile)
+
+            for row in docs:
+                try:
+                    ota = row[0]
+                    lyr_fbound = toc_layer('FBOUND', ota)
+                    pm("\nProcessing DOC_ID in {}...\n".format(lyr_fbound))
+
+                    arcpy.CalculateField_management(lyr_fbound,
+                                                    "DOC_ID",
+                                                    "'{}'".format(row[1]),
+                                                    "PYTHON_9.3")
+                except IndexError:
+                    pm("Leipei DOC_ID gia {} apo to .txt arxeio".format(
+                        ota))
+
+        pm("\nDONE !\n")
+
+        log('Fields FBOUND')
 
 
 class Create:
@@ -1445,15 +1473,14 @@ class Create:
             log('Create FBOUND')
 
     @staticmethod
-    def roads():
+    def roads(ignore_status=False):
         """
         Creates ROADS shp_list.
 
         :return: Nothing
         """
 
-        if status[kt.mode].check("ROADS", "CPROBS") \
-                and not status[kt.mode].check("EXPORTED", "ROADS"):
+        if status[kt.mode].check("ROADS", "CPROBS") or ignore_status:
 
             arcpy.FeatureClassToFeatureClass_conversion(
                 kt.gdb(ns.gdb_roads_all),
@@ -1534,7 +1561,7 @@ class Create:
             # Eksagogi ROADS ana OTA
             general.export_per_ota(ns.roads_all,
                                    spatial=True,
-                                   spatial_method='selection_within',
+                                   spatial_method='location_within',
                                    formal=True,
                                    name="ROADS")
 
