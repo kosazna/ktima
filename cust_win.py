@@ -55,25 +55,6 @@ def timestamp():
     return datetime
 
 
-# def cp(p_list=(), origin='C'):
-#     """
-#     Creates path from a list given the drive letter.
-#
-#     :param p_list: list or tuple or set
-#         Items of path.
-#     :param origin: str, optional
-#         Drive letter (default: 'C').
-#     :return: str
-#         Full path for a given p_list else 'C:\\' if p_list is not provided.
-#     """
-#
-#     _path = '{}:\\'.format(origin)
-#     path = ""
-#     for i in range(0, len(p_list)):
-#         path = os.path.join(_path, p_list[i])
-#         _path = path
-#     return path if path else _path
-
 def cp(members, origin='C'):
     """
     Creates path from a list given the drive letter.
@@ -204,13 +185,19 @@ def strize(iterable):
 
 def copy_shp(src, dst, shape_name, if_not_dst_create=False):
     """
+    Copies a shapefile from src to dst.
 
-    :param src:
-    :param dst:
-    :param shape_name:
-    :param if_not_dst_create:
-    :return:
+    :param src: str
+        Source path
+    :param dst: str
+        Destination path
+    :param shape_name: str
+        Name of shapefile
+    :param if_not_dst_create: bool
+        Whether or not the directory will be created if it doesn't exist
+    :return: Nothing
     """
+
     shape_extensions = ['.shp', '.shx', '.dbf']
     counter = 0
 

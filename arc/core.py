@@ -1200,6 +1200,8 @@ class Fix:
         """
         Fixes ROADS.
 
+        :param ignore_status: bool
+            Whether or not to ignore ROADS current state.
         :return: Nothing
         """
 
@@ -1290,7 +1292,7 @@ class Fields:
     @mxd
     def astenot():
         """
-        Supplements LOCALITY fiels in ASTENOT.
+        Supplements LOCALITY field in ASTENOT.
 
         :return: Nothing
         """
@@ -1333,6 +1335,12 @@ class Fields:
     @staticmethod
     @mxd
     def fbound_docs():
+        """
+        Supplements DOC_ID field in ASTENOT.
+
+        :return: Nothing
+        """
+
         with open(paths.fbounddoc) as csvfile:
             docs = csv.reader(csvfile)
 
@@ -1475,8 +1483,10 @@ class Create:
     @staticmethod
     def roads(ignore_status=False):
         """
-        Creates ROADS shp_list.
+        Creates ROADS.
 
+        :param ignore_status: bool
+            Whether or not to ignore ROADS current state.
         :return: Nothing
         """
 

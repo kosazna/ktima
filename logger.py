@@ -54,6 +54,7 @@ class KTLog:
     - kt_log: procect logger
     - company_log: server logger
     - general_log: USER logger
+    - temp_log: temp logger
 
     Methods
     -------

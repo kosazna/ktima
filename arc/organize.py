@@ -29,6 +29,27 @@ def toc_layer(shape, ota):
 
 
 class KTOrganizer:
+    """
+        KTOrganizer indexes the shapefiles and validates available
+        ones. This class also provides different functions with the
+        neccessary list of shapefiles.
+
+        Attributes
+        ----------
+        - loc_fl: shapefiles stored locally
+        - mxd_fl: shapefiles stored in mxd's
+        - mxd_indexing: bool of whether a shapefile is indexed
+        - available: shapefiles available for processing
+
+        Methods
+        -------
+        - localfiles
+        - mxdfiles
+        - validate
+        - add_layer
+        - fetch
+        """
+
     def __init__(self):
         self.loc_fl = {shape: set() for shape in info.all_ktima}
         self.mxd_fl = {shape: set() for shape in info.all_ktima}

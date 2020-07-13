@@ -25,7 +25,7 @@ def show_files(path, match=None):
 
 ##################################################
 
-meleti = 'KT1-05'
+meleti = 'KT2-11'
 company_name = 'NAMA'
 mel_type = 1
 
@@ -68,19 +68,4 @@ all_ktima = [
     "VSTEAS_REL",
     "RBOUND"]
 
-print(sorted(all_ktima))
-
-
-def something(how, full_list):
-    if not how:
-        new = full_list
-    elif how == "~":
-        new = None
-    elif how.startswith('~'):
-        no_need = how.split('-')[1:]
-        new = [_i for _i in full_list if
-               _i not in no_need]
-    else:
-        new = how
-
-    return new
+count_lines(src)

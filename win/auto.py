@@ -34,6 +34,17 @@ log = KTLog(MELETI)
 
 
 def fmt2list(formatter, full_list):
+    """
+    Tranforms user input to a list of elements
+
+    :param formatter: str
+        User input format.
+    :param full_list: list
+        list that will be formatted accordingly
+    :return: list
+        Final list of elements
+    """
+
     if not formatter:
         final_list = full_list
     elif formatter == "~":
@@ -50,6 +61,14 @@ def fmt2list(formatter, full_list):
 
 
 def fmt2path(formatter):
+    """
+    Transforms user input to a path
+
+    :param formatter: str
+        User input format.
+    :return: str
+        Path.
+    """
     if formatter.startswith('paths.'):
         folder_base = eval(formatter)
     else:
@@ -534,12 +553,17 @@ def get_scanned():
 
 def create_empty_dirs(base_folder, how, ota_list=None, shp_list=None):
     """
+    Creates empty directories according to a format provided by the user.
 
-    :param base_folder:
-    :param how:
-    :param ota_list:
-    :param shp_list:
-    :return:
+    :param base_folder: str
+        Path to where the folders must be created
+    :param how: str
+        Formatter
+    :param ota_list: list
+        List with otas
+    :param shp_list: list
+        List of shapefiles
+    :return: Nothing
     """
 
     if '<ota>' in how or '<shapefile>' in how:
@@ -579,10 +603,13 @@ def create_empty_dirs(base_folder, how, ota_list=None, shp_list=None):
 
 def fill_empty_shp(ota_list=None, shp_list=None):
     """
+    Fills folders with empty shapefiles.
 
-    :param ota_list:
-    :param shp_list:
-    :return:
+    :param ota_list: list
+        List with otas
+    :param shp_list: list
+        List of shapefiles
+    :return: Nothing
     """
 
     for ota in ota_list:
@@ -653,7 +680,7 @@ if __name__ == '__main__':
                 base = raw_input('Give folder path to create directories\n')
                 method = raw_input('Give method of creation\n')
                 otas_to_create = validate_input('ota_code')
-                print('Available Shpaefiles:\n')
+                print('Available Shapefiles:\n')
                 print(strize(info.all_ktima))
                 shapes_to_create = validate_input('shapes')
 
