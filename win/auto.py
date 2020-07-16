@@ -20,11 +20,9 @@ MELETI = str(sys.argv[1].split('\\')[1])
 
 # PATHS FOR THE PROJECT INFO AND NAMING SCHEMA
 kt_info_path = cp([MELETI, inputdata, docs_i, 'KT_Info.json'])
-naming_path = cp([MELETI, inputdata, docs_i, 'KT_Naming_Schema.json'])
 
 # DICTIONARIES OF THE PROJECT INFO AND NAMING SCHEMA
 info_data = load_json(kt_info_path)
-naming_data = load_json(naming_path)
 
 # INSTANTIATING CLASSES
 info = KTInfo(info_data)

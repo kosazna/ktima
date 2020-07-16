@@ -86,6 +86,13 @@ class Roads(object):
 
     @staticmethod
     def getParameterInfo():
+        buffer_d = arcpy.Parameter(
+            displayName="Buffer:",
+            name="buffer",
+            datatype="Double",
+            parameterType="Required",
+            direction="Input")
+
         st_ignore = arcpy.Parameter(
             displayName="Ignore Status",
             name="ignore status",
@@ -93,9 +100,10 @@ class Roads(object):
             parameterType="Required",
             direction="Input")
 
+        buffer_d.value = core.ns.ek_bound_reduction
         st_ignore.value = "false"
 
-        params = [st_ignore]
+        params = [buffer_d, st_ignore]
 
         return params
 
@@ -105,12 +113,13 @@ class Roads(object):
 
     @staticmethod
     def execute(params, messages):
-        arcpy.env.addOutputsToMap = False
+        arcpy.env.addOutputsToMap = True
 
-        ignore_status = bool(params[0].value)
+        buffer_d = params[0].value
+        ignore_status = bool(params[1].value)
 
         core.check_ktima_version()
-        core.fix.roads(ignore_status=ignore_status)
+        core.fix.roads(buffer_dist=buffer_d, ignore_status=ignore_status)
 
         return
 

@@ -165,15 +165,13 @@ if __name__ == 'ktima.arc.data':
 
     # PATHS FOR THE PROJECT INFO AND NAMING SCHEMA
     kt_info_path = cp([MELETI, inputdata, docs_i, json_info])
-    naming_path = cp([MELETI, inputdata, docs_i, json_naming])
 
     # DICTIONARIES OF THE PROJECT INFO AND NAMING SCHEMA
     info_data = load_json(kt_info_path)
-    naming_data = load_json(naming_path)
 
     # INSTANTIATING CLASSES
     info = KTInfo(info_data)
-    ns = KTNamingSchema(naming_data, info)  # stands for naming schema
+    ns = KTNamingSchema(info)  # stands for naming schema
     paths = KTPaths(MELETI, info.mel_type, info.company_name)
     log = KTLog(MELETI)
 

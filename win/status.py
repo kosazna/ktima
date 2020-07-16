@@ -25,7 +25,7 @@ def check_ktima_version():
 
     if local_ktima_version != server_ktima_version and warning_counter < 2:
         print('\n! There is an updated "ktima" version !')
-        print('Your realease : {}'.format(local_ktima_version))
+        print('Your release : {}'.format(local_ktima_version))
         print('Newer release: {}\n'.format(server_ktima_version))
         warning_counter += 1
     else:

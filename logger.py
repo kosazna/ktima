@@ -137,7 +137,7 @@ class KTLog:
         log_mapper = {
             'Check Overlaps': "%s / ASTTOM- [%d] / ASTENOT- [%d] / PST- [%d]",
             'Check PST Geometry': 'Self Intersections - [%d] // OTA : %s',
-            'Check ROADS': 'Intersections: ALL - [%d] / Problematic - [%d]',
+            'Check ROADS': 'Intersections: ALL - [%d]',
             'Check DBOUND': 'DBOUND missing "DEC_ID" or "DEC_DATE" : [%d]',
             'Check BLD': 'BLD missing "BLD_T_C" or "BLD_NUM" : [%d]',
             'Fix Geometry': 'Repaired geometry in OTA : %s',

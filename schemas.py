@@ -13,7 +13,7 @@
 import getpass
 from cust_win import *
 
-local_ktima_version = '8.3.3'
+local_ktima_version = '8.4'
 
 # MODES
 KTIMA_MODE = 'ktima'
@@ -141,67 +141,73 @@ class KTInfo:
 
 
 class KTNamingSchema:
-    def __init__(self, naming, mel_info):
-        self.astenotM = naming["merge"]["astenot"]
-        self.astikM = naming["merge"]["astik"]
-        self.astotaM = naming["merge"]["astota"]
-        self.asttomM = naming["merge"]["asttom"]
-        self.bldM = naming["merge"]["bld"]
-        self.dboundM = naming["merge"]["dbound"]
-        self.fboundM = naming["merge"]["fbound"]
-        self.pstM = naming["merge"]["pst"]
-        self.roadsM = naming["merge"]["roads"]
+    def __init__(self, mel_info):
+        self.astikM = "merge_ASTIK"
+        self.pstM = "merge_PST"
+        self.asttomM = "merge_ASTTOM"
+        self.astenotM = "merge_ASTENOT"
+        self.roadsM = "merge_ROADS"
+        self.astotaM = "merge_ASTOTA"
+        self.fboundM = "merge_FBOUND"
+        self.bldM = "merge_BLD"
+        self.dboundM = "merge_DBOUND"
 
-        self.astenotU = naming["union"]["astenot"]
-        self.astikU = naming["union"]["astik"]
-        self.astotaU = naming["union"]["astota"]
-        self.asttomU = naming["union"]["asttom"]
-        self.bldU = naming["union"]["bld"]
-        self.dboundU = naming["union"]["dbound"]
-        self.fboundU = naming["union"]["fbound"]
-        self.pstU = naming["union"]["pst"]
-        self.roadsU = naming["union"]["roads"]
+        self.astikU = "union_ASTIK"
+        self.asttomU = "union_ASTTOM"
+        self.dboundU = "union_DBOUND"
+        self.roadsU = "union_ROADS"
+        self.astenotU = "union_ASTENOT"
+        self.fboundU = "union_FBOUND"
+        self.astotaU = "union_ASTOTA"
+        self.bldU = "union_BLD"
+        self.pstU = "union_PST"
 
-        self.pst_geom = naming["geometry"]["pst"]
-        self.fbound_geom = naming["geometry"]["fbound"]
+        self.p_overlaps_astenot = "_Overlaps_ASTENOT"
+        self.p_overlaps_asttom = "_Overlaps_ASTTOM"
+        self.p_overlaps_astota = "_Overlaps_ASTOTA"
+        self.p_overlaps_pst = "_Overlaps_PST"
 
-        self.p_pst_astenot = naming["probs"]["pst_astenot"]
-        self.p_astenot_asttom = naming["probs"]["astenot_asttom"]
-        self.p_geometry_kaek = naming["probs"]["geometry_kaek"]
-        self.p_geometry_ota = naming["probs"]["geometry_ota"]
-        self.p_roads = naming["probs"]["roads"]
-        self.p_dbound = naming["probs"]["dbound"]
-        self.p_bld = naming["probs"]["bld"]
-        self.p_overlaps_astota = naming["probs"]["overlaps_astota"]
-        self.p_overlaps_astenot = naming["probs"]["overlaps_astenot"]
-        self.p_overlaps_asttom = naming["probs"]["overlaps_asttom"]
-        self.p_overlaps_pst = naming["probs"]["overlaps_pst"]
+        self.p_astenot_asttom = "_Probs_ASTENOT_ASTTOM"
+        self.p_pst_astenot = "_Probs_PST_ASTENOT"
+        self.astenot_asttom = "ASTENOT_in_ASTTOM"
+        self.pst_astenot = "PST_in_ASTENOT"
 
-        self.pst_astenot = naming["misc"]["pst_astenot"]
-        self.astenot_asttom = naming["misc"]["astenot_asttom"]
-        self.ek = naming["misc"]["ek"]
-        self.temp_ek = naming["misc"]["temp_ek"]
-        self.temp_bld = naming["misc"]["temp_bld"]
-        self.intersections_roads = naming["misc"]["intersections_roads"]
-        self.intersections_pst_rd = naming["misc"]["intersections_pst_rd"]
-        self.intersections_astenot_rd = naming["misc"][
-            "intersections_astenot_rd"]
-        self.ek_fixed_bound = naming["misc"]["ek_fixed_bound"]
-        self.ek_bound_reduction = naming["misc"]["ek_bound_reduction"]
-        self.gdb_fbound_all = naming["misc"]["gdb_fbound_all"]
-        self.fbound_all = naming["misc"]["fbound_all"]
-        self.gdb_roads_all = naming["misc"]["gdb_roads_all"]
-        self.roads_all = naming["misc"]["roads_all"]
-        self.intersection_pst_fbound = naming["misc"]["intersection_pst_fbound"]
-        self.gdb_fbound_claim = naming["misc"]["gdb_fbound_claim"]
-        self.fbound_claim = naming["misc"]["fbound_claim"]
-        self.diekdikisi = naming["misc"]["diekdikisi"]
-        self.gdb_pre_fbound_all = naming["misc"]["gdb_pre_fbound_all"]
-        self.pre_fbound_all = naming["misc"]["pre_fbound_all"]
-        self.rd = naming["misc"]["rd"]
-        self.pr = naming["misc"]["pr"]
-        self.kaek_in_dbound = naming["misc"]["kaek_in_dbound"]
-        self.kaek_in_astik = naming["misc"]["kaek_in_astik"]
+        self.p_geometry_kaek = "_Probs_GEOMETRY_KAEK"
+        self.p_geometry_ota = "_Probs_GEOMETRY_OTA"
+        self.pst_geom = "geometry_PST"
+        self.fbound_geom = "geometry_FBOUND"
+
+        self.p_bld = "_Probs_BLD"
+        self.p_dbound = "_Probs_DBOUND"
+        self.temp_bld = "BLD_temp"
+
+        self.p_roads = "_Probs_ROADS"
+        self.p_roads_after_fix = "_Probs_ROADS_WithBuffer"
+        self.intersections_roads = "intersections_ROADS"
+        self.intersections_after_fix = "intersections_ROADS_WithBuffer"
+        self.ek_bound_reduction = -0.01
+        self.ek_fixed_bound = "EK_Buffered"
+        self.ek_check = "EK_ForCheck"
+        self.ek = "EK"
+        self.temp_ek = "EK_Temp"
+        self.roadsM_breaked = "merge_ROADS_splitted"
+        self.intersections_astenot_rd = "intersections_ASTENOT_RD"
+        self.gdb_roads_all = "ROADS_IntersectionsFixed"
+        self.roads_small = "ROADS_SmallSections"
+        self.roads_all = "ROADS_FixedAll"
+
+        self.fbound_claim = "FBOUND_Claim"
+        self.diekdikisi = "Diekdikisi"
+        self.gdb_fbound_claim = "gdb_FBOUND_CLAIM"
+        self.gdb_fbound_all = "gdb_FBOUND_ALL"
+        self.pre_fbound_all = "PRE_FBOUND_ALL"
+        self.fbound_all = "FBOUND_ALL"
+        self.gdb_pre_fbound_all = "gdb_PRE_FBOUND_ALL"
+        self.pr = "PR"
+        self.rd = "RD"
+        self.kaek_in_dbound = "KAEK_IN_DBOUND"
+        self.kaek_in_astik = "KAEK_IN_ASTIK"
+        self.intersection_pst_fbound = "intersections_PST_FBOUND"
 
         self.oria_etairias = '{}_ORIA_{}'.format(
             mel_info.meleti.replace('-', '_'),

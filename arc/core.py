@@ -561,9 +561,9 @@ class Check:
 
             precision_txt = '{:.{}f} m'.format(_inner, inner)
 
-            pm("\nCheck accuracy : {}\n".format(precision_txt))
+            pm("\n  Check accuracy : {}\n".format(precision_txt))
 
-            pm("\nProcessing...\n")
+            pm("\n  Processing...\n")
 
             geoprocessing.union(['ASTOTA'], _inner, gaps=False)
             turn_off()
@@ -612,9 +612,9 @@ class Check:
                             ns.p_overlaps_leitourgoum))
 
                 if count_leitourgoun_m == count_leitourgoun_u:
-                    pm('\nLEITOURGOUN - OK')
+                    pm('\n  - LEITOURGOUN - OK\n')
                 else:
-                    pm('\nLEITOURGOUN - ! Overlaps ! - [{}]'.format(
+                    pm('\n  - LEITOURGOUN - ! Overlaps ! - [{}]\n'.format(
                         diff_leitourgoun))
 
             log_shapes = [precision_txt,
@@ -622,9 +622,9 @@ class Check:
 
             # TO UNION PREPEI NA EINAI IDIO ME TO MERGE
             if count_astota_m == count_astota_u:
-                pm('\nASTOTA - OK\n')
+                pm('\n  - ASTOTA - OK\n')
             else:
-                pm('\nASTOTA - ! Overlaps ! - [{}]\n'.format(diff_astota))
+                pm('\n  - ASTOTA - ! Overlaps ! - [{}]\n'.format(diff_astota))
 
             log('Check ASTOTA', log_list=log_shapes)
 
@@ -645,9 +645,9 @@ class Check:
 
             precision_txt = '{:.{}f} m'.format(precision, accuracy)
 
-            pm("\nCheck accuracy : {}\n".format(precision_txt))
+            pm("\n  Check accuracy : {}\n".format(precision_txt))
 
-            pm("\nProcessing...\n")
+            pm("\n  Processing...\n")
 
             # GEOPROCESSING
 
@@ -707,19 +707,19 @@ class Check:
 
             # TO UNION PREPEI NA EINAI IDIO ME TO MERGE
             if count_pst_m == count_pst_u:
-                pm('\nPST - OK')
+                pm('\n  - PST - OK')
             else:
-                pm('\nPST - ! Overlaps ! - [{}]'.format(diff_pst))
+                pm('\n  - PST - ! Overlaps ! - [{}]'.format(diff_pst))
 
             if count_astenot_m == count_astenot_u:
-                pm('ASTENOT - OK')
+                pm('  - ASTENOT - OK')
             else:
-                pm('ASTENOT - ! Overlaps ! - [{}]'.format(diff_astenot))
+                pm('  - ASTENOT - ! Overlaps ! - [{}]'.format(diff_astenot))
 
             if count_asttom_m == count_asttom_u:
-                pm('ASTTOM - OK\n')
+                pm('  - ASTTOM - OK\n')
             else:
-                pm('ASTTOM - ! Overlaps ! - [{}]\n'.format(diff_asttom))
+                pm('  - ASTTOM - ! Overlaps ! - [{}]\n'.format(diff_asttom))
 
             time_now = timestamp()
 
@@ -733,7 +733,7 @@ class Check:
     @staticmethod
     def numbering():
         if ktima_status('PST', 'ASTTOM', 'ASTENOT'):
-            pm("\nProcessing...\n")
+            pm("\n  Processing...\n")
 
             org.add_layer([ns.pstM, ns.astenotM, ns.asttomM])
 
@@ -822,15 +822,15 @@ class Check:
             # PREPEI NA MIN YPARXEI KAMIA EGGRAFI STOUS PROBLIMATIKOUS PINAKES
 
             if probs_pst_astenot == 0:
-                pm('\nPST me ASTENOT - OK')
+                pm('\n  - PST me ASTENOT - OK')
             else:
-                pm('\n! Lathos KAEK se ENOTITA ! - [{}]'.format(
+                pm('\n  ! Lathos KAEK se ENOTITA ! - [{}]'.format(
                     count_pst_astenot))
 
             if probs_astenot_asttom == 0:
-                pm('ASTENOT me ASTTOM - OK\n')
+                pm('  - ASTENOT me ASTTOM - OK\n')
             else:
-                pm('! Lathos KAEK se TOMEA ! - [{}]\n'.format(
+                pm('  ! Lathos KAEK se TOMEA ! - [{}]\n'.format(
                     count_astenot_asttom))
 
             log_shapes = [probs_pst_astenot,
@@ -862,11 +862,11 @@ class Check:
             # Elegxos gia to an uparxoun self_intersections kai
             # apomonosi ton provlimatikon KAEK
             if count_geom == 0:
-                pm("\nGEOMETRY OK - NO SELF INTERSECTIONS.\n")
+                pm("\n  GEOMETRY OK - NO SELF INTERSECTIONS.\n")
                 problematic = []
             else:
-                pm("\n{} SELF INTERSECTIONS.\n".format(count_geom))
-                pm("Processing...\n")
+                pm("\n  {} SELF INTERSECTIONS.\n".format(count_geom))
+                pm("  Processing...\n")
                 arcpy.AddJoin_management(ns.pstM, "OBJECTID", ns.pst_geom,
                                          "FEATURE_ID", "KEEP_COMMON")
                 arcpy.CopyFeatures_management(ns.pstM,
@@ -887,9 +887,9 @@ class Check:
 
                 problematic = sorted(list(problematic_set))
 
-                pm("OTA with geometry problems:\n")
+                pm("  OTA with geometry problems:\n")
                 for prob_ota in problematic:
-                    pm(prob_ota)
+                    pm('  - {}'.format(prob_ota))
 
                 pm("\n")
 
@@ -927,7 +927,7 @@ class Check:
             # Elegxos gia to an uparxoun self_intersections
             # kai apomonosi ton provlimatikon KAEK
             if count_geom == 0:
-                pm("\nGEOMETRY OK - NO SELF INTERSECTIONS IN FBOUND.\n")
+                pm("\n  GEOMETRY OK - NO SELF INTERSECTIONS IN FBOUND.\n")
                 problematic = []
             else:
                 arcpy.AddField_management(ns.fbound_geom, "OTA", "TEXT",
@@ -936,7 +936,7 @@ class Check:
                                                 "OTA",
                                                 '!CLASS![-5:]',
                                                 "PYTHON_9.3")
-                pm("\n{} SELF INTERSECTIONS IN FBOUND.\n".format(
+                pm("\n  {} SELF INTERSECTIONS IN FBOUND.\n".format(
                     count_geom))
 
                 cursor = arcpy.UpdateCursor(ns.fbound_geom)
@@ -946,9 +946,9 @@ class Check:
 
                 problematic = sorted(list(problematic_set))
 
-                pm("OTA with FBOUND geometry problems :\n")
+                pm("  OTA with FBOUND geometry problems :\n")
                 for prob_ota in problematic:
-                    pm(prob_ota)
+                    pm('  - {}'.format(prob_ota))
 
             log_fbound_geometry = [count_geom,
                                    problematic]
@@ -967,7 +967,7 @@ class Check:
             pm("\n!!! {} source files missing !!!\n".format('FBOUND'))
 
     @staticmethod
-    def roads():
+    def roads(check_with_buffer=False):
         """
         Checks intersections on ROADS shp_list.
 
@@ -976,7 +976,27 @@ class Check:
 
         if ktima_status('PST', 'ASTENOT', 'ROADS'):
 
-            org.add_layer([ns.pstM, ns.roadsM, ns.astenotM])
+            org.add_layer([ns.pstM, ns.roadsM, ns.astenotM, ns.astotaM])
+
+            pm('\n  Searching for small ROADS sections...\n')
+
+            arcpy.FeatureToLine_management(ns.roadsM, kt.gdb(ns.roadsM_breaked))
+            arcpy.SelectLayerByAttribute_management(ns.roadsM_breaked,
+                                                    "NEW_SELECTION",
+                                                    " Shape_Length < 0.021 ")
+
+            small = get_count(ns.roadsM_breaked)
+
+            if small:
+                arcpy.CopyFeatures_management(ns.roadsM_breaked,
+                                              kt.gdb(ns.roads_small))
+
+            small = get_count(ns.roads_small)
+            clear_selection(ns.roadsM_breaked)
+
+            pm('  - Small ROADS sections - [{}]\n'.format(small))
+
+            pm('\n  Searching for ROADS intersections...')
 
             # Eksagwgh kai enosi eidikwn ektasewn
             arcpy.SelectLayerByAttribute_management(ns.pstM,
@@ -990,55 +1010,54 @@ class Check:
             arcpy.Dissolve_management(ns.ek, kt.gdb(ns.temp_ek),
                                       "PROP_TYPE")
 
+            arcpy.Intersect_analysis([ns.temp_ek, ns.astotaM],
+                                     kt.gdb(ns.ek_check),
+                                     output_type="INPUT")
+            if check_with_buffer:
+                arcpy.Buffer_analysis(kt.gdb(ns.ek_check),
+                                      kt.gdb(ns.ek_fixed_bound),
+                                      ns.ek_bound_reduction)
+                check_with = ns.ek_fixed_bound
+            else:
+                check_with = ns.ek_check
+
             # Elegxos gia aksones ektos EK
-            arcpy.Intersect_analysis([ns.roadsM, ns.temp_ek],
+            arcpy.Intersect_analysis([ns.roadsM, check_with],
                                      kt.gdb(ns.intersections_roads),
                                      output_type="POINT")
 
-            arcpy.DeleteField_management(ns.intersections_roads, "PROP_TYPE")
+            arcpy.DeleteField_management(ns.intersections_roads,
+                                         ["PROP_TYPE", "CAD_ADMIN"])
 
             count_inter_all = get_count(ns.intersections_roads)
 
             if count_inter_all:
                 # Elegxos gia aksones pou mporei na kovoun thn idia enotita
-                arcpy.SpatialJoin_analysis(ns.intersections_roads, ns.pstM,
-                                           kt.gdb(ns.intersections_pst_rd),
+                arcpy.SpatialJoin_analysis(ns.intersections_roads, ns.astenotM,
+                                           kt.gdb(ns.intersections_astenot_rd),
                                            match_option="CLOSEST")
-                arcpy.SelectLayerByAttribute_management(ns.intersections_pst_rd,
-                                                        "NEW_SELECTION",
-                                                        " PROP_TYPE = '0101' ")
-                arcpy.SpatialJoin_analysis(ns.intersections_pst_rd,
-                                           ns.astenotM,
-                                           kt.gdb(ns.intersections_astenot_rd))
 
-                count_inter_astenot = get_count(ns.intersections_astenot_rd)
-            else:
-                count_inter_astenot = 0
-
-            if count_inter_astenot > 10:
+            if count_inter_all > 10:
                 arcpy.Dissolve_management(ns.intersections_astenot_rd,
                                           kt.gdb(ns.p_roads),
                                           "CAD_ADMIN", "CAD_ADMIN COUNT")
-            else:
-                arcpy.SpatialJoin_analysis(ns.intersections_pst_rd,
+            elif 0 < count_inter_all <= 10:
+                arcpy.SpatialJoin_analysis(ns.intersections_astenot_rd,
                                            ns.astenotM,
                                            kt.gdb(ns.p_roads))
 
-            log_roads = [count_inter_all,
-                         count_inter_astenot]
+            log_roads = [count_inter_all]
 
             if count_inter_all == 0:
-                pm("\nROADS - OK\n")
+                pm("\n  - ROADS - OK\n")
             else:
-                pm("\nROADS intersections - [{}]".format(count_inter_all))
-                pm("ROADS intersections me ASTENOT - [{}].\n".format(
-                    count_inter_astenot))
+                pm("\n  - ROADS intersections - [{}]\n".format(count_inter_all))
 
             time_now = timestamp()
 
             log('Check ROADS', log_list=log_roads)
             status[kt.mode].update("ROADS", "ALL", count_inter_all)
-            status[kt.mode].update("ROADS", "PROBS", count_inter_astenot)
+            status[kt.mode].update("ROADS", "PROBS", 0)
             status[kt.mode].update("ROADS", "CD", time_now)
             status[kt.mode].update("ROADS", "CPROBS", bool(count_inter_all))
 
@@ -1067,9 +1086,9 @@ class Check:
             count_dbound = get_count(ns.p_dbound)
 
             if count_dbound == 0:
-                pm("\nDBOUND - OK\n")
+                pm("\n  DBOUND - OK\n")
             else:
-                pm("\n{} eggrafes den exoun DEC_ID / DEC_DATE.\n".format(
+                pm("\n  - {} eggrafes den exoun DEC_ID / DEC_DATE.\n".format(
                     count_dbound))
 
             time_now = timestamp()
@@ -1105,9 +1124,9 @@ class Check:
             count_bld = get_count(ns.p_bld)
 
             if count_bld == 0:
-                pm("\nBLD - OK\n")
+                pm("\n  BLD - OK\n")
             else:
-                pm("\n{} eggrafes den exoun BLD_T_C / BLD_NUM.\n".format(
+                pm("\n  - {} eggrafes den exoun BLD_T_C / BLD_NUM.\n".format(
                     count_bld))
 
             time_now = timestamp()
@@ -1184,7 +1203,7 @@ class Fix:
                 lyr = paths.ktima(repair_ota, "FBOUND", ext=True)
 
                 if os.path.exists(lyr):
-                    pm("Repairing geometry in FBOUND_{}".format(repair_ota))
+                    pm("  Repairing geometry in FBOUND_{}".format(repair_ota))
                     arcpy.RepairGeometry_management(lyr, "DELETE_NULL")
 
             status[kt.mode].update('SHAPE', 'FBOUND', False)
@@ -1196,28 +1215,61 @@ class Fix:
         log('Fix FBOUND Geometry', log_list=repaired)
 
     @staticmethod
-    def roads(ignore_status=False):
+    def roads(buffer_dist, ignore_status=False):
         """
         Fixes ROADS.
 
+        :param buffer_dist:
         :param ignore_status: bool
             Whether or not to ignore ROADS current state.
         :return: Nothing
         """
 
         if status[kt.mode].check("ROADS", "CPROBS") or ignore_status:
+            org.add_layer([ns.roadsM, ns.astenotM, ns.pstM])
+            turn_off()
             # Kopsimo ton aksonon 10 cm prin to orio tis enotitas
-            arcpy.Buffer_analysis(kt.gdb(ns.temp_ek),
-                                  kt.gdb(ns.ek_fixed_bound),
-                                  ns.ek_bound_reduction)
-            arcpy.Clip_analysis(kt.gdb(ns.roadsM),
-                                kt.gdb(ns.ek_fixed_bound),
-                                kt.gdb(ns.gdb_roads_all))
+            arcpy.Buffer_analysis(kt.gdb(ns.ek_check),
+                                  kt.gdb(ns.ek_fixed_bound), buffer_dist)
 
-            status[kt.mode].update("EXPORTED", "ROADS", False)
+            arcpy.Intersect_analysis([ns.roadsM, ns.ek_fixed_bound],
+                                     kt.gdb(ns.intersections_after_fix),
+                                     output_type="POINT",
+                                     join_attributes="ONLY_FID")
 
-            log('Fix ROADS')
-            pm("\nDONE !\n")
+            probs = get_count(ns.intersections_after_fix)
+
+            if probs:
+                arcpy.SpatialJoin_analysis(ns.intersections_after_fix,
+                                           ns.astenotM,
+                                           kt.gdb(ns.intersections_astenot_rd),
+                                           match_option="CLOSEST")
+
+                if probs > 10:
+                    arcpy.Dissolve_management(ns.intersections_astenot_rd,
+                                              kt.gdb(ns.p_roads_after_fix),
+                                              "CAD_ADMIN", "CAD_ADMIN COUNT")
+                elif 0 < probs <= 10:
+                    arcpy.SpatialJoin_analysis(ns.intersections_astenot_rd,
+                                               ns.astenotM,
+                                               kt.gdb(ns.p_roads_after_fix))
+
+                pm('\n!! Task Aborted !!\n')
+                pm('- {} intersections when cliping with {} buffer\n'.format(
+                    probs, buffer_dist))
+                pm('- For adjustments see: {} ({}.gdb)\n\n'.format(
+                    ns.p_roads_after_fix, kt.mode))
+            else:
+                arcpy.Clip_analysis(kt.gdb(ns.roadsM),
+                                    kt.gdb(ns.ek_fixed_bound),
+                                    kt.gdb(ns.gdb_roads_all))
+
+                status[kt.mode].update("EXPORTED", "ROADS", False)
+
+                pm('\nROADS fixed\n')
+
+                log('Fix ROADS')
+                pm("\nDONE !\n")
         else:
             pm("\nNothing to fix\n")
 
@@ -1249,7 +1301,7 @@ class Fields:
         # me vasi tis prodiagrafes
         for lyr_pst in org.fetch('PST', missing='ignore'):
             if lyr_pst[-5:] in kt.otas:
-                pm("Processing {}".format(lyr_pst))
+                pm("  Processing {}".format(lyr_pst))
                 arcpy.SelectLayerByAttribute_management(
                     lyr_pst,
                     "NEW_SELECTION",
@@ -1281,7 +1333,7 @@ class Fields:
         # Diagrafi ACQ_SCALE apo tous ASTTOM
         for lyr_asttom in org.fetch('ASTTOM', missing='ignore'):
             if lyr_asttom[-5:] in kt.otas:
-                pm("Processing {}".format(lyr_asttom))
+                pm("  Processing {}".format(lyr_asttom))
                 arcpy.DeleteField_management(lyr_asttom, "ACQ_SCALE", )
 
         pm("\nDONE !\n")
@@ -1308,7 +1360,7 @@ class Fields:
                     ota = row[0][:5]
                     if ota in available_otas:
                         lyr_astenot = toc_layer('ASTENOT', ota)
-                        pm("Processing {}".format(lyr_astenot))
+                        pm("  Processing {}".format(lyr_astenot))
                         arcpy.SelectLayerByAttribute_management(
                             lyr_astenot,
                             "NEW_SELECTION",
@@ -1348,7 +1400,7 @@ class Fields:
                 try:
                     ota = row[0]
                     lyr_fbound = toc_layer('FBOUND', ota)
-                    pm("\nProcessing DOC_ID in {}...\n".format(lyr_fbound))
+                    pm("\n  Processing DOC_ID in {}...\n".format(lyr_fbound))
 
                     arcpy.CalculateField_management(lyr_fbound,
                                                     "DOC_ID",

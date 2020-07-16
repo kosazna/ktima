@@ -162,7 +162,19 @@ class Roads(object):
 
     @staticmethod
     def getParameterInfo():
-        return
+        buffered = arcpy.Parameter(
+            displayName="Check with Buffer ({}) m".format(
+                core.ns.ek_bound_reduction),
+            name="buffered",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
+
+        buffered.value = "false"
+
+        params = [buffered]
+
+        return params
 
     @staticmethod
     def updateParameters(params):
@@ -172,8 +184,10 @@ class Roads(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
+        buffer_dist = bool(params[0].value)
+
         core.check_ktima_version()
-        core.check.roads()
+        core.check.roads(check_with_buffer=buffer_dist)
 
         return
 

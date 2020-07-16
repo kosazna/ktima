@@ -163,7 +163,7 @@ class KTOrganizer:
                                                layer_to_add,
                                                "AUTO_ARRANGE")
                     except ValueError:
-                        pm("LYR package does not exist : {}".format(feature))
+                        pm("\n LYR package does not exist : {}".format(feature))
             else:
                 for feature in features:
                     try:
@@ -173,7 +173,7 @@ class KTOrganizer:
                                                "AUTO_ARRANGE")
                     except ValueError as e:
                         pm(e)
-                        pm("\n\nFile does not exist : {}".format(feature))
+                        pm("\n\n File does not exist : {}".format(feature))
 
             if not lyr:
                 turn_off()
@@ -227,7 +227,7 @@ def turn_off():
 
     dataframes = df_now()
 
-    chk = ['merge_', 'union_', '_sum', '_in', 'FBOUND']
+    chk = ['merge_', 'union_', '_sum', '_in', 'FBOUND', '_ALL']
 
     for df in dataframes:
         for _lyr in arcpy.mapping.ListLayers(mxd, "", df):
