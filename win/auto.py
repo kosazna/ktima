@@ -10,6 +10,7 @@
 # This modules has all the neccesary functions for all tasks
 # on the windows side of the project
 
+import re
 from status import *
 from update import update_from_server
 from build import Builder
@@ -334,6 +335,18 @@ def metadata():
     :return: Nothing
     """
 
+    def create_new_content(data, ota_value, date_value):
+        ota_end = re.search(r'<CODE_OKXE>(\d*)', roads_cont).end()
+        date_end = re.search(r'<DeliveryDate>(\d*/\d*/\d*)', roads_cont).end()
+
+        ota_start = ota_end - 5
+        date_start = date_end - 10
+
+        temp = data[:ota_start] + str(ota_value) + metas[meta][ota_end:]
+        data = temp[:date_start] + date_value + temp[date_end:]
+
+        return data
+
     date = (raw_input("\nDate (xx/xx/xxxx) : \n").upper())
 
     try:
@@ -374,11 +387,8 @@ def metadata():
             for meta in metas:
                 path = paths.meta(ota, meta)
 
-                temp = metas[meta][:82] + str(ota) + metas[meta][87:]
-                content = temp[:118] + date + temp[128:]
-
                 with open(path, 'w') as meta_f:
-                    meta_f.write(content)
+                    meta_f.write(create_new_content(metas[meta], ota, date))
 
             progress(progress_counter, len(info.ota_list))
 
