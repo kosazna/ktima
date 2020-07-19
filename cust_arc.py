@@ -167,3 +167,21 @@ def delete_fields(fc1, keep=None):
     to_del = [str(i) for i in field_list if i not in no_del]
 
     return to_del
+
+
+def unique(table, field):
+    """
+    Unique values of a shapefile or feature class
+
+    :param table: str
+        Shapefile or Feature class
+    :param field: str
+        Field of shapefile or feature class
+    :return: Nothing
+    """
+
+    cursor = arcpy.SearchCursor(table)
+
+    unique_values = [row.getValue(field) for row in cursor]
+
+    return sorted(list(set(unique_values)))

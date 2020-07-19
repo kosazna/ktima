@@ -100,10 +100,18 @@ class Roads(object):
             parameterType="Required",
             direction="Input")
 
+        i_ignore = arcpy.Parameter(
+            displayName="Ignore Intersections",
+            name="ignore intersections",
+            datatype="Boolean",
+            parameterType="Required",
+            direction="Input")
+
         buffer_d.value = core.ns.ek_bound_reduction
         st_ignore.value = "false"
+        i_ignore.value = "false"
 
-        params = [buffer_d, st_ignore]
+        params = [buffer_d, st_ignore, i_ignore]
 
         return params
 
@@ -117,9 +125,11 @@ class Roads(object):
 
         buffer_d = params[0].value
         ignore_status = bool(params[1].value)
+        ignore_intersections = bool(params[2].value)
 
         core.check_ktima_version()
-        core.fix.roads(buffer_dist=buffer_d, ignore_status=ignore_status)
+        core.fix.roads(buffer_dist=buffer_d, ignore_status=ignore_status,
+                       ignore_intersections=ignore_intersections)
 
         return
 

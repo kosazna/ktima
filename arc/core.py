@@ -971,10 +971,12 @@ class Check:
         """
         Checks intersections on ROADS shp_list.
 
-        :return: Nothing
+        :param check_with_buffer: bool
+            Whether or not it will check with duffered polygon
+        :return:Nothing
         """
 
-        if ktima_status('PST', 'ASTENOT', 'ROADS'):
+        if ktima_status('PST', 'ASTENOT', 'ROADS', 'ASTOTA'):
 
             org.add_layer([ns.pstM, ns.roadsM, ns.astenotM, ns.astotaM])
 
@@ -991,7 +993,6 @@ class Check:
                 arcpy.CopyFeatures_management(ns.roadsM_breaked,
                                               kt.gdb(ns.roads_small))
 
-            small = get_count(ns.roads_small)
             clear_selection(ns.roadsM_breaked)
 
             pm('  - Small ROADS sections - [{}]\n'.format(small))
@@ -1023,8 +1024,12 @@ class Check:
 
             # Elegxos gia aksones ektos EK
             arcpy.Intersect_analysis([ns.roadsM, check_with],
-                                     kt.gdb(ns.intersections_roads),
+                                     ns.intersections_roads_multi,
                                      output_type="POINT")
+
+            arcpy.MultipartToSinglepart_management(ns.intersections_roads_multi,
+                                                   kt.gdb(
+                                                       ns.intersections_roads))
 
             arcpy.DeleteField_management(ns.intersections_roads,
                                          ["PROP_TYPE", "CAD_ADMIN"])
@@ -1198,7 +1203,7 @@ class Fix:
 
             for row in _data[kt.mode]["FBOUND_GEOMETRY"]["OTA"]:
                 repair_ota = str(row)
-                repaired.append(int(repair_ota))
+                repaired.append(str(repair_ota))
 
                 lyr = paths.ktima(repair_ota, "FBOUND", ext=True)
 
@@ -1215,13 +1220,17 @@ class Fix:
         log('Fix FBOUND Geometry', log_list=repaired)
 
     @staticmethod
-    def roads(buffer_dist, ignore_status=False):
+    def roads(buffer_dist, ignore_status=False, ignore_intersections=False):
         """
         Fixes ROADS.
 
-        :param buffer_dist:
+
+        :param buffer_dist: float
+            How much the shapefile will be buffered
         :param ignore_status: bool
             Whether or not to ignore ROADS current state.
+        :param ignore_intersections: bool
+            Whether or not to ignore intersections found from buffered polygon
         :return: Nothing
         """
 
@@ -1239,7 +1248,7 @@ class Fix:
 
             probs = get_count(ns.intersections_after_fix)
 
-            if probs:
+            if probs and not ignore_intersections:
                 arcpy.SpatialJoin_analysis(ns.intersections_after_fix,
                                            ns.astenotM,
                                            kt.gdb(ns.intersections_astenot_rd),

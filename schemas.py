@@ -183,6 +183,7 @@ class KTNamingSchema:
 
         self.p_roads = "_Probs_ROADS"
         self.p_roads_after_fix = "_Probs_ROADS_WithBuffer"
+        self.intersections_roads_multi = "intersections_ROADS_multi"
         self.intersections_roads = "intersections_ROADS"
         self.intersections_after_fix = "intersections_ROADS_WithBuffer"
         self.ek_bound_reduction = -0.01
@@ -194,7 +195,7 @@ class KTNamingSchema:
         self.intersections_astenot_rd = "intersections_ASTENOT_RD"
         self.gdb_roads_all = "ROADS_IntersectionsFixed"
         self.roads_small = "ROADS_SmallSections"
-        self.roads_all = "ROADS_FixedAll"
+        self.roads_all = "ROADS_ALL"
 
         self.fbound_claim = "FBOUND_Claim"
         self.diekdikisi = "Diekdikisi"
