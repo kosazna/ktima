@@ -176,6 +176,7 @@ class KTNamingSchema:
         self.p_geometry_ota = "_Probs_GEOMETRY_OTA"
         self.pst_geom = "geometry_PST"
         self.fbound_geom = "geometry_FBOUND"
+        self.eas_geom = "geometry_EAS"
 
         self.p_bld = "_Probs_BLD"
         self.p_dbound = "_Probs_DBOUND"

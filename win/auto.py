@@ -93,15 +93,15 @@ def validate_input(_func):
         User action after validation
     """
 
-    console = {'action_type': "(1) Export Shapefiles\n"
-                              "(2) Organize Files\n"
-                              "(3) Create Metadata\n"
-                              "(4) Create Empty Shapefiles\n"
-                              "(5) Status\n"
-                              "(6) Delete Data\n"
-                              "(7) Count Files\n"
-                              "(8) Get scanned files\n"
-                              "(9) Create Directories\n"
+    console = {'action_type': " (1) Export Shapefiles\n"
+                              " (2) Organize Files\n"
+                              " (3) Create Metadata\n"
+                              " (4) Create Empty Shapefiles\n"
+                              " (5) Status\n"
+                              " (6) Delete Data\n"
+                              " (7) Count Files\n"
+                              " (8) Get scanned files\n"
+                              " (9) Create Directories\n"
                               "(10) Update ktima\n\n",
                'get_folder': "\nGet from : (S)erver  /  (L)ocal \n\n",
                'export_folder': "\nExport to : (L)ocal  /  (P)aradosi\n\n",
@@ -646,6 +646,17 @@ def update_jsons():
     c_copy(repo, paths.kt_naming)
 
     log('Docs update')
+
+
+def formal_copy(path):
+    for fpath, fname, bname, ext in list_dir(path,
+                                             match=['.shp', '.shx', '.dbf']):
+        ota = bname[-5:]
+        name = bname[:-6]
+
+        out = os.path.join(paths.ktima_folder(ota, name),
+                           '{}{}'.format(name, ext))
+        c_copy(fpath, out)
 
 
 if __name__ == '__main__':

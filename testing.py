@@ -25,9 +25,9 @@ def show_files(path, match=None):
 
 ##################################################
 
-meleti = 'KT2-11'
+meleti = 'KT5-14'
 company_name = 'NAMA'
-mel_type = 1
+mel_type = 2
 
 # paths = Paths(meleti, mel_type, company_name)
 info_data = load_json(cp([meleti, inputdata, docs_i,
@@ -41,7 +41,7 @@ names = KTNamingSchema(info)
 ##################################################
 
 src = cp(['Python27', 'ArcGIS10.1', 'Lib', 'site-packages', 'ktima'])
-dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_7'], origin=gd[USER])
+dst = cp(['Google Drive', 'Work', 'ktima', 'ktima_8'], origin=gd[USER])
 
 all_ktima = [
     "ASTENOT",
@@ -69,4 +69,6 @@ all_ktima = [
     "VSTEAS_REL",
     "RBOUND"]
 
-count_lines(src)
+
+
+

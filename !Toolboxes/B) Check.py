@@ -108,7 +108,7 @@ class Geometry(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
         self.label = "! Geometry"
-        self.description = "Check PST and/or FBOUND geometry"
+        self.description = "Check PST, FBOUND or EAS geometry"
         self.canRunInBackground = False
 
     @staticmethod
@@ -121,7 +121,7 @@ class Geometry(object):
             direction="Input",
             multiValue=True)
 
-        shape.filter.list = ["PST", "FBOUND"]
+        shape.filter.list = ["PST", "FBOUND", "EAS"]
 
         params = [shape]
 
@@ -145,6 +145,8 @@ class Geometry(object):
                 core.check.pst_geometry()
             elif _shape == "FBOUND":
                 core.check.fbound_geometry()
+            elif _shape == "EAS":
+                core.check.eas_geometry()
             else:
                 pass
 

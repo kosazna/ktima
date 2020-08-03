@@ -165,7 +165,8 @@ class KTLog:
             'Check ASTOTA': "Check with: %s // Overlaps: [%d]",
             'Empty Shapefiles': 'Created empty shapefiles for : %s',
             'Docs update': 'Updated json schemas',
-            'Fields FBOUND': 'Added DOC_ID info to FBOUNDs'}
+            'Fields FBOUND': 'Added DOC_ID info to FBOUNDs',
+            'Check EAS Geometry': 'Self Intersections - [%d] // OTA : %s'}
 
         time_now = datetime.datetime.now().replace(microsecond=0)
 

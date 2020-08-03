@@ -124,6 +124,11 @@ class KTStatus:
             data[self.mode]["FBOUND_GEOMETRY"]["PROBS"] else pm(
             "FBOUND  -  Geometry OK")
         pm("Check Date : {}\n".format(data[self.mode]["FBOUND_GEOMETRY"]["CD"]))
+        pm("EAS     -  Geometry Problems : {}".format(
+            data[self.mode]["EAS_GEOMETRY"]["OTA"])) if \
+            data[self.mode]["EAS_GEOMETRY"]["PROBS"] else pm(
+            "EAS     -  Geometry OK")
+        pm("Check Date : {}\n".format(data[self.mode]["EAS_GEOMETRY"]["CD"]))
         pm("SHAPES  -  Geometry Problems : {}".format(
             data[self.mode]["SHAPES_GEOMETRY"]["OTA"])) if \
             data[self.mode]["SHAPES_GEOMETRY"]["PROBS"] else pm(

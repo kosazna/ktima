@@ -544,6 +544,7 @@ class Check:
     -------
     - shapes
     - pst_geometry
+    - eas_geometry
     - fbound_geometry
     - roads
     - bld
@@ -965,6 +966,65 @@ class Check:
             log('Check FBOUND Geometry', log_list=log_fbound_geometry)
         except RuntimeError:
             pm("\n!!! {} source files missing !!!\n".format('FBOUND'))
+
+    @staticmethod
+    @mxd
+    def eas_geometry():
+        """
+        Checks for self intersections in EAS
+
+        :return: Nothing
+        """
+
+        try:
+            arcpy.CheckGeometry_management(
+                org.fetch('EAS', missing='ignore'),
+                kt.gdb(ns.eas_geom))
+
+            count_geom = get_count(ns.eas_geom)
+            problematic_set = set()
+
+            # Elegxos gia to an uparxoun self_intersections
+            # kai apomonosi ton provlimatikon KAEK
+            if count_geom == 0:
+                pm("\n  GEOMETRY OK - NO SELF INTERSECTIONS IN EAS.\n")
+                problematic = []
+            else:
+                arcpy.AddField_management(ns.eas_geom, "OTA", "TEXT",
+                                          field_length=5)
+                arcpy.CalculateField_management(ns.eas_geom,
+                                                "OTA",
+                                                '!CLASS![-5:]',
+                                                "PYTHON_9.3")
+                pm("\n  {} SELF INTERSECTIONS IN EAS.\n".format(
+                    count_geom))
+
+                cursor = arcpy.UpdateCursor(ns.eas_geom)
+                for row in cursor:
+                    ota = int(row.getValue("OTA"))
+                    problematic_set.add(ota)
+
+                problematic = sorted(list(problematic_set))
+
+                pm("  OTA with EAS geometry problems :\n")
+                for prob_ota in problematic:
+                    pm('  - {}'.format(prob_ota))
+
+            log_eas_geometry = [count_geom,
+                                problematic]
+
+            pm("\nDONE !\n")
+
+            time_now = timestamp()
+
+            status[kt.mode].update("EAS_GEOMETRY", "PROBS",
+                                   bool(count_geom))
+            status[kt.mode].update("EAS_GEOMETRY", "CD", time_now)
+            status[kt.mode].update("EAS_GEOMETRY", "OTA", problematic)
+
+            log('Check EAS Geometry', log_list=log_eas_geometry)
+        except RuntimeError:
+            pm("\n!!! {} source files missing !!!\n".format('EAS'))
 
     @staticmethod
     def roads(check_with_buffer=False):

@@ -125,6 +125,11 @@ class KTStatus:
             "FBOUND  -  Geometry OK")
         print("Check Date : {}\n".format(
             data[self.mode]["FBOUND_GEOMETRY"]["CD"]))
+        print("EAS     -  Geometry Problems : {}".format(
+            data[self.mode]["EAS_GEOMETRY"]["OTA"])) if \
+            data[self.mode]["EAS_GEOMETRY"]["PROBS"] else (
+            "EAS     -  Geometry OK")
+        print("Check Date : {}\n".format(data[self.mode]["EAS_GEOMETRY"]["CD"]))
         print("SHAPES  -  Geometry Problems : {}".format(
             data[self.mode]["SHAPES_GEOMETRY"]["OTA"])) if \
             data[self.mode]["SHAPES_GEOMETRY"]["PROBS"] else (
