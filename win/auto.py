@@ -336,8 +336,8 @@ def metadata():
     """
 
     def create_new_content(data, ota_value, date_value):
-        ota_end = re.search(r'<CODE_OKXE>(\d*)', roads_cont).end()
-        date_end = re.search(r'<DeliveryDate>(\d*/\d*/\d*)', roads_cont).end()
+        ota_end = re.search(r'<CODE_OKXE>(\d*)', data).end()
+        date_end = re.search(r'<DeliveryDate>(\d*/\d*/\d*)', data).end()
 
         ota_start = ota_end - 5
         date_start = date_end - 10

@@ -1469,11 +1469,15 @@ class Fields:
                 try:
                     ota = row[0]
                     lyr_fbound = toc_layer('FBOUND', ota)
-                    pm("\n  Processing DOC_ID in {}...\n".format(lyr_fbound))
+                    pm("  Processing DOC_ID in {}...".format(lyr_fbound))
 
                     arcpy.CalculateField_management(lyr_fbound,
                                                     "DOC_ID",
                                                     "'{}'".format(row[1]),
+                                                    "PYTHON_9.3")
+                    arcpy.CalculateField_management(lyr_fbound,
+                                                    "ORI_CODE",
+                                                    "1",
                                                     "PYTHON_9.3")
                 except IndexError:
                     pm("Leipei DOC_ID gia {} apo to .txt arxeio".format(
@@ -1616,6 +1620,8 @@ class Create:
             arcpy.FeatureClassToFeatureClass_conversion(
                 kt.gdb(ns.gdb_roads_all),
                 paths.rdoutpath, ns.roads_all)
+
+            turn_off()
 
             # Dhmiourgia pinaka ROADS vasi ton prodiagrafon
             arcpy.DeleteField_management(paths.rdinpath,
