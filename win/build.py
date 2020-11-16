@@ -265,11 +265,12 @@ def _validate_input(_func):
         User action after validation
     """
     console = {'meleti': "(1) KT1-05\n"
-                         "(2) KT2-11\n"
-                         "(3) KT5-14\n"
-                         "(4) KT5-16\n"
-                         "(5) KT5-17\n"
-                         "(6) KT5-22\n\n",
+                         "(2) KT2-02\n"
+                         "(3) KT2-11\n"
+                         "(4) KT5-14\n"
+                         "(5) KT5-16\n"
+                         "(6) KT5-17\n"
+                         "(7) KT5-22\n\n",
                'action': "(1) Auto Build\n"
                          "(2) Custom Build\n"
                          "(3) Update\n"
