@@ -13,7 +13,7 @@
 import getpass
 from cust_win import *
 
-local_ktima_version = '8.4.4'
+local_ktima_version = '8.5'
 
 # MODES
 KTIMA_MODE = 'ktima'
@@ -29,8 +29,7 @@ c_NA = 'NAMA'
 c_2P = '2KP'
 
 # GOOGLE DRIVE MAPPING LETTERS
-gd = {'aznavouridis.k': 'D',
-      'user1': 'C'}
+gd = {'aznavouridis.k': 'D'}
 
 build_pass = 'ktima()azna'
 

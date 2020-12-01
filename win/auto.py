@@ -352,33 +352,33 @@ def metadata():
     try:
         with open(paths.block_pnt_xml, 'r') as block_pnt_f:
             block_pnt_cont = str(block_pnt_f.read())
+            has_block = True
     except IOError:
-        pass
+        block_pnt_cont = ''
+        has_block = False
 
     try:
         with open(paths.geo_xml, 'r') as geo_f:
             geo_cont = str(geo_f.read())
+            has_geo = True
     except IOError:
-        pass
+        geo_cont = ''
+        has_geo = False
 
     try:
         with open(paths.roads_xml, 'r') as roads_f:
             roads_cont = str(roads_f.read())
+            has_road = True
     except IOError:
-        pass
+        roads_cont = ''
+        has_road = False
 
-    if info.mel_type == 1:
-        try:
-            metas = {'BLOCK_PNT_METADATA': block_pnt_cont,
-                     'ROADS_METADATA': roads_cont,
-                     'GEO_METADATA': geo_cont}
-        except UnboundLocalError:
-            metas = {'ROADS_METADATA': roads_cont,
-                     'GEO_METADATA': geo_cont}
-
-    else:
-        metas = {'ROADS_METADATA': roads_cont,
-                 'GEO_METADATA': geo_cont}
+    metas = {'BLOCK_PNT_METADATA': {'exists': has_block,
+                                    'data': block_pnt_cont},
+             'ROADS_METADATA': {'exists': has_road,
+                                'data': roads_cont},
+             'GEO_METADATA': {'exists': has_geo,
+                              'data': geo_cont}}
 
     if get_pass():
         progress_counter = 0
@@ -387,8 +387,10 @@ def metadata():
             for meta in metas:
                 path = paths.meta(ota, meta)
 
-                with open(path, 'w') as meta_f:
-                    meta_f.write(create_new_content(metas[meta], ota, date))
+                if metas[meta]['exists']:
+                    to_write = metas[meta]['data']
+                    with open(path, 'w') as meta_f:
+                        meta_f.write(create_new_content(to_write, ota, date))
 
             progress(progress_counter, len(info.ota_list))
 
@@ -637,13 +639,6 @@ def update_jsons():
     constructor = Builder(MELETI, info.company_name)
     constructor.update_ktima_info()
     constructor.update_temp_paths()
-
-    components = copy.copy(build_folder_NA).extend(
-        [inputdata, docs_i, json_naming])
-
-    repo = cp(components, origin=ktl['temp'][USER])
-
-    c_copy(repo, paths.kt_naming)
 
     log('Docs update')
 
