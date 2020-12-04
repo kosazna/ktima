@@ -342,7 +342,7 @@ def metadata():
         ota_start = ota_end - 5
         date_start = date_end - 10
 
-        temp = data[:ota_start] + str(ota_value) + metas[meta][ota_end:]
+        temp = data[:ota_start] + str(ota_value) + data[ota_end:]
         data = temp[:date_start] + date_value + temp[date_end:]
 
         return data
