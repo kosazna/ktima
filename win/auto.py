@@ -624,10 +624,12 @@ def fill_empty_shp(ota_list=None, shp_list=None):
 
     for ota in ota_list:
         for shp in shp_list:
-            check_path = paths.ktima(ota, shp, ext=True)
+            check_path = paths.ktima(ota, shp, ext=True,
+                                     spatial_folder=paradosidata_o)
             if not os.path.exists(check_path):
                 inpath = os.path.join(paths.empty_shps, shp)
-                outpath = paths.ktima_folder(ota, shp)
+                outpath = paths.ktima_folder(ota, shp,
+                                             spatial_folder=paradosidata_o)
                 copy_shp(inpath, outpath, shp)
 
     log('Empty Shapefiles', log_list=shp_list)

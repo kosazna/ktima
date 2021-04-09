@@ -1732,7 +1732,7 @@ class Create:
                 output_type="INPUT")
             arcpy.Dissolve_management(ns.intersection_pst_fbound,
                                       kt.gdb(ns.gdb_fbound_claim),
-                                      ["KAEK", "AREA"])
+                                      "KAEK", "AREA FIRST")
             arcpy.FeatureClassToFeatureClass_conversion(ns.gdb_fbound_claim,
                                                         paths.claimoutpath,
                                                         ns.fbound_claim)
