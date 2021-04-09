@@ -1753,7 +1753,7 @@ class Create:
             arcpy.AddField_management(ns.fbound_claim, "AREA_REST", "DOUBLE",
                                       field_precision=15, field_scale=3)
             arcpy.CalculateField_management(ns.fbound_claim, "AREA_MEAS",
-                                            '!AREA!',
+                                            '!FIRST_AREA!',
                                             "PYTHON_9.3")
             arcpy.CalculateField_management(ns.fbound_claim, "AREAFOREST",
                                             '!Shape_Area!',
