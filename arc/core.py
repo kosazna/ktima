@@ -902,7 +902,8 @@ class Check:
             status[kt.mode].update("SHAPES_GEOMETRY", "PROBS",
                                    bool(count_geom))
             status[kt.mode].update("SHAPES_GEOMETRY", "CD", time_now)
-            status[kt.mode].update("SHAPES_GEOMETRY", "OTA", problematic)
+            status[kt.mode].update("SHAPES_GEOMETRY", "OTA",
+                                   list(map(str, problematic)))
 
             pm("\nDONE !\n")
 
@@ -961,7 +962,8 @@ class Check:
             status[kt.mode].update("FBOUND_GEOMETRY", "PROBS",
                                    bool(count_geom))
             status[kt.mode].update("FBOUND_GEOMETRY", "CD", time_now)
-            status[kt.mode].update("FBOUND_GEOMETRY", "OTA", problematic)
+            status[kt.mode].update("FBOUND_GEOMETRY", "OTA",
+                                   list(map(str, problematic)))
 
             log('Check FBOUND Geometry', log_list=log_fbound_geometry)
         except RuntimeError:
@@ -1020,7 +1022,8 @@ class Check:
             status[kt.mode].update("EAS_GEOMETRY", "PROBS",
                                    bool(count_geom))
             status[kt.mode].update("EAS_GEOMETRY", "CD", time_now)
-            status[kt.mode].update("EAS_GEOMETRY", "OTA", problematic)
+            status[kt.mode].update("EAS_GEOMETRY", "OTA",
+                                   list(map(str, problematic)))
 
             log('Check EAS Geometry', log_list=log_eas_geometry)
         except RuntimeError:
@@ -1278,6 +1281,37 @@ class Fix:
             repaired = "None"
 
         log('Fix FBOUND Geometry', log_list=repaired)
+
+    @staticmethod
+    def eas_geometry():
+        """
+        Fixes FBOUND geometry.
+
+        :return: Nothing
+        """
+
+        if status[kt.mode].check('EAS_GEOMETRY', "PROBS"):
+            # Epidiorthosi ton FBOUND
+            _data = load_json(paths.status_path)
+
+            repaired = []
+
+            for row in _data[kt.mode]["EAS_GEOMETRY"]["OTA"]:
+                repair_ota = str(row)
+                repaired.append(str(repair_ota))
+
+                lyr = paths.ktima(repair_ota, "EAS", ext=True)
+
+                if os.path.exists(lyr):
+                    pm("  Repairing geometry in EAS_{}".format(repair_ota))
+                    arcpy.RepairGeometry_management(lyr, "DELETE_NULL")
+
+            pm("\nDONE !\n")
+        else:
+            pm("\nNothing to fix\n")
+            repaired = "None"
+
+        log('Fix EAS Geometry', log_list=repaired)
 
     @staticmethod
     def roads(buffer_dist, ignore_status=False, ignore_intersections=False):

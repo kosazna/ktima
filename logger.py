@@ -166,7 +166,8 @@ class KTLog:
             'Empty Shapefiles': 'Created empty shapefiles for : %s',
             'Docs update': 'Updated json schemas',
             'Fields FBOUND': 'Added DOC_ID info to FBOUNDs',
-            'Check EAS Geometry': 'Self Intersections - [%d] // OTA : %s'}
+            'Check EAS Geometry': 'Self Intersections - [%d] // OTA : %s',
+            'Fix EAS Geometry': 'Repaired EAS geometry in OTA : %s'}
 
         time_now = datetime.datetime.now().replace(microsecond=0)
 

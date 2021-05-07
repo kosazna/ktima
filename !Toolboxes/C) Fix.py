@@ -44,7 +44,7 @@ class Geometry(object):
             multiValue=True)
 
         if core.mxdName == core.mxdKtimaName:
-            fields.filter.list = ["PST", "FBOUND"]
+            fields.filter.list = ["PST", "FBOUND", "EAS"]
         else:
             fields.filter.list = ["PST"]
 
@@ -69,6 +69,8 @@ class Geometry(object):
                 core.fix.pst_geometry()
             elif _shape == "FBOUND":
                 core.fix.fbound_geometry()
+            elif _shape == "EAS":
+                core.fix.eas_geometry()
             else:
                 pass
 
