@@ -124,7 +124,7 @@ def c_copy(src, dst, status=True):
     """
 
     try:
-        shutil.copyfile(src, dst)
+        shutil.copy(src, dst)
         if status:
             print('OK --> {}'.format(dst.split('\\')[-1]))
     except IOError as e:
