@@ -434,8 +434,12 @@ def organize():
             for fpath, fname, bname, ext in list_dir(paths.mdb_in):
                 for ota in info.ota_list:
                     if ota in bname and 'VSTEAS_REL' in bname:
-                        outpath = os.path.join(paths.mdb_vsteas, ota,
+                        if info.mel_type == 1:
+                            outpath = os.path.join(paths.mdb_vsteas, ota,
                                                'SHAPE', 'VSTEAS_REL', fname[6:])
+                        else:
+                            outpath = os.path.join(paths.mdb_vsteas, ota,
+                                                'VSTEAS_REL', fname[6:])
                         c_copy(fpath, outpath)
                     elif ota in bname:
                         outpath = os.path.join(paths.mdb_out, ota, fname)
@@ -677,7 +681,7 @@ if __name__ == '__main__':
                 shapes_to_create = validate_input('shapes')
 
                 empty = Files(paths.empty_shps)
-                empty.explore()
+                empty.explore(match='.shp')
                 empty_shp = list(set(empty.names))
 
                 new_otas = fmt2list(otas_to_create, info.ota_list)

@@ -19,7 +19,7 @@ class Toolbox(object):
 
         # List of tool classes associated with this toolbox
         if core.get_pass():
-            self.tools = [Fbound, Roads, Diekdikisi, PreFbound]
+            self.tools = [Fbound, Roads, Diekdikisi]
         else:
             self.tools = []
 
@@ -112,7 +112,7 @@ class Roads(object):
 class Diekdikisi(object):
     def __init__(self):
         """Define the tool (tool name is the name of the class)."""
-        self.label = "FBOUND Claim"
+        self.label = "Diekdikisi (FOREST)"
         self.description = "Creare FBOUND claim"
         self.canRunInBackground = False
 

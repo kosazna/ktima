@@ -831,7 +831,7 @@ class Check:
             if probs_astenot_asttom == 0:
                 pm('  - ASTENOT me ASTTOM - OK\n')
             else:
-                pm('  ! Lathos KAEK se TOMEA ! - [{}]\n'.format(
+                pm('  ! Lathos ENOTITA se TOMEA ! - [{}]\n'.format(
                     count_astenot_asttom))
 
             log_shapes = [probs_pst_astenot,
@@ -943,7 +943,7 @@ class Check:
 
                 cursor = arcpy.UpdateCursor(ns.fbound_geom)
                 for row in cursor:
-                    ota = int(row.getValue("OTA"))
+                    ota = str(row.getValue("OTA"))
                     problematic_set.add(ota)
 
                 problematic = sorted(list(problematic_set))
@@ -1003,7 +1003,7 @@ class Check:
 
                 cursor = arcpy.UpdateCursor(ns.eas_geom)
                 for row in cursor:
-                    ota = int(row.getValue("OTA"))
+                    ota = str(row.getValue("OTA"))
                     problematic_set.add(ota)
 
                 problematic = sorted(list(problematic_set))
