@@ -9,62 +9,24 @@
 
 # This module is for authentication purposes
 
-import hashlib
+from subprocess import check_output
 from paths import *
 
 
-# from cust_arc import *
-
-
 def get_user_uid():
-    if ktl.get('company_name', 'NOT_FOUND') == c_NA:
-        ppp = cp([mdev, diafora, paratiriseis, json_uas],
-                 origin=ktl['temp'][USER])
-    else:
-        ppp = cp([temp2p, mdev, diafora, paratiriseis, json_uas],
-                 origin=ktl['temp'][USER])
+    authorizer = os.path.join(os.environ.get('USERPROFILE'), '.ktima', 'auth.exe')
+    authdata = check_output("{} --appname ktima".format(authorizer))
 
-    tpp = cp([users, USER, json_ipass])
+    return eval(authdata)
 
-    try:
-        with open(ppp, 'r') as h_f:
-            hash_k = hashlib.sha256(USER).hexdigest()
-            keys = json.load(h_f)
-            server_version = keys['ktima_version']
-    except IOError:
-        c_date = time.strftime("%d/%m/%Y")
-        try:
-            with open(tpp, 'r') as h_f:
-                hash_k = hashlib.sha256(
-                    '{}-{}'.format(c_date, USER)).hexdigest()
-                keys = json.load(h_f)
-                server_version = ''
-        except IOError:
-            hash_k = None
-            keys = {}
-            server_version = ''
-
-    return hash_k, keys, server_version
-
-
-hk, key, server_ktima_version = get_user_uid()
+mapping_auth = get_user_uid()
 
 
 def get_pass():
-    try:
-        ehk = key[USER]
-    except KeyError:
-        ehk = "No Key"
-
-    if mdev.strip('! ') == USER:
-        return True
-    elif hk == ehk:
-        # if local_ktima_version != recent_ktima_version:
-        #     if 4 < warning_counter < 8:
-        #         pm('\n! There is an updated "ktima" version !')
-        #         pm('Your realease : {}'.format(local_ktima_version))
-        #         pm('Newer release: {}\n'.format(recent_ktima_version))
-        #     warning_counter += 1
-        return True
+    if mapping_auth is not None:
+        try:
+            return mapping_auth[USER]['arcgis']
+        except KeyError:
+            return False
     else:
         return False

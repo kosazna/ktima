@@ -1,6 +1,12 @@
 # -*- coding: utf-8 -*-
 from paths import *
 import re
+from datetime import datetime, timedelta
+from subprocess import check_output
+import os
+
+# print(check_output("C:/Users/aznavouridis.k/.ktima/auth.exe --appname ktima"))
+print(os.environ.get("USERPROFILE"))
 
 
 def count_lines(path):
@@ -25,18 +31,18 @@ def show_files(path, match=None):
 
 ##################################################
 
-meleti = 'KT5-14'
-company_name = 'NAMA'
-mel_type = 2
+# meleti = 'KT5-14'
+# company_name = 'NAMA'
+# mel_type = 2
 
-# paths = Paths(meleti, mel_type, company_name)
-info_data = load_json(cp([meleti, inputdata, docs_i,
-                          'KT_Info.json']))
-naming_data = load_json(cp([meleti, inputdata, docs_i,
-                            'KT_Naming_Schema.json']))
-info = KTInfo(info_data)
-paths = KTPaths(meleti, mel_type, company_name)
-names = KTNamingSchema(info)
+# # paths = Paths(meleti, mel_type, company_name)
+# info_data = load_json(cp([meleti, inputdata, docs_i,
+#                           'KT_Info.json']))
+# naming_data = load_json(cp([meleti, inputdata, docs_i,
+#                             'KT_Naming_Schema.json']))
+# info = KTInfo(info_data)
+# paths = KTPaths(meleti, mel_type, company_name)
+# names = KTNamingSchema(info)
 
 ##################################################
 
@@ -68,7 +74,3 @@ all_ktima = [
     "NOMI",
     "VSTEAS_REL",
     "RBOUND"]
-
-
-
-

@@ -114,7 +114,6 @@ class ChangeMode(object):
         if default:
             core.kt.set_default_mode(mode)
 
-        core.check_ktima_version()
         core.kt.reset_mode(mode, core.strize(otas))
 
 
@@ -140,7 +139,6 @@ class Info(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check_ktima_version()
         core.status[core.kt.mode].show()
 
 
@@ -227,7 +225,6 @@ class OtaExport(object):
         export = bool(params[4].value)
         dtbase = bool(params[5].value)
 
-        core.check_ktima_version()
         core.general.export_per_ota(shape,
                                     spatial=spatial,
                                     spatial_method=spatial_method,
@@ -298,7 +295,6 @@ class ExportToServer(object):
 
         shapes = _shapes.split(";")
 
-        core.check_ktima_version()
         core.general.export_to_server(shapes, geodatabse)
 
         return
@@ -364,7 +360,6 @@ class Identical(object):
 
         export = bool(params[2].value)
 
-        core.check_ktima_version()
         core.find.find_identical(what_to, in_what, export)
 
         return
@@ -401,7 +396,6 @@ class Isolate(object):
         arcpy.env.addOutputsToMap = True
         shapetype = params[0].valueAsText
 
-        core.check_ktima_version()
         core.general.isolate(shapetype)
 
         return
@@ -473,7 +467,6 @@ class Merge(object):
 
         core.org.add_layer(shapetypes, lyr=True)
 
-        core.check_ktima_version()
         core.geoprocessing.merge(shapetypes,
                                  force_merge,
                                  missing)
@@ -513,7 +506,6 @@ class Queries(object):
         arcpy.env.addOutputsToMap = True
         shapetype = params[0].valueAsText
 
-        core.check_ktima_version()
 
         if shapetype == "KAEK_in_DBOUND":
             core.find.kaek_in_dbound()
@@ -546,5 +538,4 @@ class MonthReport(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check_ktima_version()
         core.general.month_report()

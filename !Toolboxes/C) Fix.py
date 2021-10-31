@@ -62,7 +62,6 @@ class Geometry(object):
         _fields = params[0].valueAsText
         shapes = _fields.split(";")
 
-        core.check_ktima_version()
 
         for _shape in shapes:
             if _shape == "PST":
@@ -129,7 +128,6 @@ class Roads(object):
         ignore_status = bool(params[1].value)
         ignore_intersections = bool(params[2].value)
 
-        core.check_ktima_version()
         core.fix.roads(buffer_dist=buffer_d, ignore_status=ignore_status,
                        ignore_intersections=ignore_intersections)
 
@@ -174,7 +172,6 @@ class Fields(object):
 
         core.pm(shapes)
 
-        core.check_ktima_version()
 
         for _shape in shapes:
             if _shape == "ASTENOT":

@@ -65,7 +65,6 @@ class Overlaps(object):
 
         check_what = params[0].valueAsText
 
-        core.check_ktima_version()
 
         if check_what == 'ASTOTA':
             core.check.boundaries(params[1].value)
@@ -96,7 +95,6 @@ class Numbering(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check_ktima_version()
         core.check.numbering()
 
         return
@@ -138,7 +136,6 @@ class Geometry(object):
         shape = params[0].valueAsText
         shapes = shape.split(";")
 
-        core.check_ktima_version()
 
         for _shape in shapes:
             if _shape == "PST":
@@ -188,7 +185,6 @@ class Roads(object):
 
         buffer_dist = bool(params[0].value)
 
-        core.check_ktima_version()
         core.check.roads(check_with_buffer=buffer_dist)
 
         return
@@ -215,7 +211,6 @@ class Dbound(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check_ktima_version()
         core.check.dbound()
 
         return
@@ -242,7 +237,6 @@ class Bld(object):
     def execute(params, messages):
         arcpy.env.addOutputsToMap = True
 
-        core.check_ktima_version()
         core.check.bld()
 
         return
