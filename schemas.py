@@ -91,7 +91,7 @@ empty_shps = 'Empty_Shapefiles'
 
 # USER AND DRIVE LETTER MAPPING FOR EACH USER
 USER = getpass.getuser()
-ktl = load_json(cp([users, USER, json_paths]))
+ktl = load_json(cp([users, USER, '.ktima', 'static', json_paths]))
 
 # MOST COMMON FOLDER PATHS
 temp_NA = [mdev, diafora, ktima_folder, scripts]
