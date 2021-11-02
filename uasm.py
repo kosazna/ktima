@@ -14,8 +14,9 @@ from paths import *
 
 
 def get_user_uid():
+    arguments = "-A ktima"
     authorizer = os.path.join(os.environ.get('USERPROFILE'), '.ktima', 'auth.exe')
-    authdata = check_output("{} --appname ktima".format(authorizer))
+    authdata = check_output("{} {}".format(authorizer, arguments))
 
     return eval(authdata)
 
