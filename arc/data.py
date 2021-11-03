@@ -105,7 +105,7 @@ def mdf(fc, importance='', out='general', ota=None, name=None):
         name = fc
     elif out == 'ota':
         outpath = paths.mdf(fc, importance, out)
-        name = '{}_{}'.format(fc, ota)
+        name = '{}_{}'.format(ota, fc)
     elif out == 'formal':
         name = name
         outpath = paths.ktima(ota, name)
