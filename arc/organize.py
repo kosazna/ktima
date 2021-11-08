@@ -247,7 +247,11 @@ def mxd(func):
             # add_layer() for 'merge' is executed from the toolbox
         org.mxdfiles()
         org.validate(req_map[func.__name__])
-        result = func(*args, **kwargs)
+        if can_process:
+            result = func(*args, **kwargs)
+        else:
+            result = None
+            pm("\nAccess denied\n")
 
         return result
 

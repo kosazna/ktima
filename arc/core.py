@@ -639,6 +639,9 @@ class Check:
             Precision which will be used in 'union'.
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if ktima_status('PST', 'ASTTOM', 'ASTENOT'):
 
@@ -733,6 +736,10 @@ class Check:
 
     @staticmethod
     def numbering():
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
+
         if ktima_status('PST', 'ASTTOM', 'ASTENOT'):
             pm("\n  Processing...\n")
 
@@ -850,6 +857,9 @@ class Check:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if ktima_status('PST'):
             org.add_layer([ns.pstM])
@@ -917,6 +927,9 @@ class Check:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         try:
             arcpy.CheckGeometry_management(
@@ -977,6 +990,9 @@ class Check:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         try:
             arcpy.CheckGeometry_management(
@@ -1038,6 +1054,9 @@ class Check:
             Whether or not it will check with duffered polygon
         :return:Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if ktima_status('PST', 'ASTENOT', 'ROADS', 'ASTOTA'):
 
@@ -1136,6 +1155,9 @@ class Check:
 
         :return:
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if ktima_status('DBOUND'):
             # Elegxos gia DBOUND pou mporei na toys leipei eite to
@@ -1172,6 +1194,9 @@ class Check:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if ktima_status('BLD'):
             # Elegxos gia BLD pou mporei na exoun thn timh '0' eite
@@ -1225,6 +1250,9 @@ class Fix:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if status[kt.mode].check('SHAPES_GEOMETRY', "PROBS"):
             # Epilogi olon ton shapefile enos provlimatikou OTA kai
@@ -1257,6 +1285,9 @@ class Fix:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if status[kt.mode].check('FBOUND_GEOMETRY', "PROBS"):
             # Epidiorthosi ton FBOUND
@@ -1289,6 +1320,9 @@ class Fix:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if status[kt.mode].check('EAS_GEOMETRY', "PROBS"):
             # Epidiorthosi ton FBOUND
@@ -1327,6 +1361,10 @@ class Fix:
             Whether or not to ignore intersections found from buffered polygon
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
+
 
         if status[kt.mode].check("ROADS", "CPROBS") or ignore_status:
             org.add_layer([ns.roadsM, ns.astenotM, ns.pstM])
@@ -1402,6 +1440,10 @@ class Fields:
 
         # Diorthosi ton pedion ORI_TYPE, DEC_ID kai ADDRESS stous PST
         # me vasi tis prodiagrafes
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
+
         for lyr_pst in org.fetch('PST', missing='ignore'):
             if lyr_pst[-5:] in kt.otas:
                 pm("  Processing {}".format(lyr_pst))
@@ -1434,6 +1476,10 @@ class Fields:
         """
 
         # Diagrafi ACQ_SCALE apo tous ASTTOM
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
+
         for lyr_asttom in org.fetch('ASTTOM', missing='ignore'):
             if lyr_asttom[-5:] in kt.otas:
                 pm("  Processing {}".format(lyr_asttom))
@@ -1453,6 +1499,10 @@ class Fields:
         """
 
         # Prosthiki onomasias sto pedio LOCALITY ton ASTENOT me vasi txt arxeio
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
+
         available_otas = org.fetch('ASTENOT', missing='ignore', ota_num=True)
 
         with open(paths.locality) as csvfile:
@@ -1495,6 +1545,9 @@ class Fields:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         with open(paths.fbounddoc) as csvfile:
             docs = csv.reader(csvfile)
@@ -1547,6 +1600,10 @@ class Create:
             Path for the chosen forest file to use
         :return: nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
+
         pm('\nCreating FBOUND using:\n-->{}\n'.format(which_po))
 
         if ktima_status('ASTOTA'):
@@ -1648,6 +1705,9 @@ class Create:
             Whether or not to ignore ROADS current state.
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if status[kt.mode].check("ROADS", "CPROBS") or ignore_status:
 
@@ -1757,6 +1817,9 @@ class Create:
 
         :return: Nothing
         """
+        if not can_process:
+            pm("\nAccess denied\n")
+            return
 
         if ktima_status('PST', 'FBOUND'):
             # Dhmiourgia tou pinaka tis diekdikisis tou dasous
@@ -1839,7 +1902,7 @@ class Create:
         :return: Nothing
         """
 
-        if ktima_status('ASTOTA'):
+        if ktima_status('ASTOTA') and can_process:
             # Dhmiourgia tou sunolikoy PRE_FBOUND me vasi ta nea oria ton OTA
             arcpy.Intersect_analysis(
                 [kt.gdb(ns.astotaM), paths.predasinpath],

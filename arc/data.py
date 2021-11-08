@@ -156,10 +156,15 @@ if __name__ == 'ktima.arc.data':
     if get_pass():
         if mxdName == mxdKtimaName:
             MELETI = mxdPath.split('\\')[1]
+            if MELETI in get_categories():
+                can_process = True
+            else:
+                can_process = False
         else:
             MELETI = None
     else:
         MELETI = None
+        can_process = False
         pm("\nAccess denied\n")
         print("\nAccess denied\n")
 

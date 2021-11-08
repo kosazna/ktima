@@ -34,3 +34,6 @@ def get_pass():
             return False
     else:
         return False
+
+def get_categories():
+    return mapping_auth[USER]['categories']
