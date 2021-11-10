@@ -15,7 +15,7 @@ from paths import *
 
 def get_user_uid():
     arguments = "-A ktima"
-    authorizer = os.path.join(os.environ.get('USERPROFILE'), '.ktima', 'auth.exe')
+    authorizer = os.path.join(os.environ.get('USERPROFILE'), '.ktima', 'source', 'auth', 'auth.exe')
     if os.path.exists(authorizer):
         authdata = check_output("{} {}".format(authorizer, arguments))
     else:
